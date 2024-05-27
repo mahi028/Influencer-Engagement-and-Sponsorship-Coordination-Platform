@@ -4,7 +4,7 @@ from application.modals import User, Role, UserRoles
 from application import login_manager
 from application.form import RegisterForm, LoginForm, InfluencerDetailForm, SponserDetailForm
 from application.hash import hashpw, checkpw
-from flask_login import login_required, login_user, logout_user, current_user
+from flask_login import login_required, login_user, logout_user
 
 @login_manager.user_loader
 def load_user(user_id):
