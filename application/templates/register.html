@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+    {% block content %}
+    <div class="container" style="max-width: 600px;">
+        <center>
+            <h1> Register </h1>
+        </center>
+        <form method="post" action="{{url_for('user_auth.register')}}">
+            {{form.hidden_tag()}}
+            {{form.email.label(class="form-label")}}
+            {{form.email(class="form-control")}} <br>
+
+            {{form.password.label(class="form-label")}}
+            {{form.password(class="form-control")}} <br>
+            
+            {{form.conf_password.label(class="form-label")}}
+            {{form.conf_password(class="form-control")}} <br>
+
+            {{form.role.label(class="form-label")}}<br>
+
+            {%for sub_feild in form.role%}
+            <div class="form-check form-check-inline">
+                {{sub_feild(class="form-check-input")}}
+                {{sub_feild.label(class="form-check-label")}}
+            </div>
+            {%endfor%}
+            <br><br>
+            <center>
+                {{form.submit(class="btn btn-outline-secondary")}} <br>
+                <span>Already a User?<a href="{{url_for('user_auth.login')}}" class="link-secondary link-offset-2 link-offset-1-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Login</a></span>
+            </center>
+        </form>
+    </div>
+    {%endblock%}
