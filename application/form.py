@@ -6,13 +6,13 @@ class RegisterForm(FlaskForm):
     email = EmailField('Your Email', validators = [DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     conf_password = PasswordField('Confirm Password', validators=[DataRequired()])
-    role = RadioField('Your Role?', choices = [(1,'Admin'), (2,'Influencer'), (3,'Sponser')],validators = [DataRequired()])
+    role = RadioField('Your Role?', choices = [(2,'Influencer'), (3,'Sponser')],validators = [DataRequired()])
     submit = SubmitField('Submit')
 
 class LoginForm(FlaskForm):
     email = EmailField('Your Email', validators = [DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
-    role = RadioField('Your Role?', choices = [(1,'Admin'), (2,'Influencer'), (3,'Sponser')],validators = [DataRequired()])
+    role = RadioField('Your Role?', choices = [(2,'Influencer'), (3,'Sponser')],validators = [DataRequired()])
     submit = SubmitField('Submit')
 
 class SponserDetailForm(FlaskForm):
