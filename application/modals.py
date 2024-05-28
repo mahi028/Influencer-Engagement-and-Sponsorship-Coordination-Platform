@@ -30,6 +30,8 @@ class Sponser(db.Model):
     industry = db.Column(db.String, nullable = False)
     budget = db.Column(db.Integer, nullable = False)
 
+    user = db.relationship('User', backref=db.backref('sponsers', cascade="all, delete-orphan"))
+
 class Influencer(db.Model):
     #for influencers
     influencer_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
@@ -37,7 +39,9 @@ class Influencer(db.Model):
     category = db.Column(db.String, nullable = False)
     niche = db.Column(db.String, nullable = False)
 
-    reach = db.Column(db.Integer, nullable = True)
+    # reach = db.Column(db.Integer, nullable = True)
+    user = db.relationship('User', backref=db.backref('influencers', cascade="all, delete-orphan"))
+
 
 
 class Campaign(db.Model):
@@ -53,13 +57,13 @@ class Campaign(db.Model):
 class Camp_request(db.Model):
     request_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.campaign_id"))
-    influencer_id = db.Column(db.Integer, db.ForeignKey("user.user_id"))
+    influencer_id = db.Column(db.Integer, db.ForeignKey("influencer.influencer_id"))
     requirements = db.Column(db.String)
     payment_amount = db.Column(db.Integer)
     stutus = db.Column(db.String(15))
 
-    user = db.relationship('User', backref = db.backref('influencer', cascade = "all, delete-orphan"))
-    campaign = db.relationship('Campaign', backref = db.backref('campaign', cascade = "all, delete-orphan"))
+    user = db.relationship('Influencer', backref = db.backref('camp_requests', cascade = "all, delete-orphan"))
+    campaign = db.relationship('Campaign', backref = db.backref('camp_requests', cascade = "all, delete-orphan"))
 
 class Camp_msg(db.Model):
     msg_id = db.Column(db.Integer, primary_key = True, autoincrement = True)

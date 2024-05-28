@@ -24,5 +24,5 @@ class SponserDetailForm(FlaskForm):
 class InfluencerDetailForm(FlaskForm):
     name = StringField('Name', validators = [DataRequired()])
     category = StringField('Category', validators = [DataRequired()])
-    niche = IntegerField('Niche', validators = [DataRequired()])
+    niche = StringField('Niche', validators = [DataRequired()])
     submit = SubmitField('Submit')
