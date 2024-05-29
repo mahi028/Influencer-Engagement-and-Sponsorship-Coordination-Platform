@@ -24,19 +24,24 @@ def create_app():
 
     login_manager.init_app(app)
 
-    login_manager.login_view = '/login'
+    login_manager.login_view = '/'
 
-    with app.app_context():
-        from application.modals import User, Role
-        db.create_all()
 
-        # role1 = Role(name = 'Admin')
-        # role2 = Role(name = 'Influcener')
-        # role3 = Role(name = 'Sponser')
-        # db.session.add_all([role1, role2, role3])
-        # db.session.commit()
+    from application.file_exist import db_exists
+    if not db_exists:
+        with app.app_context():
+            from application.modals import User, Role
+            db.create_all()
 
-    from application.controllers.index import home
+            roles = Role.query.all()
+            if not roles:
+                role1 = Role(name = 'Admin')
+                role2 = Role(name = 'Influcener')
+                role3 = Role(name = 'Sponser')
+                db.session.add_all([role1, role2, role3])
+                db.session.commit()
+
+    from application.controllers.dashboard import home
     from application.controllers.auth import user_auth
 
     app.register_blueprint(home, url_prefix = '/home')

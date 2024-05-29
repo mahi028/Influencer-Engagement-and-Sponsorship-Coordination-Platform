@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{%block title%}{{page}}{%endblock%}
+
     {% block content %}
     <div class="container" style="max-width: 600px;">
         <center>
@@ -12,19 +14,19 @@
             {{form.password.label(class="form-label")}}
             {{form.password(class="form-control")}} <br>
 
+            
+            <div class="btn-group" role="group" aria-label="Roles">
             {%for sub_feild in form.role%}
-            <div class="form-check form-check-inline">
-                {{sub_feild(class="form-check-input")}}
-                {{sub_feild.label(class="form-check-label")}}
-            </div>
+                {{sub_feild(class="btn-check")}}
+                {{sub_feild.label(class="btn btn-outline-primary")}}
             {%endfor%}
+            </div>
                 <br><br>
                 <center>
                     {{form.submit(class="btn btn-outline-secondary")}} <br>
                     <span>New User? <a href="{{url_for('user_auth.register')}}" class="link-secondary link-offset-2 link-offset-1-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Register</a></span>
                 </center>
         </form>
-    
     </div>
 
     {%endblock%}
