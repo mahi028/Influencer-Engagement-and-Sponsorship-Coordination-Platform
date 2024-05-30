@@ -12,7 +12,7 @@ def load_user(user_id):
 
 user_auth = Blueprint('user_auth', __name__)
 
-@user_auth.route('/', methods = ["GET", "POST"])
+@user_auth.route('/login', methods = ["GET", "POST"])
 def login():
     form = LoginForm()
     
@@ -81,11 +81,10 @@ def register():
 
                     except Exception as e:
                         flash(e)
-                        return redirect(url_for("user_auth.register"))                        
+                        
             else:
                 roles = {1: 'Admin', 2: 'Influencer', 3: 'Sponser'}
                 flash(f'User exists, So plese type correct password to register as a {roles[int(form.role.data)]}. Or use another email.')
-                return redirect(url_for("user_auth.register"))
 
         else:
             if form.password.data == form.conf_password.data:
@@ -96,7 +95,6 @@ def register():
 
                 except Exception as e:
                     flash(e)
-                    return redirect(url_for("user_auth.register"))
 
                 else:
                     added_user = User.query.filter_by(email = form.email.data).first()
@@ -105,16 +103,14 @@ def register():
                         new_role = UserRoles(user_id = added_user.user_id, role_id = int(form.role.data))
                         db.session.add(new_role)
                         db.session.commit()
-
+                        flash('User created :)')
+                        return redirect(url_for('user_auth.login'))
+                    
                     except Exception as e:
                         db.session.delete(added_user)
                         db.session.commit()
                         flash(e)
-                        return redirect(url_for("user_auth.register"))
-                    
-                    else:
-                        flash('User created :)')
-                        return redirect(url_for('user_auth.login'))
+
             else:
                 flash('Passwords did not match.')
 

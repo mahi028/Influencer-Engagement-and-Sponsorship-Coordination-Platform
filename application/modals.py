@@ -46,6 +46,7 @@ class Influencer(db.Model):
 
 class Campaign(db.Model):
     campaign_id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    campaign_by = db.Column(db.Integer, db.ForeignKey("sponser.sponser_id"))
     campaign_name = db.Column(db.String, unique=True)
     desc = db.Column(db.String)
     start_date = db.Column(db.DateTime, default = datetime.utcnow())
@@ -53,6 +54,9 @@ class Campaign(db.Model):
     budget = db.Column(db.Integer)
     visibility = db.Column(db.Boolean)
     goals = db.Column(db.String)
+
+    campaign = db.relationship('Sponser', backref = db.backref('campaigns', cascade = "all, delete-orphan"))
+
 
 class Camp_request(db.Model):
     request_id = db.Column(db.Integer, primary_key = True, autoincrement = True)

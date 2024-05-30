@@ -1,0 +1,48 @@
+{%extends 'base.html'%}
+{%block title%} {{page}} {%endblock%}
+{%block content%}
+    <!-- title -->
+        <div class="container text-center">
+            <h1 class="display-4">Welcome to SponsorMe</h1>
+            <p class="lead">Elevate Your Brand, Empower Your Influence.</p>
+        </div>
+
+    <!-- Features -->
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Monetize your content.</h5>
+                        <p class="card-text">Easily get sponsers for your content and get paid for advertizing their products or sevices.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Advertize your product or services.</h5>
+                        <p class="card-text">Get influencers of your interest with high reach to advertize your product or services.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h5 class="card-title">Publish campaigns.</h5>
+                        <p class="card-text">Publish campaign to get attention for your Advertizements towards right influencers.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container text-center">
+        <a class="btn btn-primary btn-lg" href= "{{url_for('user_auth.register')}}" role="button">Register</a>
+        <a class="btn btn-primary btn-lg" href="{{url_for('user_auth.login')}}"  role="button">Sign In</a>
+    </div><br>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center py-4 ">
+        <p class="mb-0">© 2024 SponsorMe. All rights reserved.</p>
+    </footer>
+{%endblock%}
