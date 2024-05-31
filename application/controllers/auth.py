@@ -23,27 +23,14 @@ def login():
             flash(f'No user found.')
         
         else:
-            user_role = UserRoles.query.get((user.user_id, int(form.role.data)))
-
-            if not user_role:
-                roles = {1: 'Admin', 2: 'Influencer', 3: 'Sponser'}
-                flash(f'No user found. Plese Register with role {roles[int(form.role.data)]} or create a new account.')
-
-            elif not checkpw(form.password.data, user.password):
+            if not checkpw(form.password.data, user.password):
                 flash('Wrong Password :( Please try again ')
 
             else:
                 login_user(user)
                 flash('Welcome :)')
 
-                if int(form.role.data) == 1:
-                    return redirect(url_for('home.dashboard'))
-                
-                elif int(form.role.data) == 2:
-                    return redirect(url_for('influencer.get_influencer_data'))
-
-                elif int(form.role.data) == 3:
-                    return redirect(url_for('sponser.get_sponser_data'))
+                return redirect(url_for('home.dashboard'))
             
     return render_template('login.html', page = 'login',form = form)
     

@@ -11,36 +11,25 @@ sponser = Blueprint('sponser', __name__)
 
 @sponser.route('/get_sponser_data', methods = ['GET', 'POST'])
 @login_required
-def get_sponser_data():
-    if UserRoles.query.get((current_user.user_id, 3)):
-        sponser = Sponser.query.get(current_user.user_id)
+def get_sponser_data():            
+    form = SponserDetailForm()
 
-        if sponser:
-            flash(f'Logged in as {sponser.company_name}')
+    if form.validate_on_submit():
+        try:
+            new_sponser = Sponser(sponser_id = current_user.user_id, company_name = form.company_name.data, industry = form.industry.data, budget = int(form.budget.data))
+            db.session.add(new_sponser)
+            db.session.commit()
+            flash('New Sponser account has been created :)')
             return redirect(url_for('home.dashboard'))
-                
-        form = SponserDetailForm()
 
-        if form.validate_on_submit():
-            try:
-                new_sponser = Sponser(sponser_id = current_user.user_id, company_name = form.company_name.data, industry = form.industry.data, budget = int(form.budget.data))
-                db.session.add(new_sponser)
-                db.session.commit()
-                flash('New Sponser account has been created :)')
-                return redirect(url_for('home.dashboard'))
+        except Exception as e:
+            flash(e)
 
-            except Exception as e:
-                flash(e)
-
-        return render_template('user_details.html', page = 'login', form = form)
-        
-    flash('Account with role Sponser does not exists. Try again')
-    logout_user()
-    return redirect(url_for('user_auth.login'))
+    return render_template('user_details.html', page = 'login', role = 'sponser',form = form)
 
 @sponser.route('/new/campaign', methods = ['GET', 'POST'])
 @login_required
-def new_camapign():
+def new_campaign():
     form = CampaignDetails()
 
     if form.validate_on_submit():

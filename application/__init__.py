@@ -26,8 +26,6 @@ def create_app():
 
     login_manager.init_app(app)
 
-    login_manager.login_view = '/'
-
     with app.app_context():
         from application.modals import User, Role, UserRoles
         db.create_all()
@@ -43,7 +41,7 @@ def create_app():
         admin = Role.query.filter_by(role_id = 1)
         if not admin:
             from application.hash import hashpw
-            new_admin = User(email = 'admin@admin.com', password = hashpw('mahi028')) 
+            new_admin = User(email = 'admin@gmail.com', password = hashpw('mahi028')) 
             db.session.add(new_admin)
             db.session.commit()
 
@@ -61,6 +59,8 @@ def create_app():
     app.register_blueprint(user_auth, url_prefix = '/auth')
     app.register_blueprint(sponser, url_prefix = '/sponser')
     app.register_blueprint(influencer, url_prefix = '/user')
+    login_manager.login_view = '/auth/login'
+
 
     # from application.api import api_name
     # api.add_resource(api_name, "/api_url")
