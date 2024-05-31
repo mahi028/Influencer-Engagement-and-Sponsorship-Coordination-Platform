@@ -40,10 +40,10 @@ def login():
                     return redirect(url_for('home.dashboard'))
                 
                 elif int(form.role.data) == 2:
-                    return redirect(url_for('user_auth.get_influencer_data'))
+                    return redirect(url_for('influencer.get_influencer_data'))
 
                 elif int(form.role.data) == 3:
-                    return redirect(url_for('user_auth.get_sponser_data'))
+                    return redirect(url_for('sponser.get_sponser_data'))
             
     return render_template('login.html', page = 'login',form = form)
     
@@ -115,65 +115,7 @@ def register():
                 flash('Passwords did not match.')
 
     return render_template('register.html', page = 'register', form = form)
-                        
-@user_auth.route('/get_influencer_data', methods = ['GET', 'POST'])
-@login_required
-def get_influencer_data():
-    if UserRoles.query.get((current_user.user_id, 2)):
-        inf = Influencer.query.get(current_user.user_id)
-
-        if inf:
-            flash(f'Logged in as {inf.name}')
-            return redirect(url_for('home.dashboard'))
-        
-        form = InfluencerDetailForm()
-
-        if form.validate_on_submit():
-            try:
-                new_inf = Influencer(influencer_id = current_user.user_id, name = form.name.data, category = form.category.data, niche = form.niche.data)
-                db.session.add(new_inf)
-                db.session.commit()
-                flash('Influencer account has been created :)')
-                return redirect(url_for('home.dashboard'))
-
-            except Exception as e:
-                flash(e)
-
-        return render_template('user_details.html', page = 'login', role = 'influencer', form = form)
-        
-    flash('Account with role Inluencer does not exists. Try again')
-    logout_user()
-    return redirect(url_for('user_auth.login'))
-
-@user_auth.route('/get_sponser_data', methods = ['GET', 'POST'])
-@login_required
-def get_sponser_data():
-    if UserRoles.query.get((current_user.user_id, 3)):
-        sponser = Sponser.query.get(current_user.user_id)
-
-        if sponser:
-            flash(f'Logged in as {sponser.name}')
-            return redirect(url_for('home.dashboard'))
-                
-        form = SponserDetailForm()
-
-        if form.validate_on_submit():
-            try:
-                new_sponser = Sponser(sponser_id = current_user.user_id, company_name = form.company_name.data, industry = form.industry.data, budget = int(form.budget.data))
-                db.session.add(new_sponser)
-                db.session.commit()
-                flash('New Sponser account has been created :)')
-                return redirect(url_for('home.dashboard'))
-
-            except Exception as e:
-                flash(e)
-
-        return render_template('user_details.html', page = 'login', role = 'sponser', form = form)
-        
-    flash('Account with role Sponser does not exists. Try again')
-    logout_user()
-    return redirect(url_for('user_auth.login'))
-    
+ 
 @user_auth.route('/login/admin', methods = ['GET', 'POST'])
 def adminLogin():
     form = AdminLoginForm()
