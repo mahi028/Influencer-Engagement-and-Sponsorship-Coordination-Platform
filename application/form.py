@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, PasswordField, SubmitField, EmailField, RadioField
+from wtforms import StringField, IntegerField, PasswordField, SubmitField, EmailField, RadioField, DateField, TextAreaField
 from wtforms.validators import DataRequired, Email
 
 class RegisterForm(FlaskForm):
@@ -30,4 +30,13 @@ class InfluencerDetailForm(FlaskForm):
     name = StringField('Name', validators = [DataRequired()])
     category = StringField('Category', validators = [DataRequired()])
     niche = StringField('Niche', validators = [DataRequired()])
+    submit = SubmitField('Submit')
+
+class CampaignDetails(FlaskForm):
+    campaign_name = StringField('Campaign Name', validators = [DataRequired()])
+    desc = TextAreaField('Description', validators = [DataRequired()])
+    end_date = DateField('End-Date', validators = [DataRequired()])
+    budget = IntegerField('Campaign Budget', validators = [DataRequired()])
+    visibility = RadioField('Visibilty', choices =[(0,'Privet'), (1, 'Public')],validators = [DataRequired()])
+    goals = TextAreaField('Goals')
     submit = SubmitField('Submit')
