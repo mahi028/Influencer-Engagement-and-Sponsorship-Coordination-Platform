@@ -47,9 +47,9 @@ def new_camapign():
         campaign_name = Campaign.query.filter_by(campaign_name = form.campaign_name.data).first()
 
         if not campaign_name:
-            # try:
-                # date = form.end_date.data.strip('-')
-                # datetime(year = int(date(0)), month = int(date(1)), day = int(date(2)))
+            try:
+                date = form.end_date.data.strip('-')
+                datetime(year = int(date(0)), month = int(date(1)), day = int(date(2)))
 
                 new_camp = Campaign(campaign_by = current_user.user_id, campaign_name = form.campaign_name.data, desc = form.desc.data, end_date = form.end_date.data, budget = form.budget.data, goals = form.goals.data, visibility = True if int(form.visibility.data) == 1 else False)
                 db.session.add(new_camp)
@@ -57,8 +57,8 @@ def new_camapign():
                 flash('New Campaign Created')
                 return redirect(url_for('home.dashboard'))
             
-            # except Exception as e:
-            #     flash(e)
+            except Exception as e:
+                flash(e)
         else:
             flash('Campaign Name must be unique')
     
