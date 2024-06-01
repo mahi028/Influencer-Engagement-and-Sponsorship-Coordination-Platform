@@ -27,7 +27,7 @@ def create_app():
     login_manager.init_app(app)
 
     with app.app_context():
-        from application.modals import User, Role, UserRoles
+        from application.modals import User, Role, UserRoles, Campaign
         db.create_all()
 
         roles = Role.query.all()
@@ -38,7 +38,7 @@ def create_app():
             db.session.add_all([role1, role2, role3])
             db.session.commit()
 
-        admin = Role.query.filter_by(role_id = 1)
+        admin = UserRoles.query.filter_by(role_id = 1)
         if not admin:
             from application.hash import hashpw
             new_admin = User(email = 'admin@gmail.com', password = hashpw('mahi028')) 
@@ -49,6 +49,7 @@ def create_app():
             admin_role2 = UserRoles(user_id = 1, role_id = 2)
             admin_role3 = UserRoles(user_id = 1, role_id = 3)
             db.session.add_all([admin_role1, admin_role2, admin_role3])
+            db.session.commit()
 
     from application.controllers.dashboard import home
     from application.controllers.auth import user_auth
