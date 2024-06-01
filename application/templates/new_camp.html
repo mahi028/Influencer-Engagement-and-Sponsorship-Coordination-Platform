@@ -1,43 +1,47 @@
 {% extends 'base.html' %}
-{%block title%}{{page}}{%endblock%}
 
-    {% block content %}
-    <div class="container" style="max-width: 600px;">
-        <center>
-            <h1> Create New Campaign </h1>
-        </center>
-        <form method="post">
-            {{form.hidden_tag()}}
-            {{form.campaign_name.label(class="form-label")}}
-            {{form.campaign_name(class="form-control")}} <br>
+{% block title %}{{ page }}{% endblock %}
 
-            {{form.desc.label(class="form-label")}}
-            {{form.desc(class="form-control")}} <br>
-
-            {{form.goals.label(class="form-label")}}
-            {{form.goals(class="form-control")}} <br>
-            
-            <div class="input-group">
-
-                {{form.end_date.label(class="form-label")}}
-                {{form.end_date(class="form-control")}}
-
-                {{form.budget.label(class="form-label")}}
-                {{form.budget(class="form-control")}}
-
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <h1 class="text-center">Create New Campaign</h1>
+    <form method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.campaign_name.label(class="form-label") }}
+            {{ form.campaign_name(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.desc.label(class="form-label") }}
+            {{ form.desc(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.goals.label(class="form-label") }}
+            {{ form.goals(class="form-control") }}
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                {{ form.end_date.label(class="form-label") }}
+                {{ form.end_date(class="form-control") }}
             </div>
-            <br>
-            
-            <div class="btn-group" role="group">
+            <div class="col-md-6">
+                {{ form.budget.label(class="form-label") }}
+                {{ form.budget(class="form-control") }}
+            </div>
+        </div>
+        <div class="mb-3">
+            {{ form.image.label(class="form-label d-block") }}
+            {{ form.image(class="form-control") }}
+        </div>
+        <div class="btn-group" role="group">
             {%for sub_feild in form.visibility%}
                 {{sub_feild(class="btn-check")}}
                 {{sub_feild.label(class="btn btn-outline-primary")}}
             {%endfor%}
             </div>
-                <center>
-                    {{form.submit(class="btn btn-outline-secondary")}} <br>
-                </center>
-        </form>
-    </div>
-
-    {%endblock%}
+        <div class="text-center mt-3">
+            {{ form.submit(class="btn btn-outline-secondary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -42,21 +42,18 @@ class Influencer(db.Model):
     # reach = db.Column(db.Integer, nullable = True)
     user = db.relationship('User', backref=db.backref('influencers', cascade="all, delete-orphan"))
 
-
-
 class Campaign(db.Model):
     campaign_id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     campaign_by = db.Column(db.Integer, db.ForeignKey("sponser.sponser_id"))
     campaign_name = db.Column(db.String, unique=True)
-    desc = db.Column(db.String)
+    desc = db.Column(db.String, nullable=False)
     start_date = db.Column(db.DateTime, default = datetime.utcnow())
-    end_date = db.Column(db.DateTime)
-    budget = db.Column(db.Integer)
+    end_date = db.Column(db.DateTime, nullable=True)
+    budget = db.Column(db.Integer, nullable=True)
     visibility = db.Column(db.Boolean)
-    goals = db.Column(db.String)
-
-    campaign = db.relationship('Sponser', backref = db.backref('campaigns', cascade = "all, delete-orphan"))
-
+    goals = db.Column(db.String, nullable=True)
+    image_path = db.Column(db.String, nullable=True, default = 'https://mdbcdn.b-cdn.net/img/new/slides/041.webp')
+    sponser = db.relationship('Sponser', backref = db.backref('campaigns', cascade = "all, delete-orphan"))
 
 class Camp_request(db.Model):
     request_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
@@ -66,7 +63,7 @@ class Camp_request(db.Model):
     payment_amount = db.Column(db.Integer)
     stutus = db.Column(db.String(15))
 
-    user = db.relationship('Influencer', backref = db.backref('camp_requests', cascade = "all, delete-orphan"))
+    influencer = db.relationship('Influencer', backref = db.backref('camp_requests', cascade = "all, delete-orphan"))
     campaign = db.relationship('Campaign', backref = db.backref('camp_requests', cascade = "all, delete-orphan"))
 
 class Camp_msg(db.Model):

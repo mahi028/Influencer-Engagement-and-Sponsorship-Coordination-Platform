@@ -1,11 +1,10 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, request, url_for, flash
 from application import db
-from application.modals import User, UserRoles, Influencer, Sponser, Campaign
+from application.modals import Sponser, Campaign
 from application.form import SponserDetailForm, CampaignDetails
-from application.hash import hashpw, checkpw
-from flask_login import login_required, login_user, logout_user, current_user
-from datetime import datetime
-
+from flask_login import login_required, current_user
+from werkzeug.utils import secure_filename
+import os
 
 sponser = Blueprint('sponser', __name__)
 
@@ -36,11 +35,12 @@ def new_campaign():
         campaign_name = Campaign.query.filter_by(campaign_name = form.campaign_name.data).first()
 
         if not campaign_name:
+            image_file = request.files['image']
+            image_filename = secure_filename(image_file.filename)
+            image_path = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'static', 'images'), image_filename)
+            image_file.save(image_path)
             try:
-                date = form.end_date.data.strip('-')
-                datetime(year = int(date(0)), month = int(date(1)), day = int(date(2)))
-
-                new_camp = Campaign(campaign_by = current_user.user_id, campaign_name = form.campaign_name.data, desc = form.desc.data, end_date = form.end_date.data, budget = form.budget.data, goals = form.goals.data, visibility = True if int(form.visibility.data) == 1 else False)
+                new_camp = Campaign(campaign_by = current_user.user_id, campaign_name = form.campaign_name.data, desc = form.desc.data, end_date = form.end_date.data, budget = form.budget.data, goals = form.goals.data, image_path = image_filename, visibility = True if int(form.visibility.data) == 1 else False)
                 db.session.add(new_camp)
                 db.session.commit()
                 flash('New Campaign Created')

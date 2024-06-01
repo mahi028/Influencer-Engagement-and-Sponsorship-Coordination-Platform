@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, redirect, url_for, flash
 from application.modals import User, UserRoles, Influencer, Sponser, Campaign
 from flask_login import login_required, current_user
+from sqlalchemy import desc
 
 home = Blueprint('home',__name__)
 
@@ -24,5 +25,7 @@ def dashboard():
         inf_details = Influencer.query.get(current_user.user_id)
         if not inf_details:
             return redirect(url_for('influencer.get_influencer_data'))
+        
+        campaigns = Campaign.query.filter_by(visibility = True).order_by(desc(Campaign.start_date)).all()
     
-    return render_template('dashboard.html', page = 'Dashboard', roles = roles)
+    return render_template('dashboard.html', page = 'Dashboard', roles = roles, campaigns = campaigns)

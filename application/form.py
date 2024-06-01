@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, PasswordField, SubmitField, EmailField, RadioField, DateField, TextAreaField
+from wtforms import StringField, IntegerField, PasswordField, SubmitField, FileField, EmailField, RadioField, DateField, TextAreaField
 from wtforms.validators import DataRequired, Email
 
 class RegisterForm(FlaskForm):
@@ -38,4 +38,5 @@ class CampaignDetails(FlaskForm):
     budget = IntegerField('Campaign Budget', validators = [DataRequired()])
     visibility = RadioField('Visibilty', choices =[(0,'Privet'), (1, 'Public')],validators = [DataRequired()])
     goals = TextAreaField('Goals')
+    image = FileField('Campaign Image', validators = [DataRequired()])
     submit = SubmitField('Submit')

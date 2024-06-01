@@ -1,7 +1,23 @@
 {% extends 'base.html' %}
 {%block title%}{{page}}{%endblock%}
     {% block content %}
-        <div class="contatiner bg-light" style="max-width: 600px;">
-            hello
+    <center>
+        <div class="contatiner" style="max-width: 600px;">
+            {%for campaign in campaigns%}
+              <div class="card mb-3 shadow-lg bg-body-tertiary rounded">
+                  <img src="/st/images/{{campaign.image_path}}" class="card-img-top" alt="Wild Landscape"/>
+                  <div class="card-body">
+                    <h5 class="card-title">{{campaign.campaign_name}}</h5>
+                    <p class="card-text">
+                        {{campaign.desc}}
+                    </p>
+                    <p class="card-text">
+                      <small class="text-muted">by -{{campaign.sponser.company_name}}</small>
+                    </p>
+                  </div>
+                </div>
+            {%endfor%}
         </div>
+        
+    </center>
     {%endblock%}
