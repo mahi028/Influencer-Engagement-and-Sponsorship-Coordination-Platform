@@ -37,12 +37,14 @@ def new_campaign():
         if not campaign_name:
             image_file = request.files['image']
             image_filename = secure_filename(image_file.filename)
-            image_path = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'static', 'images'), image_filename)
-            image_file.save(image_path)
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            upload_folder = os.path.join(base_dir, '..', 'static', 'images')
+            image_path = os.path.join(upload_folder, image_filename)
             try:
                 new_camp = Campaign(campaign_by = current_user.user_id, campaign_name = form.campaign_name.data, desc = form.desc.data, end_date = form.end_date.data, budget = form.budget.data, goals = form.goals.data, image_path = image_filename, visibility = True if int(form.visibility.data) == 1 else False)
                 db.session.add(new_camp)
                 db.session.commit()
+                image_file.save(image_path)
                 flash('New Campaign Created')
                 return redirect(url_for('home.dashboard'))
             
@@ -52,3 +54,10 @@ def new_campaign():
             flash('Campaign Name must be unique')
     
     return render_template('new_camp.html', page = 'Create Campaign', form = form)
+
+@sponser.route('/my/campaigns', methods = ['GET', 'POST'])
+@login_required
+def my_campaigns():
+
+    campaigns = Campaign.query.filter_by(campaign_by = current_user.user_id).all()
+    return render_template('dashboard.html', page = 'My Campaigns', roles = 'Sponser', campaigns = campaigns)
