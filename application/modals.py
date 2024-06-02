@@ -24,7 +24,6 @@ class UserRoles(db.Model):
 
 
 class Sponser(db.Model):
-    #only for sponsers
     sponser_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
     company_name = db.Column(db.String, nullable = False)
     industry = db.Column(db.String, nullable = False)
@@ -33,7 +32,6 @@ class Sponser(db.Model):
     user = db.relationship('User', backref=db.backref('sponsers', cascade="all, delete-orphan"))
 
 class Influencer(db.Model):
-    #for influencers
     influencer_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
     name = db.Column(db.String, nullable = False)
     category = db.Column(db.String, nullable = False)
