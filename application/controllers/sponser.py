@@ -75,16 +75,3 @@ def my_campaigns():
 
     campaigns = Campaign.query.filter_by(campaign_by = current_user.user_id).all()
     return render_template('dashboard.html', page = 'My Campaigns', roles = 'Sponser', campaigns = campaigns)
-
-@sponser.route('/requests', methods = ['GET', 'POST'])
-@login_required
-def requests():
-    campaigns = Campaign.query.filter_by(campaign_by = current_user.user_id).all()
-    rqst = []
-    if campaigns:
-        for campaign in campaigns:
-            rq = Requests.query.filter_by(campaign_id = campaign.campaign_id).all()
-            for r in rq:
-                rqst.append(r)
-    
-    return render_template('dashboard.html', page = 'Requests', roles = 'Sponser', rqst = rqst)
