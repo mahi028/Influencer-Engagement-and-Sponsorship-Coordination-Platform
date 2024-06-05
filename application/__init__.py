@@ -42,13 +42,17 @@ def create_app():
         if not admin:
             from application.hash import hashpw
             new_admin = User(email = 'admin@gmail.com', password = hashpw('mahi028')) 
-            db.session.add(new_admin)
+            new_inf = User(email = 'inf@gmail.com', password = hashpw('mahi028')) 
+            new_spn = User(email = 'spn@gmail.com', password = hashpw('mahi028')) 
+            db.session.add_all([new_admin, new_inf, new_spn])
             db.session.commit()
 
             admin_role1 = UserRoles(user_id = 1, role_id = 1)
             admin_role2 = UserRoles(user_id = 1, role_id = 2)
             admin_role3 = UserRoles(user_id = 1, role_id = 3)
-            db.session.add_all([admin_role1, admin_role2, admin_role3])
+            admin_role4 = UserRoles(user_id = 2, role_id = 2)
+            admin_role5 = UserRoles(user_id = 3, role_id = 3)
+            db.session.add_all([admin_role1, admin_role2, admin_role3, admin_role4, admin_role5])
             db.session.commit()
 
     from application.controllers.dashboard import home

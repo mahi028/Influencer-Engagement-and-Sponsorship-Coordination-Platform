@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, request, url_for, flash
+from flask import Blueprint, render_template, jsonify, redirect, request, url_for, flash
 from application import db
 from application.modals import Sponser, Campaign, Requests
 from application.form import SponserDetailForm, CampaignDetails
@@ -54,6 +54,20 @@ def new_campaign():
             flash('Campaign Name must be unique')
     
     return render_template('new_camp.html', page = 'Create Campaign', form = form)
+
+@sponser.route('/delete/campaign/<int:campaign_id>', methods = ['GET', 'POST'])
+@login_required
+def delete_camp(campaign_id):
+    camp = Campaign.query.get(campaign_id)
+    if camp:
+        try:
+            db.session.delete(camp)
+            db.session.commit()
+            return jsonify({'Request' : 'Success'})
+        except:
+            return jsonify({'Request' : 'Failed to delete. Try Again'})
+    return jsonify({'Request' : 'No such campaign exists'})
+    
 
 @sponser.route('/my/campaigns', methods = ['GET', 'POST'])
 @login_required

@@ -1,24 +1,25 @@
 // action="{{url_for('influencer.colab', campaign_id = campaign.campaign_id)}}" 
 
-async function request_colab(url){
+async function post_rqst(url){
     try{
-    const response = await fetch(url,{
-                                method : 'POST',        
-                                headers : {'Content-Type':'application/json'}
-                                })
-    const result = await response.json()
-    flash(result['Request'])
+        const response = await fetch(url,{
+                                    method : 'POST',        
+                                    headers : {'Content-Type':'application/json'}
+                                    })
+        const result = await response.json()
+        flash(result['Request'])
+        return result
 
-    }
-    catch(error){
-    flash('Something Went Wrong, Try Again later')
+    }catch(error){
+        flash('Something Went Wrong, Try Again later')
+        return {'Request' : 'Unsuccessful'}
     }
 }
 
-function flash(msg){
-    const flash_cont = document.getElementById('flash_cont')
-    flash_cont.innerHTML = `<div class="alert alert-secondary alert-dismissible fade show" role="alert">
-                                <span>${msg}</span>
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>`
+async function delete_camp(campaign_id){
+    rqst = await post_rqst(`/sponser/delete/campaign/${campaign_id}`)
+    if (rqst['Request'] === 'Success'){
+        document.getElementById(`campaigns`).removeChild(document.getElementById(`${campaign_id}`))
+    }
+
 }
