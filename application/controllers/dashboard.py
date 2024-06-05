@@ -26,6 +26,6 @@ def dashboard():
         if not inf_details:
             return redirect(url_for('influencer.get_influencer_data'))
         
-        campaigns = Campaign.query.filter_by(visibility = True).order_by(desc(Campaign.start_date)).all()
+    campaigns = Campaign.query.filter_by(visibility = True).order_by(desc(Campaign.start_date)).all()
     
     return render_template('dashboard.html', page = 'Dashboard', roles = roles, campaigns = campaigns)

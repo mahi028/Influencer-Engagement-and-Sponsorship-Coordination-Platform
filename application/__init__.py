@@ -38,7 +38,7 @@ def create_app():
             db.session.add_all([role1, role2, role3])
             db.session.commit()
 
-        admin = UserRoles.query.filter_by(role_id = 1)
+        admin = UserRoles.query.filter_by(role_id = 1).first()
         if not admin:
             from application.hash import hashpw
             new_admin = User(email = 'admin@gmail.com', password = hashpw('mahi028')) 
@@ -63,8 +63,8 @@ def create_app():
     login_manager.login_view = '/auth/login'
 
 
-    # from application.api import api_name
-    # api.add_resource(api_name, "/api_url")
+    # from application.api import CampRequests
+    # api.add_resource(CampRequests, "/api/colab/<int:campaign.campaign_by>")
 
     return app
 

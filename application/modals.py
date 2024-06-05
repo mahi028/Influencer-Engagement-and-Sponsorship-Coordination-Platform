@@ -2,7 +2,6 @@ from application import db
 from datetime import datetime
 from flask_login import UserMixin
 
-
 class Role(db.Model):
     role_id = db.Column(db.Integer, primary_key=True, autoincrement = True)
     name = db.Column(db.String)
@@ -21,7 +20,6 @@ class UserRoles(db.Model):
 
     user = db.relationship('User', backref=db.backref('user_roles', cascade="all, delete-orphan"))
     role = db.relationship('Role', backref=db.backref('user_roles', cascade="all, delete-orphan"))
-
 
 class Sponser(db.Model):
     sponser_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
@@ -53,18 +51,22 @@ class Campaign(db.Model):
     image_path = db.Column(db.String, nullable=True, default = 'https://mdbcdn.b-cdn.net/img/new/slides/041.webp')
     sponser = db.relationship('Sponser', backref = db.backref('campaigns', cascade = "all, delete-orphan"))
 
-class Camp_request(db.Model):
+class Requests(db.Model):
     request_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.campaign_id"))
     influencer_id = db.Column(db.Integer, db.ForeignKey("influencer.influencer_id"))
+
+    influencer = db.relationship('Influencer', backref = db.backref('requests', cascade = "all, delete-orphan"))
+    campaign = db.relationship('Campaign', backref = db.backref('requests', cascade = "all, delete-orphan"))
+
+class Camp_request(db.Model):
+    request_id = db.Column(db.Integer, db.ForeignKey("requests.request_id"), primary_key = True)
     requirements = db.Column(db.String)
     payment_amount = db.Column(db.Integer)
     stutus = db.Column(db.String(15))
-
-    influencer = db.relationship('Influencer', backref = db.backref('camp_requests', cascade = "all, delete-orphan"))
-    campaign = db.relationship('Campaign', backref = db.backref('camp_requests', cascade = "all, delete-orphan"))
+    request = db.relationship('Requests', backref = db.backref('camp_requests', cascade = "all, delete-orphan"))
 
 class Camp_msg(db.Model):
     msg_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    request_id = db.Column(db.Integer, db.ForeignKey("camp_request.request_id"))
+    request_id = db.Column(db.Integer, db.ForeignKey("requests.request_id"))
     msg = db.Column(db.String)

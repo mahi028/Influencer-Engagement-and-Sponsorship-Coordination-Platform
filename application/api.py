@@ -10,13 +10,10 @@ user_parser.add_argument('email')
 user_parser.add_argument('password')
 user_parser.add_argument('confirm_password')
 
-class User(Resource):
-    def post(self):
-        email = user_parser.parse_args().get('email')
-        password = user_parser.parse_args().get('password')
-        confirm_password = user_parser.parse_args().get('confirm_password')
-
-        user = User.query.filter_by(email = email)
-
-        # if user:
+class CampRequests(Resource):
+    def post(self, campaign_by):
+        # if campaign_by == user_id:
+        #     return UserError(status_code=401, error_msg="")
+        # pass
+        pass
             
