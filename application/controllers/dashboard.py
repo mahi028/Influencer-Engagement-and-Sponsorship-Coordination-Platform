@@ -27,8 +27,9 @@ def dashboard():
             return redirect(url_for('influencer.get_influencer_data'))
         
     campaigns = Campaign.query.filter_by(visibility = True).order_by(desc(Campaign.start_date)).all()
+    user = User.query.get(current_user.user_id)
     
-    return render_template('dashboard.html', page = 'Dashboard', roles = roles, campaigns = campaigns)
+    return render_template('dashboard.html', page = 'Dashboard', roles = roles, campaigns = campaigns, user = user)
 
 @home.route('/requests', methods = ['GET', 'POST'])
 @login_required
@@ -47,3 +48,12 @@ def requests():
     my_rqst = Requests.query.filter_by(influencer_id = current_user.user_id)
     
     return render_template('dashboard.html', page = 'Requests', roles = roles, rqst = rqst, my_rqst = my_rqst)
+
+@home.route('/profile', methods = ['GET', 'POST'])
+@login_required
+def profile():
+    user_roles = UserRoles.query.filter_by(user_id = current_user.user_id).all()
+    available_roles = {1: 'Admin', 2: 'Influencer', 3: 'Sponser'}
+    roles = [available_roles[role.role_id] for role in user_roles]
+
+    

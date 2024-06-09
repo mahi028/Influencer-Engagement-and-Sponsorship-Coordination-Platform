@@ -4,7 +4,9 @@ from application.modals import Sponser, Campaign, Requests
 from application.form import SponserDetailForm, CampaignDetails
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
+from uuid import uuid4
 import os
+
 
 sponser = Blueprint('sponser', __name__)
 
@@ -36,15 +38,25 @@ def new_campaign():
 
         if not campaign_name:
             image_file = request.files['image']
-            image_filename = secure_filename(image_file.filename)
-            base_dir = os.path.dirname(os.path.abspath(__file__))
-            upload_folder = os.path.join(base_dir, '..', 'static', 'images')
-            image_path = os.path.join(upload_folder, image_filename)
+            new_image_name = None
+            image_path = None
+            if image_file:
+            # Create unique name for image
+                unique_name = str(uuid4())
+                image_ext = image_file.filename.split('.')[1] #image extension
+                new_image_name = unique_name+'.'+image_ext
+                image_file.filename = new_image_name
+                image_filename = secure_filename(image_file.filename)
+                
+                base_dir = os.path.dirname(os.path.abspath(__file__))
+                upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
+                image_path = os.path.join(upload_folder, image_filename)
             try:
-                new_camp = Campaign(campaign_by = current_user.user_id, campaign_name = form.campaign_name.data, desc = form.desc.data, end_date = form.end_date.data, budget = form.budget.data, goals = form.goals.data, image_path = image_filename, visibility = True if int(form.visibility.data) == 1 else False)
+                new_camp = Campaign(campaign_by = current_user.user_id, campaign_name = form.campaign_name.data, desc = form.desc.data, end_date = form.end_date.data, budget = form.budget.data, goals = form.goals.data, image_path = new_image_name, visibility = True if int(form.visibility.data) == 1 else False)
                 db.session.add(new_camp)
                 db.session.commit()
-                image_file.save(image_path)
+                if image_file:
+                    image_file.save(image_path)
                 flash('New Campaign Created')
                 return redirect(url_for('home.dashboard'))
             

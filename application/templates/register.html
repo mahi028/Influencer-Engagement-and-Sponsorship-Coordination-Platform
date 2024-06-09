@@ -6,7 +6,7 @@
         <center>
             <h1> Register </h1>
         </center>
-        <form method="post" action="{{url_for('user_auth.register')}}">
+        <form method="post" enctype="multipart/form-data">
             {{form.hidden_tag()}}
             {{form.email.label(class="form-label")}}
             {{form.email(class="form-control")}} <br>
@@ -24,6 +24,10 @@
                     {{sub_feild(class="btn-check")}}
                     {{sub_feild.label(class="btn btn-outline-primary")}}
                 {%endfor%}
+            </div><br><br>
+            <div class="mb-3">
+                {{ form.image.label(class="form-label d-block") }}
+                {{ form.image(class="form-control") }}
             </div>
             <br><br>
             <center>

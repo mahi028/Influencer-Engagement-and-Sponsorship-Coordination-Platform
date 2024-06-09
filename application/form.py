@@ -6,7 +6,8 @@ class RegisterForm(FlaskForm):
     email = EmailField('Your Email', validators = [DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     conf_password = PasswordField('Confirm Password', validators=[DataRequired()])
-    role = RadioField('Your Role?', choices = [(2,'Influencer'), (3,'Sponser')],validators = [DataRequired()])
+    role = RadioField('Your Role?', choices = [(2,'Influencer'), (3,'Sponser')], validators = [DataRequired()])
+    image = FileField('Profile Image')
     submit = SubmitField('Submit')
 
 class LoginForm(FlaskForm):

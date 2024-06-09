@@ -1,10 +1,13 @@
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from application import db
-from application.modals import User, UserRoles, Influencer, Sponser
+from application.modals import User, UserRoles
 from application import login_manager
-from application.form import RegisterForm, LoginForm, InfluencerDetailForm, SponserDetailForm, AdminLoginForm
+from application.form import RegisterForm, LoginForm, AdminLoginForm
 from application.hash import hashpw, checkpw
 from flask_login import login_required, login_user, logout_user, current_user
+from werkzeug.utils import secure_filename
+import os
+from uuid import uuid4
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -60,9 +63,12 @@ def register():
 
                 else:
                     try:
+                       
+
                         new_role = UserRoles(user_id = user.user_id, role_id = int(form.role.data))
                         db.session.add(new_role)
                         db.session.commit()
+
                         flash('New role has been created :)')
                         return redirect(url_for("user_auth.login"))                        
 
@@ -75,10 +81,27 @@ def register():
 
         else:
             if form.password.data == form.conf_password.data:
+                image_file = request.files['image']
+                new_image_name = None
+                image_path = None
+                if image_file:
+                # Create unique name for image
+                    unique_name = str(uuid4())
+                    image_ext = image_file.filename.split('.')[1] #image extension
+                    new_image_name = unique_name+'.'+image_ext
+                    image_file.filename = new_image_name
+                    image_filename = secure_filename(image_file.filename)
+                    
+                    base_dir = os.path.dirname(os.path.abspath(__file__))
+                    upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
+                    image_path = os.path.join(upload_folder, image_filename)
                 try:
-                    new_user = User(email = form.email.data, password = hashpw(form.password.data))
+                    new_user = User(email = form.email.data, password = hashpw(form.password.data), profile = new_image_name)
                     db.session.add(new_user)
                     db.session.commit()
+                    if image_file:
+                        image_file.save(image_path) 
+
 
                 except Exception as e:
                     flash(e)
