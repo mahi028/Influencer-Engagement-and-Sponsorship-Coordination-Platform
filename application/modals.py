@@ -10,6 +10,7 @@ class User(db.Model, UserMixin):
     user_id = db.Column(db.Integer, autoincrement = True, primary_key=True)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String, nullable=False)
+    is_active = db.Column(db.Boolean, default = False, nullable = False)
     profile = db.Column(db.String, nullable = True, default = 'user.png')
 
     def get_id(self):
@@ -27,7 +28,7 @@ class Sponser(db.Model):
     company_name = db.Column(db.String, nullable = False)
     industry = db.Column(db.String, nullable = False)
     budget = db.Column(db.Integer, nullable = False)
-
+    about = db.Column(db.String, nullable = True)
     user = db.relationship('User', backref=db.backref('sponsers', cascade="all, delete-orphan"))
 
 class Influencer(db.Model):
@@ -35,7 +36,7 @@ class Influencer(db.Model):
     name = db.Column(db.String, nullable = False)
     category = db.Column(db.String, nullable = False)
     niche = db.Column(db.String, nullable = False)
-
+    about = db.Column(db.String, nullable = True)
     # reach = db.Column(db.Integer, nullable = True)
     user = db.relationship('User', backref=db.backref('influencers', cascade="all, delete-orphan"))
 
@@ -49,7 +50,7 @@ class Campaign(db.Model):
     budget = db.Column(db.Integer, nullable=True)
     visibility = db.Column(db.Boolean)
     goals = db.Column(db.String, nullable=True)
-    image_path = db.Column(db.String, nullable=True, default = 'https://mdbcdn.b-cdn.net/img/new/slides/041.webp')
+    image_path = db.Column(db.String, nullable=True, default = 'user.png')
     sponser = db.relationship('Sponser', backref = db.backref('campaigns', cascade = "all, delete-orphan"))
 
 class Requests(db.Model):

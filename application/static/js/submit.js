@@ -1,5 +1,3 @@
-// action="{{url_for('influencer.colab', campaign_id = campaign.campaign_id)}}" 
-
 async function post_rqst(url){
     try{
         const response = await fetch(url,{

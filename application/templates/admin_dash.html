@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{%block title%}Admin Dashboard{%endblock%}
+{% block content %}
+<center>
+    <h3>Ongoing Campaigns</h3>
+    <div class="contatiner" style="max-width: 1100px;">
+    <table class="table " style="text-align: center;">
+        <thead >
+        <tr>
+            <th scope="col">Sr. No.</th>
+            <th scope="col">Campaign</th>
+            <th scope="col">Campaign By</th>
+            <th scope="col">Email</th>
+            <th scope="col" colspan="2">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for camp in camps%}
+        <tr>
+            <th scope="row">{{loop.index}}</th>
+            <td><a href="#" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{camp.campaign_name}}</a></td>
+            <td>{{camp.sponser.company_name}}</td>
+            <td><a href="#" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{camp.sponser.user.email}}</a></td>
+            <td>
+                <a href="#"><button type="button" class="btn btn-success">View</button></a> OR 
+                <a href="#"><button type="button" class="btn btn-danger">Flag</button></a>
+            </td>
+        </tr>
+        {%endfor%}
+        </tbody>
+    </table>
+    </div>
+    {% for active_user in active_users%}
+        <p>{{active_user}}</p>
+    {%endfor%}
+    
+</center>
+{%endblock%}

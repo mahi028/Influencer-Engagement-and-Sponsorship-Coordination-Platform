@@ -16,7 +16,7 @@ def get_influencer_data():
 
     if form.validate_on_submit():
         try:
-            new_inf = Influencer(influencer_id = current_user.user_id, name = form.name.data, category = form.category.data, niche = form.niche.data)
+            new_inf = Influencer(influencer_id = current_user.user_id, name = form.name.data, category = form.category.data, niche = form.niche.data, about = form.about.data)
             db.session.add(new_inf)
             db.session.commit()
             flash('Influencer account has been created :)')

@@ -75,7 +75,7 @@
         <div class="contatiner" id="campaigns" style="max-width: 600px;">
             {%for campaign in campaigns%}
               <div class="card mb-3 shadow-lg bg-body-tertiary rounded" id="{{campaign.campaign_id}}">
-                  <img src="/st/images/{{campaign.image_path}}" class="card-img-top" alt="Wild Landscape"/>
+                  <img src="/st/uploads/{{campaign.image_path}}" class="card-img-top" alt="Wild Landscape"/>
                   <div class="card-body">
                     <h5 class="card-title">{{campaign.campaign_name}}</h5>
                     <p class="card-text">

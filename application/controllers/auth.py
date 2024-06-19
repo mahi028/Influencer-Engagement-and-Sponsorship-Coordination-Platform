@@ -31,6 +31,8 @@ def login():
 
             else:
                 login_user(user)
+                user.is_active = True
+                db.session.commit()
                 flash('Welcome :)')
 
                 return redirect(url_for('home.dashboard'))
@@ -41,8 +43,11 @@ def login():
 @user_auth.route('/logout')
 @login_required
 def logout():
-    flash('Logout Successful')
+    user = User.query.get(current_user.user_id)
     logout_user()
+    user.is_active = False
+    db.session.commit()
+    flash('Logout Successful')
     return redirect(url_for('user_auth.login'))
 
 
@@ -63,8 +68,6 @@ def register():
 
                 else:
                     try:
-                       
-
                         new_role = UserRoles(user_id = user.user_id, role_id = int(form.role.data))
                         db.session.add(new_role)
                         db.session.commit()
@@ -140,7 +143,7 @@ def adminLogin():
                 if role:
                     login_user(admin)
                     flash('Logged in as Admin')
-                    return redirect(url_for('home.dashboard'))
+                    return redirect(url_for('home.admin_dashboard'))
                 else:
                     flash('You are not authorised to access this page')
                     return redirect(url_for('user_auth.login'))
@@ -149,4 +152,4 @@ def adminLogin():
         else:
             flash('No such user. Try Again')
 
-    return render_template('login.html', page = 'Admin login',form = form)
+    return render_template('login.html', page = 'login',form = form)

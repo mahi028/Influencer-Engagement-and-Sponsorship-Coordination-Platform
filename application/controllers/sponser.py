@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, jsonify, redirect, request, url_for, flash
 from application import db
-from application.modals import Sponser, Campaign, Requests
+from application.modals import Sponser, Campaign, Requests, User
 from application.form import SponserDetailForm, CampaignDetails
 from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
@@ -17,7 +17,7 @@ def get_sponser_data():
 
     if form.validate_on_submit():
         try:
-            new_sponser = Sponser(sponser_id = current_user.user_id, company_name = form.company_name.data, industry = form.industry.data, budget = int(form.budget.data))
+            new_sponser = Sponser(sponser_id = current_user.user_id, company_name = form.company_name.data, industry = form.industry.data, budget = int(form.budget.data), about = form.about.data)
             db.session.add(new_sponser)
             db.session.commit()
             flash('New Sponser account has been created :)')
@@ -31,6 +31,7 @@ def get_sponser_data():
 @sponser.route('/new/campaign', methods = ['GET', 'POST'])
 @login_required
 def new_campaign():
+    user = User.query.get(current_user.user_id)
     form = CampaignDetails()
 
     if form.validate_on_submit():
@@ -65,7 +66,7 @@ def new_campaign():
         else:
             flash('Campaign Name must be unique')
     
-    return render_template('new_camp.html', page = 'Create Campaign', form = form)
+    return render_template('new_camp.html',user = user, page = 'Create Campaign', form = form)
 
 @sponser.route('/delete/campaign/<int:campaign_id>', methods = ['GET', 'POST'])
 @login_required
@@ -84,6 +85,6 @@ def delete_camp(campaign_id):
 @sponser.route('/my/campaigns', methods = ['GET', 'POST'])
 @login_required
 def my_campaigns():
-
+    user = User.query.get(current_user.user_id)
     campaigns = Campaign.query.filter_by(campaign_by = current_user.user_id).all()
-    return render_template('dashboard.html', page = 'My Campaigns', roles = 'Sponser', campaigns = campaigns)
+    return render_template('dashboard.html',user = user, page = 'My Campaigns', roles = 'Sponser', campaigns = campaigns)
