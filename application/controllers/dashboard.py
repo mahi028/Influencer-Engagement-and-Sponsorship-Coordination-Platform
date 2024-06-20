@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from application.modals import User, UserRoles, Requests, Influencer, Sponser, Campaign
-from application.form import UpdateProfileForm
+from application.form import UpdateProfileForm, SeachForm
 from flask_login import login_required, current_user
 from sqlalchemy import desc
 from application import db
@@ -196,3 +196,11 @@ def update_imp():
             flash('Something Went Wrong. Try Again\n', e)
 
     return render_template('update_user.html', user = curr_user, form = form)
+
+@home.route('/', methods = ["POST"])
+def search():
+    form = SeachForm()
+
+    if form.validate_on_submit():
+
+        return f"<center>You search for {form.search.data}</center><br><br><center><a class='btn btn-secondary' href='/dashboard')>Go back</a>"

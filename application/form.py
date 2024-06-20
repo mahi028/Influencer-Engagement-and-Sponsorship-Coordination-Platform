@@ -2,6 +2,10 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, PasswordField, SubmitField, FileField, EmailField, RadioField, DateField, TextAreaField
 from wtforms.validators import DataRequired, Email
 
+class SeachForm(FlaskForm):
+    search = StringField('Search for: ')
+    submit = SubmitField()
+
 class RegisterForm(FlaskForm):
     email = EmailField('Your Email*', validators = [DataRequired(), Email()])
     password = PasswordField('Password*', validators=[DataRequired()])
