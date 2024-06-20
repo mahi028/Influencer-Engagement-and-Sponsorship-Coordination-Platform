@@ -43,3 +43,9 @@ class CampaignDetails(FlaskForm):
     goals = TextAreaField('Goals')
     image = FileField('Campaign Image', validators = [DataRequired()])
     submit = SubmitField('Submit')
+
+class UpdateProfileForm(FlaskForm):
+    email = EmailField('New Email')
+    password = PasswordField('New Password')
+    image = FileField('New Profile Pic')
+    submit = SubmitField('Submit')

@@ -1,8 +1,12 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from application.modals import User, UserRoles, Requests, Influencer, Sponser, Campaign
+from application.form import UpdateProfileForm
 from flask_login import login_required, current_user
 from sqlalchemy import desc
 from application import db
+from werkzeug.utils import secure_filename
+from uuid import uuid4
+import os
 
 home = Blueprint('home',__name__)
 
@@ -142,3 +146,53 @@ def profile_edit(user):
                     return jsonify({'Request' : 'Success', 'new_val' : Sponser.query.get(current_user.user_id).about})
                 except Exception as e:
                     return jsonify({'Request' : e})
+                
+@home.route('update_imp', methods = ["GET", "POST"])
+@login_required
+def update_imp():
+    form = UpdateProfileForm()
+    curr_user = User.query.get(current_user.user_id)
+    if form.validate_on_submit():
+
+        if form.email.data:
+            if not User.query.filter_by(email = form.email.data).first():
+                curr_user.email = form.email.data
+            else:
+                flash('Email Already Exists.')
+        
+        if form.password.data:
+            curr_user.password = form.password.data
+        
+        image_file = request.files['image']
+        new_image_name = None
+        new_image_path = None
+
+        if image_file:
+            unique_name = str(uuid4())
+            image_ext = image_file.filename.split('.')[1] #image extension
+            new_image_name = unique_name+'.'+image_ext
+            image_file.filename = new_image_name
+            image_filename = secure_filename(image_file.filename)
+            
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
+            new_image_path = os.path.join(upload_folder, image_filename)
+
+            #delete old image
+            old_image_path = os.path.join(upload_folder, curr_user.profile)
+            os.remove(old_image_path)
+
+            curr_user.profile = new_image_name
+        
+        try:
+            db.session.commit()
+
+            if image_file:
+                image_file.save(new_image_path) 
+
+            flash('Profile Updated Successfully!')
+            return redirect(url_for('home.profile'))
+        except Exception as e:
+            flash('Something Went Wrong. Try Again\n', e)
+
+    return render_template('update_user.html', user = curr_user, form = form)
