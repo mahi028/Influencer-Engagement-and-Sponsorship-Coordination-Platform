@@ -17,7 +17,7 @@ async function post_rqst(url){
 async function delete_camp(campaign_id){
     rqst = await post_rqst(`/sponser/delete/campaign/${campaign_id}`)
     if (rqst['Request'] === 'Success'){
-        document.getElementById(`campaigns`).removeChild(document.getElementById(`${campaign_id}`))
+        window.location.href = '/dashboard'
     }
 
 }

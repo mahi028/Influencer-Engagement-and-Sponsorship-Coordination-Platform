@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{%block title%}{{page}}{%endblock%}
+{% block content %}
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    .campaign-card {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .camp-img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        /* margin-top: -75px; */
+        border: 5px solid white;
+    }
+    .campaign-info {
+        margin-top: 20px;
+    }
+    .campaign-info h2 {
+        margin-bottom: 10px;
+    }
+</style>
+
+
+<div class="container">
+    <div class="profile-content text-center">
+        <div class="campaign-card bg-white p-4">
+            <img src="/st/uploads/{{camp.image_path}}" alt="Campaign Image" class="camp-img" id="camp-img"> 
+            <!-- {%if user.user_id == current_user.user_id%}
+                <button type="button" class="btn" onclick="profile_edit()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16"><path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"></path></svg>
+                </button> 
+            {%endif%} -->
+            <div class="campaign-info">
+                <h2  id="campaign-name"> 
+                    {{camp.campaign_name}}
+                    {%if current_user.user_id == camp.campaign_by%}
+                        <button type="button" class="btn" onclick="profile_edit_form(`/sponser/edit/{{camp.campaign_id}}`, 'campaign-name', 'name')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16"><path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"></path></svg>
+                    </button>
+                    {%endif%}
+                </h2>
+                <p class="text-muted">
+                    <strong>Campaign By:</strong>
+                    <span id="campaign-by">
+                        <a href="#" class="link-secondary link-underline-opacity-0">{{camp.sponser.company_name}}</a> <!--redirect to sponser profile-->
+                    </span>
+                </p>
+                <p>
+                    <strong>Description:</strong> 
+                    <span id="desc">{{camp.desc}} 
+                        {%if current_user.user_id == camp.campaign_by%}
+                        <button type="button" class="btn" onclick="profile_edit_form(`/sponser/edit/{{camp.campaign_id}}`, `desc`, 'desc')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16"><path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"></path></svg>
+                        </button>
+                        {%endif%}
+                    </span>
+                </p>
+                <p><strong>Goals:</strong> 
+                    <span id="goals">{{camp.goals}}
+                        {%if current_user.user_id == camp.campaign_by%}
+                        <button type="button" class="btn"  class="btn" onclick="profile_edit_form(`/sponser/edit/{{camp.campaign_id}}`, `goals`, 'goals')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16"><path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"></path></svg>
+                        </button>
+                        {%endif%}
+                    </span> 
+                    
+                </p>
+                <p class="text-muted">Budget: 
+                    <span id="budget">
+                        {{camp.budget}}
+                        {%if current_user.user_id == camp.campaign_by%}
+                        <button type="button" class="btn"  class="btn" onclick="profile_edit_form(`/sponser/edit/{{camp.campaign_id}}`, `budget`, 'budget')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16"><path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"></path></svg>
+                        </button>
+                        {%endif%}
+                    </span>
+                </p>
+                <p class="text-muted">
+                    <strong>Start date:</strong><span id="start-date">{{camp.start_date}}</span>
+                    <!-- {%if current_user.user_id == camp.campaign_by%}
+                        <button type="button" class="btn"  class="btn" onclick="profile_edit_form(`/sponser/edit/{{camp.campaign_id}}`, `goals`, 'goals')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16"><path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"></path></svg>
+                        </button>
+                    {%endif%} <br><br> -->
+                    <strong>End date:</strong><span id="end-date">{{camp.end_date}}</span>
+                    <!-- {%if current_user.user_id == camp.campaign_by%}
+                        <button type="button" class="btn"  class="btn" onclick="profile_edit_form(`/sponser/edit/{{camp.campaign_id}}`, `goals`, 'goals')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16"><path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"></path></svg>
+                        </button>
+                    {%endif%} -->
+                </p>
+                {%if current_user.user_id != camp.campaign_by%}
+                    <button class="btn btn-outline-success" onclick="post_rqst('/user/colab/{{camp.campaign_id}}')" type="submit">Make colab request</button>
+                {%else%}
+                    <button class="btn btn-outline-danger" onclick="delete_camp('{{camp.campaign_id}}')" type="submit">Delete Campaign</button>
+                {%endif%}
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/st/js/submit.js"></script>
+<script src="/st/js/profile_edits.js"></script>
+{%endblock%}
+<!-- Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatem voluptas delectus consequatur vero, impedit veritatis quis. Sed eaque, recusandae facilis quas distinctio molestiae perferendis impedit voluptatem perspiciatis placeat ut accusamus sint ducimus id iusto odit odio labore animi in ratione dolore veritatis! Blanditiis alias nam est velit fuga at, vel voluptatem autem soluta numquam accusantium nemo fugit quis error beatae, tenetur inventore cupiditate nobis eligendi ratione reprehenderit facilis magni! In, minus? Perferendis, necessitatibus dolorum quia deserunt tempora laudantium veritatis vero laborum. Reiciendis, molestias laboriosam eveniet magni veritatis impedit non magnam officia deleniti error consectetur illum at perspiciatis sit officiis eum libero suscipit voluptate delectus distinctio alias dignissimos sequi. Reprehenderit ex, temporibus amet iste praesentium cumque laboriosam nesciunt esse optio corrupti voluptates neque, deserunt voluptatem, earum porro vitae facere! Numquam asperiores cumque recusandae perspiciatis id, quisquam quia sed dolor! Asperiores voluptatem distinctio, suscipit esse temporibus id aliquid sint enim laboriosam molestias ab reiciendis deserunt quo fugit placeat reprehenderit ipsum. Omnis voluptatibus reiciendis iusto animi maiores nam odio fugit sapiente quasi exercitationem vel dolorem beatae assumenda laudantium modi obcaecati voluptate id sequi natus dignissimos illo minus, maxime veniam! Dolorum cumque accusamus in laborum voluptatum minima soluta quidem fuga hic nesciunt libero, labore neque dolores, sequi sed praesentium impedit nisi accusantium aliquam expedita autem omnis beatae tempore ab? Dolorum possimus et quia facilis. Exercitationem temporibus expedita assumenda ipsa voluptatibus nisi tempora repellat laudantium voluptatem totam eius minus quo cumque quae beatae non ipsum aliquid, error ipsam! Sapiente explicabo consequuntur voluptates expedita doloremque, perferendis, fugiat tempore dignissimos iusto aspernatur sunt ab in error voluptate. Perspiciatis nobis nostrum consectetur eius iusto voluptatibus nemo laboriosam reprehenderit accusantium eaque inventore aspernatur nam autem soluta expedita, rerum dolorum. Nemo omnis rerum repellat dolores voluptatem fuga provident ut ipsam consequatur velit iusto laborum, nihil sequi odit asperiores dicta culpa! -->

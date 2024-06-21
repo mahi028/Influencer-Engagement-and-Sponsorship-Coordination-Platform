@@ -147,7 +147,7 @@ def profile_edit(user):
                 except Exception as e:
                     return jsonify({'Request' : e})
                 
-@home.route('update_imp', methods = ["GET", "POST"])
+@home.route('/update_imp', methods = ["GET", "POST"])
 @login_required
 def update_imp():
     form = UpdateProfileForm()
@@ -204,3 +204,10 @@ def search():
     if form.validate_on_submit():
 
         return f"<center>You search for {form.search.data}</center><br><br><center><a class='btn btn-secondary' href='/dashboard')>Go back</a>"
+
+@home.route('/view/<int:camp_id>', methods = ["GET", "POST"])
+@login_required
+def view_camp(camp_id):
+    user = User.query.get(current_user.user_id)
+    camp = Campaign.query.get(camp_id)
+    return render_template('campaign.html', camp = camp, user = user)

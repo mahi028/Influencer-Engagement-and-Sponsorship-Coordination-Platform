@@ -88,3 +88,54 @@ def my_campaigns():
     user = User.query.get(current_user.user_id)
     campaigns = Campaign.query.filter_by(campaign_by = current_user.user_id).all()
     return render_template('dashboard.html',user = user, page = 'My Campaigns', roles = 'Sponser', campaigns = campaigns)
+
+@sponser.route('/edit/<int:camp_id>', methods = ['POST'])
+@login_required
+def edit_camp(camp_id):
+    camp = Campaign.query.get(camp_id)
+    if camp.campaign_by == current_user.user_id:
+        data = request.get_json()
+        to_update = data['to_update']
+        val = data['value']
+        match to_update:
+            case 'name':
+                try:
+                    camp.campaign_name = val
+                    db.session.commit()
+                    return jsonify({'Request' : 'Success', 'new_val' : Campaign.query.get(camp_id).campaign_name})
+                except Exception as e:
+                    return jsonify({'Request' : e})
+        
+            case 'desc':
+                try:
+                    camp.desc = val
+                    db.session.commit()
+                    return jsonify({'Request' : 'Success', 'new_val' : Campaign.query.get(camp_id).desc})
+                except Exception as e:
+                    return jsonify({'Request' : e})
+                
+            case 'goals':
+                try:
+                    camp.goals = val
+                    db.session.commit()
+                    return jsonify({'Request' : 'Success', 'new_val' : Campaign.query.get(camp_id).goals})
+                except Exception as e:
+                    return jsonify({'Request' : e})
+            
+            case 'budget':
+                try:
+                    camp.budget = int(val)
+                    db.session.commit()
+                    return jsonify({'Request' : 'Success', 'new_val' : Campaign.query.get(camp_id).budget})
+                except Exception as e:
+                    return jsonify({'Request' : e})
+
+            # case 'valid_date':
+            #     try:
+            #         camp.desc = val
+            #         db.session.commit()
+            #         return jsonify({'Request' : 'Success', 'new_val' : Campaign.query.get(camp_id).desc})
+            #     except Exception as e:
+            #         return jsonify({'Request' : e})
+    else:
+        return jsonify({'Request' : 'Not Authorised'})

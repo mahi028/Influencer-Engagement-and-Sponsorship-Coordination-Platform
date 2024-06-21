@@ -26,16 +26,16 @@ def login():
             flash(f'No user found.')
         
         else:
-            if not checkpw(form.password.data, user.password):
-                flash('Wrong Password :( Please try again ')
-
-            else:
+            if checkpw(form.password.data, user.password):
                 login_user(user)
                 user.is_active = True
                 db.session.commit()
                 flash('Welcome :)')
 
                 return redirect(url_for('home.dashboard'))
+
+            else:
+                flash('Wrong Password :( Please try again ')
             
     return render_template('login.html', page = 'login',form = form)
     
