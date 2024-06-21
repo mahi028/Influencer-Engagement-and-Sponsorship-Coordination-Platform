@@ -14,7 +14,6 @@
         width: 150px;
         height: 150px;
         border-radius: 50%;
-        /* margin-top: -75px; */
         border: 5px solid white;
     }
     .campaign-info {
@@ -91,6 +90,7 @@
                 {%if current_user.user_id != camp.campaign_by%}
                     <button class="btn btn-outline-success" onclick="post_rqst('/user/colab/{{camp.campaign_id}}')" type="submit">Make colab request</button>
                 {%else%}
+                    {%if camp.visibility%}Public{%else%}Privet{%endif%} <br>
                     <button class="btn btn-outline-danger" onclick="delete_camp('{{camp.campaign_id}}')" type="submit">Delete Campaign</button>
                 {%endif%}
             </div>

@@ -51,5 +51,6 @@ class CampaignDetails(FlaskForm):
 class UpdateProfileForm(FlaskForm):
     email = EmailField('New Email')
     password = PasswordField('New Password')
+    conf_password = PasswordField('Confirm Password (Only if you want to edit)')
     image = FileField('New Profile Pic')
     submit = SubmitField('Submit')

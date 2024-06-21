@@ -4,6 +4,7 @@ from application.form import UpdateProfileForm, SeachForm
 from flask_login import login_required, current_user
 from sqlalchemy import desc
 from application import db
+from application.hash import hashpw
 from application.get_roles import user_roles
 from werkzeug.utils import secure_filename
 from uuid import uuid4
@@ -82,16 +83,6 @@ def profile_edit(user):
     data = request.get_json()
     to_update = data['to_update']
     val = data['value']
-    if user == user:
-        curr_user = User.query.get(current_user.user_id)
-        match to_update:
-            case 'email':
-                try:
-                    curr_user.email = val 
-                    db.session.commit() 
-                    return jsonify({'Request' : 'Success', 'new_val' : User.query.get(current_user.user_id).email})
-                except Exception as e:
-                    return jsonify({'Request' : e})
 
     if user == 'inf':
         curr_user = Influencer.query.get(current_user.user_id)
@@ -132,7 +123,7 @@ def profile_edit(user):
                 try:
                     curr_user.industry = val
                     db.session.commit()
-                    return jsonify({'Request' : 'Success', 'new_val' : Influencer.query.get(current_user.user_id).industry})
+                    return jsonify({'Request' : 'Success', 'new_val' : Sponser.query.get(current_user.user_id).industry})
                 except Exception as e:
                     return jsonify({'Request' : e})
             case 'about':
@@ -157,7 +148,15 @@ def update_imp():
                 flash('Email Already Exists.')
         
         if form.password.data:
-            curr_user.password = form.password.data
+            if form.conf_password.data:
+                if form.password.data == form.conf_password.data:
+                    curr_user.password = hashpw(form.password.data)
+                else:
+                    flash('Password did not match')
+                    return redirect(url_for('home.update_imp'))                    
+            else:
+                flash('Plese fill conf_password feild')
+                return redirect(url_for('home.update_imp'))                    
         
         image_file = request.files['image']
         new_image_name = None
