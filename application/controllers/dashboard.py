@@ -4,6 +4,7 @@ from application.form import UpdateProfileForm, SeachForm
 from flask_login import login_required, current_user
 from sqlalchemy import desc
 from application import db
+from application.get_roles import user_roles
 from werkzeug.utils import secure_filename
 from uuid import uuid4
 import os
@@ -17,9 +18,7 @@ def landing_page():
 @home.route('/dashboard')
 @login_required
 def dashboard():
-    user_roles = UserRoles.query.filter_by(user_id = current_user.user_id).all()
-    available_roles = {1: 'Admin', 2: 'Influencer', 3: 'Sponser'}
-    roles = [available_roles[role.role_id] for role in user_roles]
+    roles = user_roles(current_user.user_id)
 
     if 'Sponser' in roles:
         sponser_details = Sponser.query.get(current_user.user_id)
@@ -47,9 +46,7 @@ def admin_dashboard():
 @home.route('/requests', methods = ['GET', 'POST'])
 @login_required
 def requests():
-    user_roles = UserRoles.query.filter_by(user_id = current_user.user_id).all()
-    available_roles = {1: 'Admin', 2: 'Influencer', 3: 'Sponser'}
-    roles = [available_roles[role.role_id] for role in user_roles]
+    roles = user_roles(current_user.user_id)
 
     campaigns = Campaign.query.filter_by(campaign_by = current_user.user_id).all()
     rqst = []
@@ -66,9 +63,8 @@ def requests():
 @login_required
 def profile():
     user = User.query.get(current_user.user_id)
-    user_roles = UserRoles.query.filter_by(user_id = current_user.user_id).all()
-    available_roles = {1: 'Admin', 2: 'Influencer', 3: 'Sponser'}
-    roles = [available_roles[role.role_id] for role in user_roles]
+    roles = user_roles(current_user.user_id)
+
     inf = None
     spn = None
 
@@ -210,4 +206,6 @@ def search():
 def view_camp(camp_id):
     user = User.query.get(current_user.user_id)
     camp = Campaign.query.get(camp_id)
-    return render_template('campaign.html', camp = camp, user = user)
+    roles = user_roles(current_user.user_id)
+
+    return render_template('campaign.html', camp = camp, user = user, roles = roles)

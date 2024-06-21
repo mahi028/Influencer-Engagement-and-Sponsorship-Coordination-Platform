@@ -3,6 +3,7 @@ from application import db
 from application.modals import Sponser, Campaign, Requests, User
 from application.form import SponserDetailForm, CampaignDetails
 from flask_login import login_required, current_user
+from application.get_roles import user_roles
 from werkzeug.utils import secure_filename
 from uuid import uuid4
 import os
@@ -33,6 +34,7 @@ def get_sponser_data():
 def new_campaign():
     user = User.query.get(current_user.user_id)
     form = CampaignDetails()
+    roles = user_roles(current_user.user_id)
 
     if form.validate_on_submit():
         campaign_name = Campaign.query.filter_by(campaign_name = form.campaign_name.data).first()
@@ -66,7 +68,7 @@ def new_campaign():
         else:
             flash('Campaign Name must be unique')
     
-    return render_template('new_camp.html',user = user, page = 'Create Campaign', form = form)
+    return render_template('new_camp.html',user = user, page = 'Create Campaign', form = form, roles = roles)
 
 @sponser.route('/delete/campaign/<int:campaign_id>', methods = ['GET', 'POST'])
 @login_required
