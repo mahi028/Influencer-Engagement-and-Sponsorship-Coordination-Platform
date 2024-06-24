@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
-from application.modals import User, UserRoles, Requests, Influencer, Sponser, Campaign
+from application.modals import User, Requests, Influencer, Sponser, Campaign
 from application.form import UpdateProfileForm, SeachForm
 from flask_login import login_required, current_user
-from sqlalchemy import desc
+from sqlalchemy import desc as decend
 from application import db
 from application.hash import hashpw
 from application.get_roles import user_roles
@@ -31,7 +31,7 @@ def dashboard():
         if not inf_details:
             return redirect(url_for('influencer.get_influencer_data'))
         
-    campaigns = Campaign.query.filter_by(visibility = True).order_by(desc(Campaign.start_date)).all()
+    campaigns = Campaign.query.filter_by(visibility = True).order_by(decend(Campaign.start_date)).all()
     user = User.query.get(current_user.user_id)
     
     return render_template('dashboard.html', page = 'Dashboard', roles = roles, campaigns = campaigns, user = user)
@@ -60,24 +60,7 @@ def requests():
     user = User.query.get(current_user.user_id)    
     return render_template('dashboard.html', page = 'Requests', roles = roles, rqst = rqst, my_rqst = my_rqst, user = user)
 
-@home.route('/profile', methods = ['GET', 'POST'])
-@login_required
-def profile():
-    user = User.query.get(current_user.user_id)
-    roles = user_roles(current_user.user_id)
-
-    inf = None
-    spn = None
-
-    if 'Influencer' in roles:
-        inf = Influencer.query.get(current_user.user_id)
-    
-    if 'Sponser' in roles:
-        spn = Sponser.query.get(current_user.user_id)
-
-    return render_template('profile.html', roles = roles, user = user, inf = inf, spn = spn, page = 'Profile')
-
-@home.route('/edit/<string:user>', methods = ['POST'])
+@home.route('/edit/<string:user>', methods = ['PUT'])
 @login_required
 def profile_edit(user):
     data = request.get_json()
@@ -192,13 +175,22 @@ def update_imp():
 
     return render_template('update_user.html', user = curr_user, form = form)
 
-@home.route('/', methods = ["POST"])
+@home.route('/search', methods = ["GET", "POST"])
 def search():
     form = SeachForm()
-
     if form.validate_on_submit():
+        searched = form.search.data 
 
-        return f"<center>You search for {form.search.data}</center><br><br><center><a class='btn btn-secondary' href='/dashboard')>Go back</a>"
+        user = User.query.filter_by(email = searched).first()
+        if user:
+            return redirect(f'/get/{user.user_id}') 
+        sponser = Sponser.query.filter(Sponser.company_name.like('%'+searched+'%')).all()
+        influencer = Influencer.query.filter(Influencer.name.like('%'+searched+'%')).all()
+        camps_by_name = Campaign.query.filter(Campaign.campaign_name.like('%'+searched+'%')).all()
+        camps_by_desc = Campaign.query.filter(Campaign.desc.like('%'+searched+'%')).all()
+
+        return render_template('searched.html', camps_by_name = camps_by_name, camps_by_desc = camps_by_desc, sponser = sponser, influencer = influencer)
+ 
 
 @home.route('/view/<int:camp_id>', methods = ["GET", "POST"])
 @login_required
@@ -208,3 +200,18 @@ def view_camp(camp_id):
     roles = user_roles(current_user.user_id)
 
     return render_template('campaign.html', camp = camp, user = user, roles = roles)
+
+@home.route('/get/<int:user_id>', methods = ["GET", "POST"])
+@login_required
+def get_user(user_id):
+    inf = spn = None
+    roles = user_roles(user_id)
+    if 'Sponser' in roles:
+        roles = 'Sponser'
+        spn = Sponser.query.get(user_id)
+
+    elif 'Influencer' in roles:
+        roles = 'Influencer'
+        inf = Influencer.query.get(user_id)
+
+    return render_template('profile.html', role = [roles], inf = inf, spn = spn, page = 'Profile')

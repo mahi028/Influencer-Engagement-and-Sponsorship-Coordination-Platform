@@ -32,16 +32,18 @@ def get_influencer_data():
 def colab(campaign_id):
     campaign_id = int(campaign_id)
     campaign = Campaign.query.get(campaign_id)
-    if campaign.campaign_by != current_user.user_id:
-        rqst = Requests.query.filter_by(campaign_id = campaign_id, influencer_id = current_user.user_id).first()
-        if not rqst:
-            try:
-                new_rqst = Requests(campaign_id = campaign_id, influencer_id = current_user.user_id)
-                db.session.add(new_rqst)
-                db.session.commit()
-                return jsonify({'Request': 'Success'})
-            except Exception as e:
-                print(e)
-                return jsonify({'Request': 'Failed'})
-        return jsonify({'Request': 'Already Exist'})
-    return jsonify({'Request': 'Can\'t colab with self.'})
+    if UserRoles.query.get((current_user.user_id, 2)):
+        if campaign.campaign_by != current_user.user_id:
+            rqst = Requests.query.filter_by(campaign_id = campaign_id, influencer_id = current_user.user_id).first()
+            if not rqst:
+                try:
+                    new_rqst = Requests(campaign_id = campaign_id, influencer_id = current_user.user_id)
+                    db.session.add(new_rqst)
+                    db.session.commit()
+                    return jsonify({'Request': 'Success'})
+                except Exception as e:
+                    print(e)
+                    return jsonify({'Request': 'Failed'})
+            return jsonify({'Request': 'Already Exist'})
+        return jsonify({'Request': 'Can\'t colab with self.'})
+    return jsonify({'Request': 'Sponsers Can\'t colab with other sponsers'})

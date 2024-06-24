@@ -3,6 +3,7 @@ from application import db
 from application.modals import Sponser, Campaign, Requests, User
 from application.form import SponserDetailForm, CampaignDetails
 from flask_login import login_required, current_user
+from sqlalchemy import desc as decend
 from application.get_roles import user_roles
 from werkzeug.utils import secure_filename
 from uuid import uuid4
@@ -88,10 +89,10 @@ def delete_camp(campaign_id):
 @login_required
 def my_campaigns():
     user = User.query.get(current_user.user_id)
-    campaigns = Campaign.query.filter_by(campaign_by = current_user.user_id).all()
+    campaigns = Campaign.query.filter_by(campaign_by = current_user.user_id).order_by(decend(Campaign.start_date)).all()
     return render_template('dashboard.html',user = user, page = 'My Campaigns', roles = 'Sponser', campaigns = campaigns)
 
-@sponser.route('/edit/<int:camp_id>', methods = ['POST'])
+@sponser.route('/edit/<int:camp_id>', methods = ['PUT'])
 @login_required
 def edit_camp(camp_id):
     camp = Campaign.query.get(camp_id)

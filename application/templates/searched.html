@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{%block title%}{{page}}{%endblock%}
+    {% block content %}
+    
+{%if camps_by_name%}
+    <center>
+    <h3>Campaigns found by Name</h3>
+    <div class="contatiner" style="max-width: 1100px;">
+        <table class="table " style="text-align: center;">
+          <thead >
+            <tr>
+              <th scope="col">Sr. No.</th>
+              <th scope="col">Campaign Name</th>
+              <th scope="col">Campaign By</th>
+              <th scope="col" colspan="2">Action</th>
+            </tr>
+          </thead>
+          {%for camp in camps_by_name%}
+          <tbody>
+            <tr>
+              <th scope="row">{{loop.index}}</th>
+              <td>{{camp.campaign_name}}</td>
+              <td><a href="/get/{{camp.campaign_by}}" class="link-secondary link-underline-opacity-0 link-underline-opacity-75-hover">{{camp.sponser.company_name}}</a></th>
+              <td><a href="/view/{{camp.campaign_id}}" class="btn btn-secondary">View</a></td>
+            </tr>
+            {%endfor%}
+          </tbody>
+        </table>
+{%endif%}
+      
+            
+
+
+
+{%if camps_by_desc%}
+    <center>
+    <h3>Campaigns found by Description</h3>
+    <div class="contatiner" style="max-width: 1100px;">
+        <table class="table " style="text-align: center;">
+          <thead>
+            <tr>
+              <th scope="col">Sr. No.</th>
+              <th scope="col">Campaign Name</th>
+              <th scope="col">Campaign By</th>
+              <th scope="col" colspan="2">Action</th>
+            </tr>
+          </thead>
+          {%for camp in camps_by_desc%}
+          <tbody>
+            <tr>
+              <th scope="row">{{loop.index}}</th>
+              <td>{{camp.campaign_name}}</td>
+              <td><a href="/get/{{camp.campaign_by}}" class="link-secondary link-underline-opacity-0 link-underline-opacity-75-hover">{{camp.sponser.company_name}}</a></th>
+              <td><a href="/view/{{camp.campaign_id}}" class="btn btn-secondary">View</a></td>
+            </tr>
+            {%endfor%}
+          </tbody>
+        </table>
+{%endif%}
+
+{%if sponser%}
+    <center>
+        <h3>Sponsers Found</h3>
+        <div class="contatiner" style="max-width: 1100px;">
+            <table class="table " style="text-align: center;">
+              <thead>
+                <tr>
+                  <th scope="col">Sr. No.</th>
+                  <th scope="col">Sponser Name</th>
+                  <th scope="col">Email</th>
+                  <th scope="col" colspan="2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%for spn in sponser%}
+                <tr>
+                  <th scope="row">{{loop.index}}</th>
+                  <td>{{spn.company_name}}</td>
+                  <td>{{spn.user.email}}</th>
+                  <td><a href="/get/{{spn.sponser_id}}" class="btn btn-success">View Company Profile</a></td>
+                </tr>
+                {%endfor%}
+              </tbody>
+            </table>
+        </div>
+    </center>
+{%endif%}
+{%if influencer%}
+    <center>
+        <h3>Influencers Found</h3>
+        <div class="contatiner" style="max-width: 1100px;">
+            <table class="table " style="text-align: center;">
+              <thead>
+                <tr>
+                  <th scope="col">Sr. No.</th>
+                  <th scope="col">Influencer Name</th>
+                  <th scope="col">Email</th>
+                  <th scope="col" colspan="2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {%for inf in influencer%}
+                <tr>
+                  <th scope="row">{{loop.index}}</th>
+                  <td>{{inf.name}}</td>
+                  <td>{{inf.user.email}}</th>
+                  <td><a href="/get/{{inf.influencer_id}}" class="btn btn-success">View Profile</a></td>
+                </tr>
+                {%endfor%}
+              </tbody>
+            </table>
+        </div>
+    </center>
+{%endif%}
+
+{%if not influencer and not sponser and not camps_by_desc and not camps_by_name%} 
+    <center>
+        <h3>Sorry, No results for your search</h3>
+    </center>
+{%endif%}
+{%endblock%}

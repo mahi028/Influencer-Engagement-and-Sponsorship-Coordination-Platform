@@ -21,9 +21,9 @@
             {% for request in rqst%}
             <tr>
               <th scope="row">{{loop.index}}</th>
-              <td><a href="#" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{request.campaign.campaign_name}}</a></td>
+              <td><a href="/veiw/{{request.campaign.campaign_id}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{request.campaign.campaign_name}}</a></td>
               <td>{{request.influencer.name}}</td>
-              <td><a href="#" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{request.influencer.user.email}}</a></td>
+              <td><a href="/get/{{request.influencer.influencer_id}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{request.influencer.user.email}}</a></td>
               <td>
                 <a href="#"><button type="button" class="btn btn-success">Accept</button></a> OR 
                 <a href="#"><button type="button" class="btn btn-danger">Reject</button></a>
@@ -52,7 +52,7 @@
             {% for request in my_rqst%}
             <tr>
               <th scope="row">{{loop.index}}</th>
-              <td><a href="#" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{request.campaign.campaign_name}}</a></td>
+              <td><a href="/view/{{request.campaign.campaign_id}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{request.campaign.campaign_name}}</a></td>
               <td>Some Status</td>
               <td>
                 <a href="/view/{{request.campaign.campaign_id}}" class="btn btn-secondary">View</a>
@@ -67,19 +67,29 @@
        {%endif%}
 
     </center>
-
-
+    
     {%else%}
+    <style>
+    .Campaign-img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      /* margin-top: -75px; */
+      border: 5px solid white;
+    }
+    </style>
       <center>
-
-        <div class="contatiner" id="campaigns" style="max-width: 600px;">
+      <!-- <div class="container grid"> -->
+        <div class="grid" id="campaigns" style="max-width: 600px;">
             {%for campaign in campaigns%}
-              <div class="card mb-3 shadow-lg bg-body-tertiary rounded" id="{{campaign.campaign_id}}">
-                  <img src="/st/uploads/{{campaign.image_path}}" class="card-img-top" alt="Wild Landscape"/>
+              <div class=" card mb-3 shadow-lg bg-body-tertiary rounded" id="{{campaign.campaign_id}}">
+                  <center>
+                    <img src="/st/uploads/{{campaign.image_path}}" alt="Campaign Image" class="Campaign-img" id="Campaign-img"> 
+                  </center>
                   <div class="card-body">
                     <h5 class="card-title">{{campaign.campaign_name}}</h5>
                     <p class="card-text">
-                        {{campaign.desc}}
+                        {{campaign.desc[:50]+'...'}}
                     </p>
                     <p class="card-text">
                       <small class="text-muted">by -{{campaign.sponser.company_name}}</small></p>
@@ -92,7 +102,7 @@
                 </div>
             {%endfor%}
         </div>
-        
+      </div>
     </center>
     <script src="/st/js/submit.js"></script>
     {%endif%}
