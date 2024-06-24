@@ -10,7 +10,7 @@ class User(db.Model, UserMixin):
     user_id = db.Column(db.Integer, autoincrement = True, primary_key=True)
     email = db.Column(db.String(255), unique=True)
     password = db.Column(db.String, nullable=False)
-    is_active = db.Column(db.Boolean, default = False, nullable = False)
+    active_flag = db.Column(db.Boolean, default = False, nullable = False)
     profile = db.Column(db.String, nullable = True, default = 'user.png')
 
     def get_id(self):

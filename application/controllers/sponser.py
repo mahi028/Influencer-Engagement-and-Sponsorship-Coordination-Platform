@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, jsonify, redirect, request, url_for, flash
 from application import db
-from application.modals import Sponser, Campaign, Requests, User
+from application.modals import Sponser, Campaign, User
 from application.form import SponserDetailForm, CampaignDetails
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend

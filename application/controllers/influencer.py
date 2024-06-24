@@ -1,9 +1,8 @@
-from flask import Blueprint, render_template, jsonify, redirect, url_for, flash, request
+from flask import Blueprint, render_template, jsonify, redirect, url_for, flash
 from application import db
-from application.modals import User, UserRoles, Influencer, Sponser, Requests, Campaign
-from application.form import RegisterForm, LoginForm, InfluencerDetailForm, SponserDetailForm, AdminLoginForm
-from application.hash import hashpw, checkpw
-from flask_login import login_required, login_user, logout_user, current_user
+from application.modals import UserRoles, Influencer, Requests, Campaign
+from application.form import InfluencerDetailForm
+from flask_login import login_required, current_user
 
 
 influencer = Blueprint('influencer', __name__)

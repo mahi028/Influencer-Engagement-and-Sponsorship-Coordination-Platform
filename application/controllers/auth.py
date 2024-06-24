@@ -28,7 +28,7 @@ def login():
         else:
             if checkpw(form.password.data, user.password):
                 login_user(user)
-                user.is_active = True
+                user.active_flag = True
                 db.session.commit()
                 flash('Welcome :)')
 
@@ -45,7 +45,7 @@ def login():
 def logout():
     user = User.query.get(current_user.user_id)
     logout_user()
-    user.is_active = False
+    user.active_flag = False
     db.session.commit()
     flash('Logout Successful')
     return redirect(url_for('user_auth.login'))
@@ -142,6 +142,8 @@ def adminLogin():
                 
                 if role:
                     login_user(admin)
+                    admin.active_flag = True
+                    db.session.commit()
                     flash('Logged in as Admin')
                     return redirect(url_for('home.admin_dashboard'))
                 else:

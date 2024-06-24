@@ -56,7 +56,7 @@ def requests():
             rq = Requests.query.filter_by(campaign_id = campaign.campaign_id).all()
             for r in rq:
                 rqst.append(r)
-    my_rqst = Requests.query.filter_by(influencer_id = current_user.user_id)
+    my_rqst = Requests.query.filter_by(influencer_id = current_user.user_id).all()
     user = User.query.get(current_user.user_id)    
     return render_template('dashboard.html', page = 'Requests', roles = roles, rqst = rqst, my_rqst = my_rqst, user = user)
 
