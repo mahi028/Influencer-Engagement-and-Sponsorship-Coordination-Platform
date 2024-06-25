@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, jsonify, redirect, request, url_for, flash
 from application import db
-from application.modals import Sponser, Campaign, User
+from application.modals import Sponser, Campaign, User, Influencer
 from application.form import SponserDetailForm, CampaignDetails
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
@@ -133,12 +133,26 @@ def edit_camp(camp_id):
                 except Exception as e:
                     return jsonify({'Request' : e})
 
-            # case 'valid_date':
-            #     try:
-            #         camp.desc = val
-            #         db.session.commit()
-            #         return jsonify({'Request' : 'Success', 'new_val' : Campaign.query.get(camp_id).desc})
-            #     except Exception as e:
-            #         return jsonify({'Request' : e})
+            case 'visible':
+                try:
+                    curr_val = Campaign.query.get(camp_id).visibility
+                    print(curr_val)
+                    camp.visibility = not curr_val
+                    db.session.commit()
+                    return jsonify({'Request' : 'Success, Reload to see changes', 'new_val' : Campaign.query.get(camp_id).visibility})
+                except Exception as e:
+                    return jsonify({'Request' : e})
     else:
         return jsonify({'Request' : 'Not Authorised'})
+    
+@sponser.route('/send/rqst/<int:inf_id>')
+@login_required
+def send_rqst(inf_id):
+    inf = Influencer.query.get(inf_id)
+    curr_user = User.query.get(current_user.user_id)
+    # if inf:
+
+    # else:
+    #     return 
+
+    pass

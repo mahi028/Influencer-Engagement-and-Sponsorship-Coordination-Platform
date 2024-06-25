@@ -180,6 +180,8 @@ def search():
     form = SeachForm()
     if form.validate_on_submit():
         searched = form.search.data 
+        if len(searched) < 3:
+            return render_template('searched.html')
 
         user = User.query.filter_by(email = searched).first()
         if user:
