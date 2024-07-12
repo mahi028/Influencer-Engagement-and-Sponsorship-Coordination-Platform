@@ -68,11 +68,12 @@ class Campaign(db.Model):
 class Requests(db.Model):
     request_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.campaign_id"))
-    user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"))
+    influencer_id = db.Column(db.Integer, db.ForeignKey("influencer.influencer_id"))
     n_amount = db.Column(db.Integer, nullable=True)
     status = db.Column(db.String(15), nullable=False, default='Pending')
+    requested_by = db.Column(db.String(15), nullable=False)
 
-    user = db.relationship('User', backref = db.backref('requests', cascade = "all, delete-orphan"))
+    influencer = db.relationship('Influencer', backref = db.backref('requests', cascade = "all, delete-orphan"))
     campaign = db.relationship('Campaign', backref = db.backref('requests', cascade = "all, delete-orphan"))
 
 # class Camp_request(db.Model):

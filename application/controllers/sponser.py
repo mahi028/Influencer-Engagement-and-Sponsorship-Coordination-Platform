@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, jsonify, redirect, request, url_for, flash
 from application import db
-from application.modals import Sponser, Campaign, User, Influencer
+from application.modals import Sponser, Campaign, User, Influencer, Requests
 from application.form import SponserDetailForm, CampaignDetails
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
@@ -118,6 +118,13 @@ def edit_camp(camp_id):
                     return jsonify({'Request' : 'Success', 'new_val' : Campaign.query.get(camp_id).desc})
                 except Exception as e:
                     return jsonify({'Request' : e})
+            case 'requirements':
+                try:
+                    camp.requirements = val
+                    db.session.commit()
+                    return jsonify({'Request' : 'Success', 'new_val' : Campaign.query.get(camp_id).requirements})
+                except Exception as e:
+                    return jsonify({'Request' : e})
                 
             case 'goals':
                 try:
@@ -150,11 +157,15 @@ def edit_camp(camp_id):
 @sponser.route('/send/rqst/<int:inf_id>/<int:camp_id>')
 @login_required
 def send_rqst(inf_id, camp_id):
-    inf = Influencer.query.get(inf_id)
-    curr_user = User.query.get(current_user.user_id)
-    # if inf:
-
-    # else:
-    #     return 
-
-    pass
+    if Requests.query.filter_by(campaign_id = camp_id, influencer_id = inf_id).first():
+        flash('Request already exists.')
+    else:
+        try:
+            new_rqst = Requests(campaign_id = camp_id, influencer_id = inf_id, requested_by = 'spn')
+            db.session.add(new_rqst)
+            db.session.commit()
+            flash('Request Made')
+            return redirect(url_for('home.requests'))
+        except Exception as e:
+            flash(e)
+    return redirect(f'/get/{inf_id}')

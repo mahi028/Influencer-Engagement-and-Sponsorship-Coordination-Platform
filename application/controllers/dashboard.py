@@ -49,7 +49,7 @@ def requests():
         for camp in all_camps:
             requests += [rqst for rqst in Requests.query.filter_by(campaign_id = camp.campaign_id).all()]
     else:
-        requests = Requests.query.filter_by(user_id = current_user.user_id).all()
+        requests = Requests.query.filter_by(influencer_id = current_user.user_id).all()
 
     return render_template('requests.html', requests = requests, page = 'Requests', roles = roles)
 
@@ -204,6 +204,7 @@ def get_user(user_id):
     inf = spn = None
     roles = user_roles(user_id)
     curr_user_roles = user_roles(current_user.user_id)
+    camps = None
     if 'Sponser' in roles:
         roles = 'Sponser'
         spn = Sponser.query.get(user_id)
@@ -212,11 +213,14 @@ def get_user(user_id):
         roles = 'Influencer'
         inf = Influencer.query.get(user_id)
 
+        if 'Sponser' in curr_user_roles:
+            camps = Campaign.query.filter_by(campaign_by = current_user.user_id).all()
+
     elif 'Amdin' in roles:
         roles = 'Admin'
         adm = Admin.query.get(user_id)
 
-    return render_template('profile.html', roles = curr_user_roles, role = [roles], inf = inf, spn = spn, page = 'Profile')
+    return render_template('profile.html', roles = curr_user_roles, role = [roles], inf = inf, spn = spn, camps = camps, page = 'Profile')
 
 
 @home.route('/colab/<int:camp_id>', methods = ['GET', 'POST'])
@@ -224,7 +228,7 @@ def get_user(user_id):
 def colab(camp_id):
     curr_user = current_user.user_id
     roles = user_roles(curr_user)
-    if Requests.query.filter_by(campaign_id = camp_id, user_id = curr_user).first():
+    if Requests.query.filter_by(campaign_id = camp_id, influencer_id = curr_user).first():
         flash('Request Already Exist.')
         return redirect(f'/view/{camp_id}')
     
@@ -236,7 +240,7 @@ def colab(camp_id):
     
     if form.validate_on_submit():
         try:
-            new_rqst = Requests(campaign_id = camp_id, user_id = curr_user, n_amount = form.negotiate.data, status = 'Pending')
+            new_rqst = Requests(campaign_id = camp_id, influencer_id = curr_user, n_amount = form.negotiate.data, status = 'Pending', requested_by = curr_user)
             db.session.add(new_rqst)
             db.session.commit()
             return redirect(url_for('home.requests'))

@@ -110,6 +110,22 @@
                 {% if inf.influencer_id == current_user.user_id or spn.sponser_id == current_user.user_id %}
                     <a class="btn btn-secondary" href="{{url_for('home.update_imp')}}">Update Email/Password/Profile</a>
                 {%endif%}
+
+                {%if 'Influencer' in role %} 
+                    {%if camps%}
+                    <!-- Dropdown -->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        Colab
+                        </button>
+                        <ul class="dropdown-menu">
+                            {%for camp in camps%}
+                                <li><a class="dropdown-item" href="/sponser/send/rqst/{{inf.influencer_id}}/{{camp.campaign_id}}">{{camp.campaign_name}}</a></li>
+                            {%endfor%}
+                        </ul>
+                    </div>
+                    {%endif%}
+                {%endif%}
             </div>
         </div>
     </div>

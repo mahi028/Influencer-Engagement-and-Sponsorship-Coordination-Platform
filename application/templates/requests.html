@@ -11,7 +11,8 @@
             <tr>
               <th>Sr. No.</th>
               <th>Campaign Name</th>
-              <th>Campaign By</th>
+              <th>Sponser</th>
+              <th>Influencer</th>
               <th>Budget</th>
               <th>Negotiate_am</th>
               <th>Status</th>
@@ -24,6 +25,7 @@
               <th scope="row">{{loop.index}}</th>
               <td><a href="/view/{{rqst.campaign.campaign_id}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{rqst.campaign.campaign_name}}</a></td>
               <td><a href="/get/{{rqst.campaign.campaign_by}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{rqst.campaign.sponser.company_name}}</a></td>
+              <td><a href="/get/{{rqst.influencer_id}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{rqst.influencer.name}}</a></td>
               <td>{{rqst.campaign.budget}}</td>
               <td>{{rqst.n_amount}}</td>
               <td>{{rqst.status}}</td>
