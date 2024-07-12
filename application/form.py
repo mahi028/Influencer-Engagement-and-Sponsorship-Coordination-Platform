@@ -12,17 +12,17 @@ class RegisterForm(FlaskForm):
     conf_password = PasswordField('Confirm Password*', validators=[DataRequired()])
     role = RadioField('Your Role?*', choices = [(2,'Influencer'), (3,'Sponser')], validators = [DataRequired()])
     image = FileField('Profile Image')
-    submit = SubmitField('Submit')
+    submit = SubmitField('Register')
 
 class LoginForm(FlaskForm):
     email = EmailField('Your Email*', validators = [DataRequired(), Email()])
     password = PasswordField('Password*', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+    submit = SubmitField('Login')
 
-class AdminLoginForm(FlaskForm):
-    email = EmailField('Your Email*', validators = [DataRequired(), Email()])
-    password = PasswordField('Password*', validators=[DataRequired()])
-    submit = SubmitField('Submit')
+# class AdminLoginForm(FlaskForm):
+#     email = EmailField('Your Email*', validators = [DataRequired(), Email()])
+#     password = PasswordField('Password*', validators=[DataRequired()])
+#     submit = SubmitField('Login')
 
 class SponserDetailForm(FlaskForm):
     company_name = StringField('Company/Individual Name*', validators = [DataRequired()])
@@ -41,16 +41,21 @@ class InfluencerDetailForm(FlaskForm):
 class CampaignDetails(FlaskForm):
     campaign_name = StringField('Campaign Name*', validators = [DataRequired()])
     desc = TextAreaField('Description*', validators = [DataRequired()])
+    requirements = TextAreaField('requirements*', validators = [DataRequired()])
     end_date = DateField('End-Date*', validators = [DataRequired()])
     budget = IntegerField('Campaign Budget*', validators = [DataRequired()])
     visibility = RadioField('Visibilty*', choices =[(0,'Privet'), (1, 'Public')],validators = [DataRequired()])
     goals = TextAreaField('Goals')
-    image = FileField('Campaign Image', validators = [DataRequired()])
-    submit = SubmitField('Submit')
+    image = FileField('Campaign Image')
+    submit = SubmitField('Create')
 
 class UpdateProfileForm(FlaskForm):
     email = EmailField('New Email')
     password = PasswordField('New Password')
     conf_password = PasswordField('Confirm Password (Only if you want to edit)')
     image = FileField('New Profile Pic')
-    submit = SubmitField('Submit')
+    submit = SubmitField('Update')
+
+class NegotiateForm(FlaskForm):
+    negotiate = IntegerField('Negotiate?')    
+    submit = SubmitField('Colab')

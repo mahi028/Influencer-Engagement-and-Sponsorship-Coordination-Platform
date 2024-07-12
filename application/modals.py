@@ -12,6 +12,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String, nullable=False)
     active_flag = db.Column(db.Boolean, default = False, nullable = False)
     profile = db.Column(db.String, nullable = True, default = 'user.png')
+    flag = db.Column(db.String, nullable = False, default = False)
 
     def get_id(self):
            return (self.user_id)
@@ -22,6 +23,13 @@ class UserRoles(db.Model):
 
     user = db.relationship('User', backref=db.backref('user_roles', cascade="all, delete-orphan"))
     role = db.relationship('Role', backref=db.backref('user_roles', cascade="all, delete-orphan"))
+
+class Admin(db.Model):
+    admin_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
+    name = db.Column(db.String, nullable = False)
+
+    user = db.relationship('User', backref=db.backref('admins', cascade="all, delete-orphan"))
+     
 
 class Sponser(db.Model):
     sponser_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
@@ -45,28 +53,34 @@ class Campaign(db.Model):
     campaign_by = db.Column(db.Integer, db.ForeignKey("sponser.sponser_id"))
     campaign_name = db.Column(db.String, unique=True)
     desc = db.Column(db.String, nullable=False)
+    requirements = db.Column(db.String, nullable=False)
     start_date = db.Column(db.DateTime, default = datetime.utcnow())
     end_date = db.Column(db.DateTime, nullable=True)
     budget = db.Column(db.Integer, nullable=True)
     visibility = db.Column(db.Boolean)
     goals = db.Column(db.String, nullable=True)
     image_path = db.Column(db.String, nullable=True, default = 'user.png')
+    flag = db.Column(db.String, nullable = False, default = False)
+    flag_reason = db.Column(db.String, nullable = True)
+    
     sponser = db.relationship('Sponser', backref = db.backref('campaigns', cascade = "all, delete-orphan"))
 
 class Requests(db.Model):
     request_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
     campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.campaign_id"))
-    influencer_id = db.Column(db.Integer, db.ForeignKey("influencer.influencer_id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"))
+    n_amount = db.Column(db.Integer, nullable=True)
+    status = db.Column(db.String(15), nullable=False, default='Pending')
 
-    influencer = db.relationship('Influencer', backref = db.backref('requests', cascade = "all, delete-orphan"))
+    user = db.relationship('User', backref = db.backref('requests', cascade = "all, delete-orphan"))
     campaign = db.relationship('Campaign', backref = db.backref('requests', cascade = "all, delete-orphan"))
 
-class Camp_request(db.Model):
-    request_id = db.Column(db.Integer, db.ForeignKey("requests.request_id"), primary_key = True)
-    requirements = db.Column(db.String)
-    payment_amount = db.Column(db.Integer)
-    stutus = db.Column(db.String(15))
-    request = db.relationship('Requests', backref = db.backref('camp_requests', cascade = "all, delete-orphan"))
+# class Camp_request(db.Model):
+#     request_id = db.Column(db.Integer, db.ForeignKey("requests.request_id"), primary_key = True)
+#     payment_amount = db.Column(db.Integer)
+#     stutus = db.Column(db.String(15))
+#     n_amount = db.Column(db.Integer, nullable=True)
+#     request = db.relationship('Requests', backref = db.backref('camp_requests', cascade = "all, delete-orphan"))
 
 class Camp_msg(db.Model):
     msg_id = db.Column(db.Integer, primary_key = True, autoincrement = True)

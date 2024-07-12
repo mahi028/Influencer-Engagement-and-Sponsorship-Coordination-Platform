@@ -48,22 +48,24 @@ def create_app():
             db.session.commit()
 
             admin_role1 = UserRoles(user_id = 1, role_id = 1)
-            admin_role2 = UserRoles(user_id = 1, role_id = 2)
-            admin_role3 = UserRoles(user_id = 1, role_id = 3)
+            # admin_role2 = UserRoles(user_id = 1, role_id = 2)
+            # admin_role3 = UserRoles(user_id = 1, role_id = 3)
             admin_role4 = UserRoles(user_id = 2, role_id = 2)
             admin_role5 = UserRoles(user_id = 3, role_id = 3)
-            db.session.add_all([admin_role1, admin_role2, admin_role3, admin_role4, admin_role5])
+            db.session.add_all([admin_role1, admin_role4, admin_role5])
             db.session.commit()
 
     from application.controllers.dashboard import home
     from application.controllers.auth import user_auth
     from application.controllers.sponser import sponser
     from application.controllers.influencer import influencer
+    from application.controllers.admin import admin
 
     app.register_blueprint(home, url_prefix = '/')
     app.register_blueprint(user_auth, url_prefix = '/auth')
     app.register_blueprint(sponser, url_prefix = '/sponser')
     app.register_blueprint(influencer, url_prefix = '/user')
+    app.register_blueprint(admin, url_prefix = '/admin')
     login_manager.login_view = '/auth/login'
 
 

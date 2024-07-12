@@ -56,7 +56,7 @@ def new_campaign():
                 upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
                 image_path = os.path.join(upload_folder, image_filename)
             try:
-                new_camp = Campaign(campaign_by = current_user.user_id, campaign_name = form.campaign_name.data, desc = form.desc.data, end_date = form.end_date.data, budget = form.budget.data, goals = form.goals.data, image_path = new_image_name, visibility = True if int(form.visibility.data) == 1 else False)
+                new_camp = Campaign(campaign_by = current_user.user_id, campaign_name = form.campaign_name.data, desc = form.desc.data, requirements = form.requirements.data, end_date = form.end_date.data, budget = form.budget.data, goals = form.goals.data, image_path = new_image_name, visibility = True if int(form.visibility.data) == 1 else False)
                 db.session.add(new_camp)
                 db.session.commit()
                 if image_file:
@@ -103,6 +103,8 @@ def edit_camp(camp_id):
         match to_update:
             case 'name':
                 try:
+                    if Campaign.query.filter_by(campaign_name = val).first():
+                        return jsonify({'Request' : "Campaign Already Exist"})
                     camp.campaign_name = val
                     db.session.commit()
                     return jsonify({'Request' : 'Success', 'new_val' : Campaign.query.get(camp_id).campaign_name})
@@ -145,9 +147,9 @@ def edit_camp(camp_id):
     else:
         return jsonify({'Request' : 'Not Authorised'})
     
-@sponser.route('/send/rqst/<int:inf_id>')
+@sponser.route('/send/rqst/<int:inf_id>/<int:camp_id>')
 @login_required
-def send_rqst(inf_id):
+def send_rqst(inf_id, camp_id):
     inf = Influencer.query.get(inf_id)
     curr_user = User.query.get(current_user.user_id)
     # if inf:

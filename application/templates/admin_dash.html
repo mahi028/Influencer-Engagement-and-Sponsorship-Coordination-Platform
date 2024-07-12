@@ -11,6 +11,8 @@
             <th scope="col">Campaign</th>
             <th scope="col">Campaign By</th>
             <th scope="col">Email</th>
+            <th scope="col">Visibility</th>
+            <!-- <th scope="col">Status</th> -->
             <th scope="col" colspan="2">Action</th>
         </tr>
         </thead>
@@ -18,12 +20,14 @@
         {% for camp in camps%}
         <tr>
             <th scope="row">{{loop.index}}</th>
-            <td><a href="#" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{camp.campaign_name}}</a></td>
-            <td>{{camp.sponser.company_name}}</td>
-            <td><a href="#" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{camp.sponser.user.email}}</a></td>
+            <td>{{camp.campaign_name}}</td>
+            <td><a href="/get/{{camp.campaign_by}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{camp.sponser.company_name}}</a></td>
+            <td>{{camp.sponser.user.email}}</td>
+            <td>{% if camp.visibility%}Public{%else%}Privet{%endif%}</td>
+            <!-- <td></td> -->
             <td>
-                <a href="#"><button type="button" class="btn btn-success">View</button></a> OR 
-                <a href="#"><button type="button" class="btn btn-danger">Flag</button></a>
+                <a href="/view/{{camp.campaign_id}}" class="btn btn-secondary">View</a> OR 
+                <button type="button" class="btn btn-danger" id="{{camp.campaign_id}}" onclick="flag_camp('{{camp.campaign_id}}')">{%if camp.flag%}Un-Flag{%else%}Flag{%endif%}</button>
             </td>
         </tr>
         {%endfor%}
@@ -35,4 +39,5 @@
     {%endfor%}
     
 </center>
+<script src="/st/js/submit.js"></script>
 {%endblock%}

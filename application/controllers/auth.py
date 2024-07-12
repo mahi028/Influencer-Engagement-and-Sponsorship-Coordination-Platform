@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from application import db
 from application.modals import User, UserRoles
 from application import login_manager
-from application.form import RegisterForm, LoginForm, AdminLoginForm
+from application.form import RegisterForm, LoginForm
 from application.hash import hashpw, checkpw
 from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
@@ -131,7 +131,7 @@ def register():
  
 @user_auth.route('/login/admin', methods = ['GET', 'POST'])
 def adminLogin():
-    form = AdminLoginForm()
+    form = LoginForm()
     
     if form.validate_on_submit():
         admin = User.query.filter_by(email = form.email.data).first()
@@ -145,7 +145,7 @@ def adminLogin():
                     admin.active_flag = True
                     db.session.commit()
                     flash('Logged in as Admin')
-                    return redirect(url_for('home.admin_dashboard'))
+                    return redirect(url_for('home.dashboard'))
                 else:
                     flash('You are not authorised to access this page')
                     return redirect(url_for('user_auth.login'))

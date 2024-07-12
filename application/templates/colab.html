@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{%block title%}{{page}}{%endblock%}
+
+    {% block content %}
+    <div class="container" style="max-width: 600px;">
+        <center>
+            <h1> Colab </h1>
+        </center>
+        <form method="post">
+            {{form.hidden_tag()}}
+            {{form.negotiate.label(class="form-label")}}
+            {{form.negotiate(class="form-control")}} <br>
+            <center>
+                {{form.submit(class="btn btn-outline-secondary")}} <br>
+            </center>
+        </form>
+    </div>
+
+{%endblock%}

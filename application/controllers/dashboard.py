@@ -1,10 +1,11 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
-from application.modals import User, Requests, Influencer, Sponser, Campaign
-from application.form import UpdateProfileForm, SeachForm
+from application.modals import User, Requests, Influencer, Sponser, Campaign, Admin, UserRoles
+from application.form import UpdateProfileForm, SeachForm, NegotiateForm
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
 from application import db
 from application.hash import hashpw
+from application.validation import UserError
 from application.get_roles import user_roles
 from werkzeug.utils import secure_filename
 from uuid import uuid4
@@ -31,34 +32,26 @@ def dashboard():
         if not inf_details:
             return redirect(url_for('influencer.get_influencer_data'))
         
-    campaigns = Campaign.query.filter_by(visibility = True).order_by(decend(Campaign.start_date)).all()
+    campaigns = Campaign.query.filter_by(visibility = True, flag = False).order_by(decend(Campaign.start_date)).all()
     user = User.query.get(current_user.user_id)
     
     return render_template('dashboard.html', page = 'Dashboard', roles = roles, campaigns = campaigns, user = user)
 
-@home.route('/admin/dashboard')
-@login_required
-def admin_dashboard():
-    user = User.query.get(current_user.user_id)
-    camps = Campaign.query.all()
-    active_users = User.query.filter_by(is_active = True)
-    return render_template('admin_dash.html', page = 'Admin-Dashboard', active_users = active_users, user = user, camps = camps)
-
 @home.route('/requests', methods = ['GET', 'POST'])
 @login_required
 def requests():
-    roles = user_roles(current_user.user_id)
 
-    campaigns = Campaign.query.filter_by(campaign_by = current_user.user_id).all()
-    rqst = []
-    if campaigns:
-        for campaign in campaigns:
-            rq = Requests.query.filter_by(campaign_id = campaign.campaign_id).all()
-            for r in rq:
-                rqst.append(r)
-    my_rqst = Requests.query.filter_by(influencer_id = current_user.user_id).all()
-    user = User.query.get(current_user.user_id)    
-    return render_template('dashboard.html', page = 'Requests', roles = roles, rqst = rqst, my_rqst = my_rqst, user = user)
+    roles = user_roles(current_user.user_id)
+    requests = []
+
+    if 'Sponser' in roles:
+        all_camps = Campaign.query.filter_by(campaign_by = current_user.user_id).all()
+        for camp in all_camps:
+            requests += [rqst for rqst in Requests.query.filter_by(campaign_id = camp.campaign_id).all()]
+    else:
+        requests = Requests.query.filter_by(user_id = current_user.user_id).all()
+
+    return render_template('requests.html', requests = requests, page = 'Requests', roles = roles)
 
 @home.route('/edit/<string:user>', methods = ['PUT'])
 @login_required
@@ -138,7 +131,7 @@ def update_imp():
                     flash('Password did not match')
                     return redirect(url_for('home.update_imp'))                    
             else:
-                flash('Plese fill conf_password feild')
+                flash('Please fill conf_password feild')
                 return redirect(url_for('home.update_imp'))                    
         
         image_file = request.files['image']
@@ -169,7 +162,7 @@ def update_imp():
                 image_file.save(new_image_path) 
 
             flash('Profile Updated Successfully!')
-            return redirect(url_for('home.profile'))
+            return redirect(f'/get/{current_user.user_id}')
         except Exception as e:
             flash('Something Went Wrong. Try Again\n', e)
 
@@ -200,6 +193,8 @@ def view_camp(camp_id):
     user = User.query.get(current_user.user_id)
     camp = Campaign.query.get(camp_id)
     roles = user_roles(current_user.user_id)
+    if camp.flag and not (camp.campaign_by == current_user.user_id or 'Admin' in roles):
+        raise UserError(404, 'CampaignNotFound')
 
     return render_template('campaign.html', camp = camp, user = user, roles = roles)
 
@@ -208,6 +203,7 @@ def view_camp(camp_id):
 def get_user(user_id):
     inf = spn = None
     roles = user_roles(user_id)
+    curr_user_roles = user_roles(current_user.user_id)
     if 'Sponser' in roles:
         roles = 'Sponser'
         spn = Sponser.query.get(user_id)
@@ -216,4 +212,64 @@ def get_user(user_id):
         roles = 'Influencer'
         inf = Influencer.query.get(user_id)
 
-    return render_template('profile.html', role = [roles], inf = inf, spn = spn, page = 'Profile')
+    elif 'Amdin' in roles:
+        roles = 'Admin'
+        adm = Admin.query.get(user_id)
+
+    return render_template('profile.html', roles = curr_user_roles, role = [roles], inf = inf, spn = spn, page = 'Profile')
+
+
+@home.route('/colab/<int:camp_id>', methods = ['GET', 'POST'])
+@login_required
+def colab(camp_id):
+    curr_user = current_user.user_id
+    roles = user_roles(curr_user)
+    if Requests.query.filter_by(campaign_id = camp_id, user_id = curr_user).first():
+        flash('Request Already Exist.')
+        return redirect(f'/view/{camp_id}')
+    
+    if 'Sponser' in roles:
+        flash('Sponsers can\'t make colab request.')
+        return redirect(url_for('home.dashboard'))
+    
+    form = NegotiateForm()
+    
+    if form.validate_on_submit():
+        try:
+            new_rqst = Requests(campaign_id = camp_id, user_id = curr_user, n_amount = form.negotiate.data, status = 'Pending')
+            db.session.add(new_rqst)
+            db.session.commit()
+            return redirect(url_for('home.requests'))
+        
+        except Exception as e:
+            flash(e)
+
+    return render_template('colab.html', form = form, roles = roles)
+
+
+@home.route('/negotiate/<int:rqst_id>', methods = ['GET', 'POST'])
+@login_required
+def negotiate(rqst_id):
+    roles = user_roles(current_user.user_id)
+    form = NegotiateForm()
+    if form.validate_on_submit():
+        try:
+            Requests.query.get(rqst_id).n_amount = form.negotiate.data
+            db.session.commit()
+            return redirect(url_for('home.requests'))
+        except Exception as e:
+            flash(e)
+    return render_template('colab.html', form = form, page = 'Negotiate', roles = roles)
+
+
+@home.route('/delete/rqst/<int:rqst_id>', methods = ['GET'])
+@login_required
+def delete_rqst(rqst_id):
+    rqst = Requests.query.get(rqst_id)
+    try:
+        db.session.delete(rqst)
+        db.session.commit()
+        flash('Request Deleted')
+    except Exception as e:
+        flash(e)
+    return redirect(url_for('home.requests'))
