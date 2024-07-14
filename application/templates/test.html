@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div class="main">
+        <p>I am a <span id="morph"></span></p>
+    </div>
+
+    <script>
+        const skills = ['Developer', 'Designer', 'Analyst'];
+
+        for(let i = 0; i < skills.length; i++){
+            for (let j = 0; j < skills[i].length; j++){
+                setTimeout(()=>{
+                    document.getElementById('morph').innerHTML += skills[i][j]  
+                    console.log('hi')
+                },500)  
+                document.getElementById('morph').innerHTML = ''        
+            }              
+        }
+    </script>
+</body>
+</html>

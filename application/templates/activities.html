@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{%block title%}{{page}}{%endblock%}
+{% block content %}
+<style>
+    .container{
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        row-gap: 50px;
+        /* column-gap: 10px; */
+        justify-content: center;
+    }
+    h1{
+        text-align: center;
+    }
+</style>
+    <h1>{{page}}</h1>
+    <div class="container" id="chart_cont">
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/st/js/activities.js"></script>
+{%endblock%}

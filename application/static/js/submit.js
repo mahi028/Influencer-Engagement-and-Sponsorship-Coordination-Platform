@@ -17,7 +17,7 @@ async function post_rqst(url){
 async function flag_camp(camp_id){
     rqst = await post_rqst(`/admin/flag/camp/${camp_id}`)
     if (rqst['Request'] === 'Success'){
-        flag_btn = document.getElementById(camp_id)
+        flag_btn = document.getElementById('camp'+camp_id)
         if (flag_btn.innerHTML  === 'Flag'){
             flag_btn.innerHTML = "Un-Flag"
         }else{
@@ -28,7 +28,7 @@ async function flag_camp(camp_id){
 async function flag_user(user_id){
     rqst = await post_rqst(`/admin/flag/user/${user_id}`)
     if (rqst['Request'] === 'Success'){
-        flag_btn = document.getElementById(user_id)
+        flag_btn = document.getElementById('user'+user_id)
         if (flag_btn.innerHTML  === 'Flag'){
             flag_btn.innerHTML = "Un-Flag"
         }else{

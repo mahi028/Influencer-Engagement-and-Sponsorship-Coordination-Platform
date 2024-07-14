@@ -24,13 +24,33 @@ def admin_dashboard():
     active_users = User.query.filter_by(is_active = True)
     return render_template('admin_dash.html', page = 'Admin-Dashboard', active_users = active_users, roles = roles, camps = camps)
 
-@admin.route('/flag/<string:type>/<int:camp_id>', methods = ["POST"])
+@admin.route('/flag/<string:type>/<int:id>', methods = ["POST"])
 @login_required
-def flag_camp(type,camp_id):
+def flag(type,id):
     if not is_admin(current_user.user_id):
         raise UserError(401, "Not Authorised")
-    if type == 'camp':
-        camp = Campaign.query.get(camp_id)
-        camp.flag = not camp.flag
-        db.session.commit()
-        return jsonify({'Request': 'Success'})
+    match type:
+        case 'camp':
+            camp = Campaign.query.get(id)
+            camp.flag = not camp.flag
+            db.session.commit()
+            return jsonify({'Request': 'Success'})
+        
+        case 'user':
+            user = User.query.get(id)
+            user.flag = not user.flag
+            db.session.commit()
+            return jsonify({'Request': 'Success'})
+    
+@admin.route('/requests', methods = ["GET","POST"])
+@login_required
+def requests():
+    rqst = Requests.query.all()
+    roles = user_roles(current_user.user_id)
+    return render_template('requests.html', requests = rqst, page = 'Ongoing Requests', roles = roles)
+    
+@admin.route('/activities', methods = ["GET","POST"])
+@login_required
+def activities():
+    roles = user_roles(current_user.user_id)
+    return render_template('activities.html', page = 'Activities', roles = roles)

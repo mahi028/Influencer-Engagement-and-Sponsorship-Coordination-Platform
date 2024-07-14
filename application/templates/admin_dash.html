@@ -27,7 +27,7 @@
             <!-- <td></td> -->
             <td>
                 <a href="/view/{{camp.campaign_id}}" class="btn btn-secondary">View</a> OR 
-                <button type="button" class="btn btn-danger" id="{{camp.campaign_id}}" onclick="flag_camp('{{camp.campaign_id}}')">{%if camp.flag%}Un-Flag{%else%}Flag{%endif%}</button>
+                <button type="button" class="btn btn-danger" id="camp{{camp.campaign_id}}" onclick="flag_camp('{{camp.campaign_id}}')">{%if camp.flag%}Un-Flag{%else%}Flag{%endif%}</button>
             </td>
         </tr>
         {%endfor%}

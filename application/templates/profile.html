@@ -126,9 +126,13 @@
                     </div>
                     {%endif%}
                 {%endif%}
+                {%if 'Admin' in roles%}
+                    <button type="button" class="btn btn-danger" id="user{{profile.user_id}}" onclick="flag_user('{{profile.user_id}}')">{%if profile.flag%}Un-Flag{%else%}Flag{%endif%}</button>
+                {%endif%}
             </div>
         </div>
     </div>
 </div>
 <script src="/st/js/profile_edits.js"></script>
+<script src="/st/js/submit.js"></script>
 {%endblock%}

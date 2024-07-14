@@ -9,6 +9,7 @@ from application.validation import UserError
 from application.get_roles import user_roles
 from werkzeug.utils import secure_filename
 from uuid import uuid4
+from datetime import datetime
 import os
 
 home = Blueprint('home',__name__)
@@ -32,7 +33,7 @@ def dashboard():
         if not inf_details:
             return redirect(url_for('influencer.get_influencer_data'))
         
-    campaigns = Campaign.query.filter_by(visibility = True, flag = False).order_by(decend(Campaign.start_date)).all()
+    campaigns = Campaign.query.filter(Campaign.start_date <= datetime.utcnow(), Campaign.end_date >= datetime.utcnow(), Campaign.flag == False, Campaign.visibility == True).order_by(decend(Campaign.start_date)).all()
     user = User.query.get(current_user.user_id)
     
     return render_template('dashboard.html', page = 'Dashboard', roles = roles, campaigns = campaigns, user = user)
@@ -220,7 +221,7 @@ def get_user(user_id):
         roles = 'Admin'
         adm = Admin.query.get(user_id)
 
-    return render_template('profile.html', roles = curr_user_roles, role = [roles], inf = inf, spn = spn, camps = camps, page = 'Profile')
+    return render_template('profile.html', profile = User.query.get(user_id), roles = curr_user_roles, role = [roles], inf = inf, spn = spn, camps = camps, page = 'Profile')
 
 
 @home.route('/colab/<int:camp_id>', methods = ['GET', 'POST'])
@@ -234,21 +235,21 @@ def colab(camp_id):
     
     if 'Sponser' in roles:
         flash('Sponsers can\'t make colab request.')
-        return redirect(url_for('home.dashboard'))
+        return redirect(f'/view/{camp_id}')
     
-    form = NegotiateForm()
+    elif 'Admin' in roles:
+        flash('Admins can\'t make colab request.')
+        return redirect(f'/view/{camp_id}')
     
-    if form.validate_on_submit():
-        try:
-            new_rqst = Requests(campaign_id = camp_id, influencer_id = curr_user, n_amount = form.negotiate.data, status = 'Pending', requested_by = curr_user)
-            db.session.add(new_rqst)
-            db.session.commit()
-            return redirect(url_for('home.requests'))
-        
-        except Exception as e:
-            flash(e)
-
-    return render_template('colab.html', form = form, roles = roles)
+    try:
+        new_rqst = Requests(campaign_id = camp_id, influencer_id = curr_user, status = 'Pending', requested_by = curr_user)
+        db.session.add(new_rqst)
+        db.session.commit()
+        return redirect(url_for('home.requests'))
+    
+    except Exception as e:
+        flash(e)
+        return redirect(f'/view/{camp_id}')
 
 
 @home.route('/negotiate/<int:rqst_id>', methods = ['GET', 'POST'])

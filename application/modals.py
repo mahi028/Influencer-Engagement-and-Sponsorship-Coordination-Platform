@@ -30,7 +30,6 @@ class Admin(db.Model):
 
     user = db.relationship('User', backref=db.backref('admins', cascade="all, delete-orphan"))
      
-
 class Sponser(db.Model):
     sponser_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
     company_name = db.Column(db.String, nullable = False)

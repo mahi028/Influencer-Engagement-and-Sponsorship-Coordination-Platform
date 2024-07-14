@@ -69,8 +69,8 @@ def create_app():
     login_manager.login_view = '/auth/login'
 
 
-    # from application.api import CampRequests
-    # api.add_resource(CampRequests, "/api/colab/<int:campaign.campaign_by>")
+    from application.api import Activities
+    api.add_resource(Activities, "/api/activity/request_data/<string:type_of_data>")
 
     return app
 
