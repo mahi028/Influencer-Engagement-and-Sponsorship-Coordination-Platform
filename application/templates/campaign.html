@@ -28,6 +28,10 @@
 
 <div class="container">
     <div class="profile-content text-center">
+        {%if camp.flag%}
+            <h3 style="color: red;">Flagged</h3>
+            <p>{{camp.flag_reason}}</p>
+        {%endif%}
         <div class="campaign-card bg-white p-4">
             <img src="/st/uploads/{{camp.image_path}}" alt="Campaign Image" class="camp-img" id="camp-img"> 
             <div class="campaign-info">
