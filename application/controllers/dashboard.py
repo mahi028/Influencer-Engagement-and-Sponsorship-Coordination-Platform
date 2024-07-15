@@ -194,7 +194,7 @@ def view_camp(camp_id):
     user = User.query.get(current_user.user_id)
     camp = Campaign.query.get(camp_id)
     roles = user_roles(current_user.user_id)
-    if camp.flag and not (camp.campaign_by == current_user.user_id or 'Admin' in roles):
+    if camp.flag and camp.sponser.user.flag and not (camp.campaign_by == current_user.user_id or 'Admin' in roles):
         return 'Camp Not Found'
     return render_template('campaign.html', camp = camp, user = user, roles = roles)
 
