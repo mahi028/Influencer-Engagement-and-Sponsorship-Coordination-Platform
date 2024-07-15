@@ -42,6 +42,7 @@ class CampaignDetails(FlaskForm):
     campaign_name = StringField('Campaign Name*', validators = [DataRequired()])
     desc = TextAreaField('Description*', validators = [DataRequired()])
     requirements = TextAreaField('requirements*', validators = [DataRequired()])
+    start_date = DateField('Start-Date')
     end_date = DateField('End-Date*', validators = [DataRequired()])
     budget = IntegerField('Campaign Budget*', validators = [DataRequired()])
     visibility = RadioField('Visibilty*', choices =[(0,'Privet'), (1, 'Public')],validators = [DataRequired()])

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{%block title%}Admin Dashboard{%endblock%}
+{% block content %}
+<center>
+    {%if sponsers%}
+        <h3>Sponsers</h3>
+        <div class="contatiner" style="max-width: 1100px;">
+        <table class="table " style="text-align: center;">
+            <thead >
+            <tr>
+                <th scope="col">Sr. No.</th>
+                <th scope="col">Comapany Name</th>
+                <th scope="col">Industry</th>
+                <th scope="col">Email</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for spn in sponsers%}
+            <tr>
+                <th scope="row">{{loop.index}}</th>
+                <td><a href="/get/{{spn.sponser_id}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{spn.company_name}}</a></td>
+                <td>{{spn.industry}}</td>
+                <td>{{spn.user.email}}</td>
+                <td>
+                    {%if 'Admin' in roles%}
+                        <!-- Dropdown -->
+                        {%if spn.user.flag %}
+                            <div id="flag_cont{{spn.sponser_id}}">
+                                <button type="button" class="btn btn-danger" id="user{{spn.sponser_id}}" onclick="flag_user('{{spn.sponser_id}}', 'none')">Un-Flag</button>
+                            </div>
+                        {%else%}
+                            <div id="flag_cont{{spn.sponser_id}}">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span id="user{{spn.sponser_id}}">Flag</span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><button class="dropdown-item" onclick="flag_user('{{spn.sponser_id}}', 'inapropriate_user')">Inapropriate User</button></li>
+                                        <li><button class="dropdown-item" onclick="flag_user('{{spn.sponser_id}}', 'spam')">Spam</button></li>
+                                        <li><button class="dropdown-item" onclick="flag_user('{{spn.sponser_id}}', 'inapropriate_content')">Inapropriate Content</button></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        {%endif%}
+                    {%endif%}
+                </td>
+            </tr>
+            {%endfor%}
+            </tbody>
+        </table>
+        </div>   
+    {%endif%} 
+    {%if influencers%}
+        <h3>Influencers</h3>
+        <div class="contatiner" style="max-width: 1100px;">
+        <table class="table " style="text-align: center;">
+            <thead >
+            <tr>
+                <th scope="col">Sr. No.</th>
+                <th scope="col">Name</th>
+                <th scope="col">Category</th>
+                <th scope="col">Email</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for inf in influencers%}
+            <tr>
+                <th scope="row">{{loop.index}}</th>
+                <td><a href="/get/{{inf.influencer_id}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{inf.name}}</a></td>
+                <td>{{inf.category}}</td>
+                <td>{{inf.user.email}}</td>
+                <td>
+                    {%if 'Admin' in roles%}
+                        <!-- Dropdown -->
+                        {%if inf.user.flag %}
+                            <div id="flag_cont{{inf.influencer_id}}">
+                                <button type="button" class="btn btn-danger" id="user{{inf.influencer_id}}" onclick="flag_user('{{inf.influencer_id}}', 'none')">Un-Flag</button>
+                            </div>
+                        {%else%}
+                            <div id="flag_cont{{inf.influencer_id}}">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span id="user{{inf.influencer_id}}">Flag</span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><button class="dropdown-item" onclick="flag_user('{{inf.influencer_id}}', 'inapropriate_user')">Inapropriate User</button></li>
+                                        <li><button class="dropdown-item" onclick="flag_user('{{inf.influencer_id}}', 'spam')">Spam</button></li>
+                                        <li><button class="dropdown-item" onclick="flag_user('{{inf.influencer_id}}', 'inapropriate_content')">Inapropriate Content</button></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        {%endif%}
+                    {%endif%}
+                </td>
+            </tr>
+            {%endfor%}
+            </tbody>
+        </table>
+        </div> 
+    {%endif%}
+</center>
+<script src="/st/js/submit.js"></script>
+{%endblock%}

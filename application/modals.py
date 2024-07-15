@@ -13,6 +13,7 @@ class User(db.Model, UserMixin):
     active_flag = db.Column(db.Boolean, default = False, nullable = False)
     profile = db.Column(db.String, nullable = True, default = 'user.png')
     flag = db.Column(db.String, nullable = False, default = False)
+    flag_reason = db.Column(db.String, nullable = True)
 
     def get_id(self):
            return (self.user_id)
@@ -53,8 +54,8 @@ class Campaign(db.Model):
     campaign_name = db.Column(db.String, unique=True)
     desc = db.Column(db.String, nullable=False)
     requirements = db.Column(db.String, nullable=False)
-    start_date = db.Column(db.DateTime, default = datetime.utcnow())
-    end_date = db.Column(db.DateTime, nullable=True)
+    start_date = db.Column(db.DateTime, nullable=False, default = datetime.utcnow())
+    end_date = db.Column(db.DateTime, nullable=False)
     budget = db.Column(db.Integer, nullable=True)
     visibility = db.Column(db.Boolean)
     goals = db.Column(db.String, nullable=True)

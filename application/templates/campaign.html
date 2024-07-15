@@ -120,6 +120,27 @@
                     {%endif%} <br>
                     <button class="btn btn-outline-danger" onclick="delete_camp('{{camp.campaign_id}}')" type="submit">Delete Campaign</button>
                 {%endif%}
+                <br><br>
+                {%if 'Admin' in roles%}
+                    {%if camp.flag %}
+                        <div id="flag_cont{{camp.campaign_id}}">
+                            <button type="button" class="btn btn-danger" id="camp{{camp.campaign_id}}" onclick="flag_camp('{{camp.campaign_id}}', 'none')">Un-Flag</button>
+                        </div>
+                    {%else%}
+                        <div id="flag_cont{{camp.campaign_id}}">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span id="camp{{camp.campaign_id}}">Flag</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><button class="dropdown-item" onclick="flag_camp('{{camp.campaign_id}}', 'inapropriate_user')">Hateful or targeting</button></li>
+                                    <li><button class="dropdown-item" onclick="flag_camp('{{camp.campaign_id}}', 'spam')">Spam</button></li>
+                                    <li><button class="dropdown-item" onclick="flag_camp('{{camp.campaign_id}}', 'inapropriate_content')">Inapropriate Content</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                    {%endif%}
+                {%endif%}
             </div>
         </div>
     </div>

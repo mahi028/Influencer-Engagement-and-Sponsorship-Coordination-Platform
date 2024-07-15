@@ -25,6 +25,10 @@
         </div>
         <div class="row mb-3">
             <div class="col-md-6">
+                {{ form.start_date.label(class="form-label") }}
+                {{ form.start_date(class="form-control") }}
+            </div>
+            <div class="col-md-6">
                 {{ form.end_date.label(class="form-label") }}
                 {{ form.end_date(class="form-control") }}
             </div>

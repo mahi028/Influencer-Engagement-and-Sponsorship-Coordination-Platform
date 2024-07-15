@@ -195,17 +195,23 @@ def view_camp(camp_id):
     camp = Campaign.query.get(camp_id)
     roles = user_roles(current_user.user_id)
     if camp.flag and not (camp.campaign_by == current_user.user_id or 'Admin' in roles):
-        raise UserError(404, 'CampaignNotFound')
-
+        return 'Camp Not Found'
     return render_template('campaign.html', camp = camp, user = user, roles = roles)
 
 @home.route('/get/<int:user_id>', methods = ["GET", "POST"])
 @login_required
 def get_user(user_id):
+
+
     inf = spn = None
     roles = user_roles(user_id)
     curr_user_roles = user_roles(current_user.user_id)
     camps = None
+    user_profile = User.query.get(user_id)
+
+    if user_profile.flag and not (user_profile.user_id == current_user.user_id or 'Admin' in curr_user_roles):
+        return "No user exist"
+
     if 'Sponser' in roles:
         roles = 'Sponser'
         spn = Sponser.query.get(user_id)
@@ -221,7 +227,7 @@ def get_user(user_id):
         roles = 'Admin'
         adm = Admin.query.get(user_id)
 
-    return render_template('profile.html', profile = User.query.get(user_id), roles = curr_user_roles, role = [roles], inf = inf, spn = spn, camps = camps, page = 'Profile')
+    return render_template('profile.html', profile = user_profile, roles = curr_user_roles, role = [roles], inf = inf, spn = spn, camps = camps, page = 'Profile')
 
 
 @home.route('/colab/<int:camp_id>', methods = ['GET', 'POST'])

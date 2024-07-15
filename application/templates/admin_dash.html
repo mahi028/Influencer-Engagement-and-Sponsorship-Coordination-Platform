@@ -13,7 +13,8 @@
             <th scope="col">Email</th>
             <th scope="col">Visibility</th>
             <!-- <th scope="col">Status</th> -->
-            <th scope="col" colspan="2">Action</th>
+            <th scope="col">View</th>
+            <th scope="col">Action</th>
         </tr>
         </thead>
         <tbody>
@@ -25,19 +26,32 @@
             <td>{{camp.sponser.user.email}}</td>
             <td>{% if camp.visibility%}Public{%else%}Privet{%endif%}</td>
             <!-- <td></td> -->
+            <td><a href="/view/{{camp.campaign_id}}" class="btn btn-secondary">View</a></td>
             <td>
-                <a href="/view/{{camp.campaign_id}}" class="btn btn-secondary">View</a> OR 
-                <button type="button" class="btn btn-danger" id="camp{{camp.campaign_id}}" onclick="flag_camp('{{camp.campaign_id}}')">{%if camp.flag%}Un-Flag{%else%}Flag{%endif%}</button>
+                {%if camp.flag %}
+                    <div id="flag_cont{{camp.campaign_id}}">
+                        <button type="button" class="btn btn-danger" id="camp{{camp.campaign_id}}" onclick="flag_camp('{{camp.campaign_id}}', 'none')">Un-Flag</button>
+                    </div>
+                {%else%}
+                    <div id="flag_cont{{camp.campaign_id}}">
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <span id="camp{{camp.campaign_id}}">Flag</span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><button class="dropdown-item" onclick="flag_camp('{{camp.campaign_id}}', 'inapropriate_user')">Hateful or targeting</button></li>
+                                <li><button class="dropdown-item" onclick="flag_camp('{{camp.campaign_id}}', 'spam')">Spam</button></li>
+                                <li><button class="dropdown-item" onclick="flag_camp('{{camp.campaign_id}}', 'inapropriate_content')">Inapropriate Content</button></li>
+                            </ul>
+                        </div>
+                    </div>
+                {%endif%}
             </td>
         </tr>
         {%endfor%}
         </tbody>
     </table>
-    </div>
-    {% for active_user in active_users%}
-        <p>{{active_user}}</p>
-    {%endfor%}
-    
+    </div>    
 </center>
 <script src="/st/js/submit.js"></script>
 {%endblock%}

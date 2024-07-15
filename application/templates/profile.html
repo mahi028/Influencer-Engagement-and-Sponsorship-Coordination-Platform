@@ -80,11 +80,7 @@
                     {%endif%} 
                 </p>
                 <p><strong>Email:</strong> 
-                    {%if 'Influencer' in role %} 
-                    <span id="email">{{inf.user.email}}</span>                    
-                    {%else%}
-                    <span id="email">{{spn.user.email}}</span>                    
-                    {%endif%}
+                    {{profile.email}}
                 </p>
                 <p id="about">
                 {%if 'Influencer' in role %} {{inf.about}} 
@@ -103,11 +99,10 @@
                 {%endif%}
                     
                 </p>
-                {%for role in role%}
-                    <small class="text-muted">| {{role}} |</small>
-                {%endfor%} <br><br>
+                <small class="text-muted">| {{role[0]}} |</small>
+                <br><br>
                 
-                {% if inf.influencer_id == current_user.user_id or spn.sponser_id == current_user.user_id %}
+                {% if profile.user_id == current_user.user_id %}
                     <a class="btn btn-secondary" href="{{url_for('home.update_imp')}}">Update Email/Password/Profile</a>
                 {%endif%}
 
@@ -127,7 +122,24 @@
                     {%endif%}
                 {%endif%}
                 {%if 'Admin' in roles%}
-                    <button type="button" class="btn btn-danger" id="user{{profile.user_id}}" onclick="flag_user('{{profile.user_id}}')">{%if profile.flag%}Un-Flag{%else%}Flag{%endif%}</button>
+                        {%if profile.flag %}
+                            <div id="flag_cont{{profile.user_id}}">
+                                <button type="button" class="btn btn-danger" id="user{{profile.user_id}}" onclick="flag_user('{{profile.user_id}}', 'none')">Un-Flag</button>
+                            </div>
+                        {%else%}
+                            <div id="flag_cont{{profile.user_id}}">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span id="user{{profile.user_id}}">Flag</span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><button class="dropdown-item" onclick="flag_user('{{profile.user_id}}', 'inapropriate_user')">Inapropriate User</button></li>
+                                        <li><button class="dropdown-item" onclick="flag_user('{{profile.user_id}}', 'spam')">Spam</button></li>
+                                        <li><button class="dropdown-item" onclick="flag_user('{{profile.user_id}}', 'inapropriate_content')">Inapropriate Content</button></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        {%endif%}
                 {%endif%}
             </div>
         </div>

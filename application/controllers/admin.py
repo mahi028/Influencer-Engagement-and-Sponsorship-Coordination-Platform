@@ -21,12 +21,11 @@ def admin_dashboard():
         raise UserError(401, "Not Authorised")
     roles = user_roles(current_user.user_id)
     camps = Campaign.query.all()
-    active_users = User.query.filter_by(is_active = True)
-    return render_template('admin_dash.html', page = 'Admin-Dashboard', active_users = active_users, roles = roles, camps = camps)
+    return render_template('admin_dash.html', page = 'Admin-Dashboard', roles = roles, camps = camps)
 
-@admin.route('/flag/<string:type>/<int:id>', methods = ["POST"])
+@admin.route('/flag/<string:type>/<int:id>/<string:reason>', methods = ["POST"])
 @login_required
-def flag(type,id):
+def flag(type,id, reason):
     if not is_admin(current_user.user_id):
         raise UserError(401, "Not Authorised")
     match type:
@@ -34,20 +33,33 @@ def flag(type,id):
             camp = Campaign.query.get(id)
             camp.flag = not camp.flag
             db.session.commit()
+            camp = Campaign.query.get(id)
+            if camp.flag:
+                camp.flag_reason = reason
+            else:
+                camp.flag_reason = None
+            db.session.commit()
             return jsonify({'Request': 'Success'})
         
         case 'user':
             user = User.query.get(id)
             user.flag = not user.flag
             db.session.commit()
+            user = User.query.get(id)
+            if user.flag:
+                user.flag_reason = reason
+            else:
+                user.flag_reason = None
+            db.session.commit()
             return jsonify({'Request': 'Success'})
     
-@admin.route('/requests', methods = ["GET","POST"])
+@admin.route('/users', methods = ["GET","POST"])
 @login_required
-def requests():
-    rqst = Requests.query.all()
+def users():
+    spn = Sponser.query.all()
+    inf = Influencer.query.all()
     roles = user_roles(current_user.user_id)
-    return render_template('requests.html', requests = rqst, page = 'Ongoing Requests', roles = roles)
+    return render_template('users.html', sponsers = spn, influencers = inf, page = 'Ongoing Requests', roles = roles)
     
 @admin.route('/activities', methods = ["GET","POST"])
 @login_required

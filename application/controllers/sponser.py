@@ -56,7 +56,7 @@ def new_campaign():
                 upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
                 image_path = os.path.join(upload_folder, image_filename)
             try:
-                new_camp = Campaign(campaign_by = current_user.user_id, campaign_name = form.campaign_name.data, desc = form.desc.data, requirements = form.requirements.data, end_date = form.end_date.data, budget = form.budget.data, goals = form.goals.data, image_path = new_image_name, visibility = True if int(form.visibility.data) == 1 else False)
+                new_camp = Campaign(campaign_by = current_user.user_id, campaign_name = form.campaign_name.data, desc = form.desc.data, requirements = form.requirements.data, start_date = form.start_date.data, end_date = form.end_date.data, budget = form.budget.data, goals = form.goals.data, image_path = new_image_name, visibility = True if int(form.visibility.data) == 1 else False)
                 db.session.add(new_camp)
                 db.session.commit()
                 if image_file:
