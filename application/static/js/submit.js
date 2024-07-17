@@ -28,7 +28,7 @@ async function flag_camp(camp_id, reason){
                                             <span id="camp${camp_id}">Flag</span>
                                         </button>
                                         <ul class="dropdown-menu">
-                                            <li><button class="dropdown-item" onclick="flag_camp('${camp_id}', 'inapropriate_user')">Hateful or targeting</button></li>
+                                            <li><button class="dropdown-item" onclick="flag_camp('${camp_id}', 'Hateful_or_targeting')">Hateful or targeting</button></li>
                                             <li><button class="dropdown-item" onclick="flag_camp('${camp_id}', 'spam')">Spam</button></li>
                                             <li><button class="dropdown-item" onclick="flag_camp('${camp_id}', 'inapropriate_content')">Inapropriate Content</button></li>
                                         </ul>

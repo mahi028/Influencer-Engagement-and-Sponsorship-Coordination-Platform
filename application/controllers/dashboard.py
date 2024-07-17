@@ -201,8 +201,6 @@ def view_camp(camp_id):
 @home.route('/get/<int:user_id>', methods = ["GET", "POST"])
 @login_required
 def get_user(user_id):
-
-
     inf = spn = None
     roles = user_roles(user_id)
     curr_user_roles = user_roles(current_user.user_id)
@@ -284,3 +282,11 @@ def delete_rqst(rqst_id):
     except Exception as e:
         flash(e)
     return redirect(url_for('home.requests'))
+
+@home.route('/sponser/campaigns/<int:spn_id>', methods = ['GET', 'POST'])
+@login_required
+def spn_campaigns(spn_id):
+    spn = Sponser.query.get(spn_id)
+    campaigns = Campaign.query.filter_by(campaign_by = spn_id).order_by(decend(Campaign.start_date)).all()
+    roles = user_roles(current_user.user_id)
+    return render_template('dashboard.html', user = spn, page = f'{spn.company_name}\'s Campaigns', roles = roles, campaigns = campaigns)
