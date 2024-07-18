@@ -39,4 +39,11 @@ class Activities(Resource):
                 data['flag'] = User.query.filter_by(flag = True).count()
                 data['un-flag'] = len(User.query.all()) - data['flag']
 
+                return jsonify(data)   
+                     
+            case 'active_posts':
+                data = {}
+                data['flag'] = Posts.query.filter_by(flag = True).count()
+                data['un-flag'] = len(Posts.query.all()) - data['flag']
+
                 return jsonify(data)            

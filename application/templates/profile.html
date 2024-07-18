@@ -105,6 +105,8 @@
                 </p>
                 {%if 'Sponser' in role%}
                     <small class="text-muted">View all camps by <a href="/sponser/campaigns/{{spn.sponser_id}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"><strong>{{spn.company_name}}</strong></a></small><br>
+                {%elif 'Influencer' in role%}
+                    <small class="text-muted">View all Posts by <a href="/influencer/posts/{{inf.influencer_id}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"><strong>{{inf.name}}</strong></a></small><br>
                 {%endif%}
                 <small class="text-muted">| {{role[0]}} |</small>
                 <br><br>

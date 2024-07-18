@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{%block title%}{{page}}{%endblock%}
+    {% block content %}
+    {%if posts%}
+    <style>
+    .post-img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      /* margin-top: -75px; */
+      border: 5px solid white;
+      object-fit: cover;
+    }
+    </style>
+      <center>
+        <h3>{{page}}</h3>
+      <!-- <div class="container grid"> -->
+        <div class="grid" id="campaigns" style="max-width: 600px;">
+            {%for post in posts%}
+              <div class=" card mb-3 shadow-lg bg-body-tertiary rounded" id="{{post.post_id}}">
+                  <center>
+                    <img loading="lazy" src="/st/uploads/{{post.image_path}}" alt="post Image" class="post-img" id="post-img"> 
+                  </center>
+                  <div class="card-body">
+                    <h5 class="card-title">{{post.post_title}}</h5>
+                    <p class="card-text">
+                        {{post.desc[:50]+'...'}}
+                    </p>
+                    <p class="card-text">
+                      <small class="text-muted">by -{{post.influencer.name}}</small></p>
+                      {%if post.post_by == current_user.user_id%}
+                        <a href="/view/post/{{post.post_id}}" class="btn btn-secondary">Edit/View Post</a>
+                      {%else%}
+                        <a href="/view/post/{{post.post_id}}" class="btn btn-secondary">View</a>
+                      {%endif%}
+                  </div>
+                </div>
+            {%endfor%}
+        </div>
+      </div>
+    </center>
+    <script src="/st/js/submit.js"></script>
+    {%else%}
+    <center>
+      <h2>No Campaigns Yet</h2>
+    </center>
+    {%endif%}
+
+    {%endblock%}

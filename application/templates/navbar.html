@@ -23,15 +23,28 @@
           </li>
 
         {%endif%}
+        {%if 'Influencer' in roles%}
+          <li class="nav-item">
+            <a class="nav-link" href="{{url_for('influencer.new_post')}}">New Post</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{url_for('influencer.my_post')}}">My Posts</a>
+          </li>
+
+        {%endif%}
+
         {%if 'Admin' in roles%}
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('admin.admin_dashboard')}}">Ongoing Campaign</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="{{url_for('admin.activities')}}">Activities</a>
+            <a class="nav-link" href="{{url_for('admin.posts')}}">Posts</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="{{url_for('admin.users')}}">Users</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{{url_for('admin.activities')}}">Activities</a>
           </li>
           {%else%}
           <li class="nav-item">

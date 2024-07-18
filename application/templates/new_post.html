@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <h1 class="text-center">{{ page }}</h1>
+    <form method="post" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+        <div class="mb-3">
+            {{ form.post_title.label(class="form-label") }}
+            {{ form.post_title(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.desc.label(class="form-label") }}
+            {{ form.desc(class="form-control") }}
+        </div>
+        <div class="mb-3">
+            {{ form.post_for.label}}
+            {{ form.post_for(class="btn btn-danger dropdown-toggle") }}
+        </div>        
+        <div class="mb-3">
+            {{ form.image.label(class="form-label d-block") }}
+            {{ form.image(class="form-control") }}
+        </div>
+        <div class="text-center mt-3">
+            {{ form.submit(class="btn btn-outline-secondary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

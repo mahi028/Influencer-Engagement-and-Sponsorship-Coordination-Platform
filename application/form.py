@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, PasswordField, SubmitField, FileField, EmailField, RadioField, DateField, TextAreaField
+from wtforms import StringField, IntegerField, PasswordField, SubmitField, FileField, EmailField, RadioField, DateField, TextAreaField, SelectField
 from wtforms.validators import DataRequired, Email
 
 class SeachForm(FlaskForm):
@@ -48,6 +48,13 @@ class CampaignDetails(FlaskForm):
     visibility = RadioField('Visibilty*', choices =[(0,'Privet'), (1, 'Public')],validators = [DataRequired()])
     goals = TextAreaField('Goals')
     image = FileField('Campaign Image')
+    submit = SubmitField('Create')
+
+class PostDetails(FlaskForm):
+    post_title = StringField('Post Title*', validators = [DataRequired()])
+    desc = TextAreaField('Post Description*', validators = [DataRequired()])
+    post_for = SelectField('Post For', validators=[DataRequired()])
+    image = FileField('Post Image')
     submit = SubmitField('Create')
 
 class UpdateProfileForm(FlaskForm):

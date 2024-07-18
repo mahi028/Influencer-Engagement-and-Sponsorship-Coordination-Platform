@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
-from application.modals import User, Requests, Influencer, Sponser, Campaign, Admin, UserRoles
+from application.modals import User, Requests, Influencer, Sponser, Campaign, Admin, UserRoles, Posts
 from application.form import UpdateProfileForm, SeachForm, NegotiateForm
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
@@ -198,6 +198,16 @@ def view_camp(camp_id):
         return 'Camp Not Found'
     return render_template('campaign.html', camp = camp, user = user, roles = roles)
 
+@home.route('/view/post/<int:post_id>', methods = ["GET", "POST"])
+@login_required
+def view_post(post_id):
+    user = User.query.get(current_user.user_id)
+    post = Posts.query.get(post_id)
+    roles = user_roles(current_user.user_id)
+    if post.flag and post.influencer.user.flag and not (post.post_by == current_user.user_id or 'Admin' in roles):
+        return 'Post Not Found'
+    return render_template('post.html', post = post, user = user, roles = roles)
+
 @home.route('/get/<int:user_id>', methods = ["GET", "POST"])
 @login_required
 def get_user(user_id):
@@ -290,3 +300,11 @@ def spn_campaigns(spn_id):
     campaigns = Campaign.query.filter_by(campaign_by = spn_id).order_by(decend(Campaign.start_date)).all()
     roles = user_roles(current_user.user_id)
     return render_template('dashboard.html', user = spn, page = f'{spn.company_name}\'s Campaigns', roles = roles, campaigns = campaigns)
+
+@home.route('/influencer/posts/<int:inf_id>', methods = ['GET', 'POST'])
+@login_required
+def inf_posts(inf_id):
+    inf = Influencer.query.get(inf_id)
+    posts = Posts.query.filter_by(post_by = inf_id).order_by(decend(Posts.post_id)).all()
+    roles = user_roles(current_user.user_id)
+    return render_template('all_posts.html', user = inf, page = f'{inf.name}\'s Posts', roles = roles, posts = posts)
