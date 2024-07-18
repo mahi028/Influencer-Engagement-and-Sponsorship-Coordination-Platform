@@ -12,7 +12,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String, nullable=False)
     active_flag = db.Column(db.Boolean, default = False, nullable = False)
     profile = db.Column(db.String, nullable = True, default = 'user.png')
-    flag = db.Column(db.String, nullable = False, default = False)
+    flag = db.Column(db.Boolean, nullable = False, default = False)
     flag_reason = db.Column(db.String, nullable = True)
 
     def get_id(self):
@@ -50,7 +50,7 @@ class Influencer(db.Model):
 
 class Campaign(db.Model):
     campaign_id = db.Column(db.Integer, primary_key=True, autoincrement = True)
-    campaign_by = db.Column(db.Integer, db.ForeignKey("sponser.sponser_id"))
+    campaign_by = db.Column(db.Integer, db.ForeignKey("sponser.sponser_id"), nullable = False)
     campaign_name = db.Column(db.String, unique=True)
     desc = db.Column(db.String, nullable=False)
     requirements = db.Column(db.String, nullable=False)
@@ -60,34 +60,34 @@ class Campaign(db.Model):
     visibility = db.Column(db.Boolean)
     goals = db.Column(db.String, nullable=True)
     image_path = db.Column(db.String, nullable=True, default = 'user.png')
-    flag = db.Column(db.String, nullable = False, default = False)
+    flag = db.Column(db.Boolean, nullable = False, default = False)
     flag_reason = db.Column(db.String, nullable = True)
     
     sponser = db.relationship('Sponser', backref = db.backref('campaigns', cascade = "all, delete-orphan"))
 
 class Posts(db.Model):
-    post_id = db.Column(db.Integer, primary_key=True, autoincrement = True)
-    post_by = db.Column(db.Integer, db.ForeignKey("influencer.influencer_id"))
-    post_for = db.Column(db.Integer, db.ForeignKey("campaign.campaign_id"))
-    post_title = db.Column(db.String,  nullable = False)
+    post_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    post_by = db.Column(db.Integer, db.ForeignKey("influencer.influencer_id"), nullable=False)
+    post_for = db.Column(db.Integer, db.ForeignKey("requests.request_id"), nullable=False)
+    post_title = db.Column(db.String, nullable=False)
     desc = db.Column(db.String, nullable=False)
-    image_path = db.Column(db.String, nullable=True, default = 'user.png')
-    flag = db.Column(db.String, nullable = False, default = False)
-    flag_reason = db.Column(db.String, nullable = True)
+    image_path = db.Column(db.String, nullable=True, default='user.png')
+    flag = db.Column(db.Boolean, nullable=False, default=False)
+    flag_reason = db.Column(db.String, nullable=True)
 
-    influencer = db.relationship('Influencer', backref = db.backref('post', cascade = "all, delete-orphan"))
-    campaign = db.relationship('Campaign', backref = db.backref('post', cascade = "all, delete-orphan"))
+    influencer = db.relationship('Influencer', backref=db.backref('posts', cascade="all, delete-orphan"))
+    request = db.relationship('Requests', backref=db.backref('posts', cascade="all, delete-orphan"))
 
 class Requests(db.Model):
-    request_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
+    request_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.campaign_id"))
     influencer_id = db.Column(db.Integer, db.ForeignKey("influencer.influencer_id"))
     n_amount = db.Column(db.Integer, nullable=True)
     status = db.Column(db.String(15), nullable=False, default='Pending')
     requested_by = db.Column(db.String(15), nullable=False)
 
-    influencer = db.relationship('Influencer', backref = db.backref('requests', cascade = "all, delete-orphan"))
-    campaign = db.relationship('Campaign', backref = db.backref('requests', cascade = "all, delete-orphan"))
+    influencer = db.relationship('Influencer', backref=db.backref('requests', cascade="all, delete-orphan"))
+    campaign = db.relationship('Campaign', backref=db.backref('requests', cascade="all, delete-orphan"))
 
 # class Camp_request(db.Model):
 #     request_id = db.Column(db.Integer, db.ForeignKey("requests.request_id"), primary_key = True)

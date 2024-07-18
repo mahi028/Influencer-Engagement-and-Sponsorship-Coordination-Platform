@@ -62,14 +62,14 @@
                 <p class="text-muted">
                     <strong>Posted for:</strong>
                     <span id="post_for">
-                        <a href="/view/{{post.post_by}}" class="link-secondary link-underline-opacity-0">{{post.campaign.campaign_name}}</a> <!--redirect to campaign-->
+                        <a href="/view/{{post.request.campaign.campaign_id}}" class="link-secondary link-underline-opacity-0">{{post.request.campaign.campaign_name}}</a> <!--redirect to campaign-->
                     </span>
                 </p>
                 {%if current_user.user_id == post.post_by%}
                     <button class="btn btn-outline-danger" onclick="delete_post('{{post.post_id}}')" type="submit">Delete Post</button>
                 {%endif%}
                 <br><br>
-                {%if post.campaign.campaign_by == current_user.user_id%}
+                {%if post.request.campaign.campaign_by == current_user.user_id%}
                     <a href="/sponser/{{post.post_id}}">Pay for Request Completion</a>
                 {%endif%}
 

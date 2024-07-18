@@ -37,11 +37,15 @@ def new_post():
         form = PostDetails()
 
         rqsts = Requests.query.filter_by(influencer_id = current_user.user_id, status = 'Accepted/Ongoing').all()
+        if not rqsts:
+            flash('No Accepted Requests to Post about.')
+            return redirect(url_for('home.requests'))
         form.post_for.choices = [None]+[rqst.campaign.campaign_name for rqst in rqsts]
         roles = user_roles(current_user.user_id)
 
         if form.validate_on_submit():
-            post_for = Campaign.query.filter_by(campaign_name = form.post_for.data).first()
+            post_camp = Campaign.query.filter_by(campaign_name = form.post_for.data).first()
+            post_for = Requests.query.filter_by(campaign_id = post_camp.campaign_id, influencer_id = current_user.user_id).first()
             if post_for:
                 image_file = request.files['image']
                 new_image_name = None
@@ -58,12 +62,12 @@ def new_post():
                     upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
                     image_path = os.path.join(upload_folder, image_filename)
                 try:
-                    new_post = Posts(post_by = current_user.user_id, post_for = post_for.campaign_id, post_title = form.post_title.data, desc = form.desc.data, image_path = new_image_name)
+                    new_post = Posts(post_by = current_user.user_id, post_for = post_for.request_id, post_title = form.post_title.data, desc = form.desc.data, image_path = new_image_name)
                     db.session.add(new_post)
                     db.session.commit()
                     if image_file:
                         image_file.save(image_path)
-                    flash('New Campaign Created')
+                    flash('New Post Created')
                     return redirect(url_for('home.dashboard'))
                 
                 except Exception as e:
