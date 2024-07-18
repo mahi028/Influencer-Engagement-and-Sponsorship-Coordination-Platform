@@ -237,34 +237,34 @@ def get_user(user_id):
 
     return render_template('profile.html', profile = user_profile, roles = curr_user_roles, role = [roles], inf = inf, spn = spn, camps = camps, page = 'Profile')
 
-
-@home.route('/colab/<int:camp_id>', methods = ['GET', 'POST'])
+@home.route('/send/rqst/<int:inf_id>/<int:camp_id>')
 @login_required
-def colab(camp_id):
-    curr_user = current_user.user_id
-    roles = user_roles(curr_user)
-    if Requests.query.filter_by(campaign_id = camp_id, influencer_id = curr_user).first():
-        flash('Request Already Exist.')
-        return redirect(f'/view/{camp_id}')
-    
-    if 'Sponser' in roles:
-        flash('Sponsers can\'t make colab request.')
-        return redirect(f'/view/{camp_id}')
-    
-    elif 'Admin' in roles:
-        flash('Admins can\'t make colab request.')
-        return redirect(f'/view/{camp_id}')
-    
-    try:
-        new_rqst = Requests(campaign_id = camp_id, influencer_id = curr_user, status = 'Pending', requested_by = roles[0])
-        db.session.add(new_rqst)
-        db.session.commit()
-        return redirect(url_for('home.requests'))
-    
-    except Exception as e:
-        flash(e)
-        return redirect(f'/view/{camp_id}')
+def send_rqst(inf_id, camp_id):
+    inf = Influencer.query.get(inf_id)
+    camp = Campaign.query.get(camp_id)
+    roles = user_roles(current_user.user_id)
+    if 'Admin' not in roles: 
+        if inf and camp:
+            if Requests.query.filter_by(campaign_id = camp.campaign_id, influencer_id = inf.influencer_id).first():
+                flash('Request already exists.')
+            else:
+                try:
+                    new_rqst = Requests(campaign_id = camp.campaign_id, influencer_id = inf.influencer_id, requested_by = roles[0])
+                    db.session.add(new_rqst)
+                    db.session.commit()
+                    flash('Request Made')
+                    return redirect(url_for('home.requests'))
+                except Exception as e:
+                    flash(e)
+        else:
+            flash('No such Influencer or Campaign')
+        if 'Influencer' in roles:
+            return redirect(f'/view/{camp.campaign_id}')
+        else:
+            return redirect(f'/get/{inf.influencer_id}')
 
+    flash('Admin Can\'t Colab')
+    return redirect(url_for('admin.admin_dashboard'))
 
 @home.route('/negotiate/<int:rqst_id>', methods = ['GET', 'POST'])
 @login_required

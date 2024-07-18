@@ -153,19 +153,3 @@ def edit_camp(camp_id):
                     return jsonify({'Request' : e})
     else:
         return jsonify({'Request' : 'Not Authorised'})
-    
-@sponser.route('/send/rqst/<int:inf_id>/<int:camp_id>')
-@login_required
-def send_rqst(inf_id, camp_id):
-    if Requests.query.filter_by(campaign_id = camp_id, influencer_id = inf_id).first():
-        flash('Request already exists.')
-    else:
-        try:
-            new_rqst = Requests(campaign_id = camp_id, influencer_id = inf_id, requested_by = 'spn')
-            db.session.add(new_rqst)
-            db.session.commit()
-            flash('Request Made')
-            return redirect(url_for('home.requests'))
-        except Exception as e:
-            flash(e)
-    return redirect(f'/get/{inf_id}')

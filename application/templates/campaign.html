@@ -103,7 +103,10 @@
                     
                 </p>
                 {%if current_user.user_id != camp.campaign_by%}
-                    <a href="/colab/{{camp.campaign_id}}" class="btn btn-success">Colab</a>
+                    <!-- Colab -->
+                    {%if 'Influencer' in roles%}
+                        <a href="/send/rqst/{{current_user.user_id}}/{{camp.campaign_id}}" class="btn btn-success">Colab</a>
+                    {%endif%}
                 {%else%}
                     {%if camp.visibility%}
                         <span id="visible">Public 
