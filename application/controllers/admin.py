@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
-from application.modals import User, Requests, Influencer, Sponser, Campaign
+from application.modals import User, Requests, Influencer, Sponser, Campaign, Posts
 from application.form import UpdateProfileForm, SeachForm
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
@@ -30,14 +30,26 @@ def flag(type,id, reason):
         raise UserError(401, "Not Authorised")
     match type:
         case 'camp':
-            camp = Campaign.query.get(id)
-            camp.flag = not camp.flag
+            post = Campaign.query.get(id)
+            post.flag = not post.flag
             db.session.commit()
-            camp = Campaign.query.get(id)
-            if camp.flag:
-                camp.flag_reason = reason
+            post = Campaign.query.get(id)
+            if post.flag:
+                post.flag_reason = reason
             else:
-                camp.flag_reason = None
+                post.flag_reason = None
+            db.session.commit()
+            return jsonify({'Request': 'Success'})
+        
+        case 'post':
+            post = Posts.query.get(id)
+            post.flag = not post.flag
+            db.session.commit()
+            post = Posts.query.get(id)
+            if post.flag:
+                post.flag_reason = reason
+            else:
+                post.flag_reason = None
             db.session.commit()
             return jsonify({'Request': 'Success'})
         
@@ -60,6 +72,13 @@ def users():
     inf = Influencer.query.all()
     roles = user_roles(current_user.user_id)
     return render_template('users.html', sponsers = spn, influencers = inf, page = 'Ongoing Requests', roles = roles)
+
+@admin.route('/posts', methods = ["GET","POST"])
+@login_required
+def posts():
+    roles = user_roles(current_user.user_id)
+    posts = Posts.query.all()
+    return render_template('admin_dash_posts.html', page = 'Posts', roles = roles, posts = posts)
     
 @admin.route('/activities', methods = ["GET","POST"])
 @login_required

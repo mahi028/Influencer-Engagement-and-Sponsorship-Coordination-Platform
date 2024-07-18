@@ -70,3 +70,4 @@ function create_chart(url, type, id, chart_name){
 create_chart('http://127.0.0.1:5000/api/activity/request_data/request_stats', 'doughnut', 'request_stats', 'Colab Stats');
 create_chart('http://127.0.0.1:5000/api/activity/request_data/active_camps', 'doughnut', 'active_camps', 'Active Campaigns');
 create_chart('http://127.0.0.1:5000/api/activity/request_data/active_users', 'doughnut', 'active_users', 'Active Users');
+create_chart('http://127.0.0.1:5000/api/activity/request_data/active_posts', 'doughnut', 'active_posts', 'Active Posts');

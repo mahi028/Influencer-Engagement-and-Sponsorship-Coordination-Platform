@@ -16,7 +16,6 @@ async function post_rqst(url){
 
 async function flag_camp(camp_id, reason){
     let rqst = await post_rqst(`/admin/flag/camp/${camp_id}/${reason}`)
-    console.log(camp_id)
     if (rqst['Request'] === 'Success'){
         const flag_cont = document.getElementById('flag_cont'+camp_id)
         const flag_btn = document.getElementById('camp'+camp_id)
@@ -31,6 +30,28 @@ async function flag_camp(camp_id, reason){
                                             <li><button class="dropdown-item" onclick="flag_camp('${camp_id}', 'Hateful_or_targeting')">Hateful or targeting</button></li>
                                             <li><button class="dropdown-item" onclick="flag_camp('${camp_id}', 'spam')">Spam</button></li>
                                             <li><button class="dropdown-item" onclick="flag_camp('${camp_id}', 'inapropriate_content')">Inapropriate Content</button></li>
+                                        </ul>
+                                    </div>
+                                `
+        }
+    }
+}
+async function flag_post(post_id, reason){
+    let rqst = await post_rqst(`/admin/flag/post/${post_id}/${reason}`)
+    if (rqst['Request'] === 'Success'){
+        const flag_cont = document.getElementById('flag_cont'+post_id)
+        const flag_btn = document.getElementById('post'+post_id)
+        if (flag_btn.innerHTML  === 'Flag'){
+            flag_cont.innerHTML = `<button type="button" class="btn btn-danger" id="post${post_id}" onclick="flag_post('${post_id}', 'none')">Un-Flag</button>`
+        }else{
+            flag_cont.innerHTML = `  <div class="btn-group">
+                                        <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span id="post${post_id}">Flag</span>
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li><button class="dropdown-item" onclick="flag_post('${post_id}', 'Hateful_or_targeting')">Hateful or targeting</button></li>
+                                            <li><button class="dropdown-item" onclick="flag_post('${post_id}', 'spam')">Spam</button></li>
+                                            <li><button class="dropdown-item" onclick="flag_post('${post_id}', 'inapropriate_content')">Inapropriate Content</button></li>
                                         </ul>
                                     </div>
                                 `
@@ -62,6 +83,12 @@ async function flag_user(user_id, reason){
 
 async function delete_camp(campaign_id){
     let rqst = await post_rqst(`/sponser/delete/campaign/${campaign_id}`)
+    if (rqst['Request'] === 'Success'){
+        window.location.href = '/dashboard'
+    }
+}
+async function delete_post(post_id){
+    let rqst = await post_rqst(`/user/delete/post/${post_id}`)
     if (rqst['Request'] === 'Success'){
         window.location.href = '/dashboard'
     }
