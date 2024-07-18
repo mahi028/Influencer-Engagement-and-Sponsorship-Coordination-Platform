@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, jsonify, redirect, request, url_fo
 from application import db
 from application.modals import Sponser, Campaign, User, Influencer, Requests, Posts
 from application.form import SponserDetailForm, CampaignDetails, InfluencerDetailForm, PostDetails
+from application.validation import UserError
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
 from application.get_roles import user_roles
@@ -77,7 +78,7 @@ def new_post():
 
         return render_template('new_post.html', user = influencer, page = 'Create Post', form = form, roles = roles)
     else:
-        return '<h1>Not Authorised</h1>'
+        raise UserError(401, 'Not Authorised')
 
 @influencer.route('/my/post', methods = ['GET', 'POST'])
 @login_required
