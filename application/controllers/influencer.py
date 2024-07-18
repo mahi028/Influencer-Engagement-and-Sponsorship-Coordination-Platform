@@ -36,7 +36,7 @@ def new_post():
     if Influencer.query.get(current_user.user_id):
         form = PostDetails()
 
-        rqsts = Requests.query.filter_by(influencer_id = current_user.user_id).all()
+        rqsts = Requests.query.filter_by(influencer_id = current_user.user_id, status = 'Accepted/Ongoing').all()
         form.post_for.choices = [None]+[rqst.campaign.campaign_name for rqst in rqsts]
         roles = user_roles(current_user.user_id)
 

@@ -69,6 +69,10 @@
                     <button class="btn btn-outline-danger" onclick="delete_post('{{post.post_id}}')" type="submit">Delete Post</button>
                 {%endif%}
                 <br><br>
+                {%if post.campaign.campaign_by == current_user.user_id%}
+                    <a href="/sponser/{{post.post_id}}">Pay for Request Completion</a>
+                {%endif%}
+
                 {%if 'Admin' in roles%}
                     {%if post.flag %}
                         <div id="flag_cont{{post.post_id}}">

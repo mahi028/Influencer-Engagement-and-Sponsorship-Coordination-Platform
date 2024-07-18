@@ -30,9 +30,13 @@
               <td>{{rqst.n_amount}}</td>
               <td>{{rqst.status}}</td>
               <td>
-                <a href="#"><button type="button" class="btn btn-success">Accept</button></a>
-                <a href="/negotiate/{{rqst.request_id}}"><button type="button" class="btn btn-danger">Negotiate</button></a>
-                <a href="/delete/rqst/{{rqst.request_id}}"><button type="button" class="btn btn-danger">Delete</button></a>
+                {%if rqst.status == 'Pending'%}
+                  <a href="/requests/accept/{{rqst.request_id}}"><button type="button" class="btn btn-success">Accept</button></a>
+                  <a href="/negotiate/{{rqst.request_id}}"><button type="button" class="btn btn-danger">Negotiate</button></a>
+                  <a href="/delete/rqst/{{rqst.request_id}}"><button type="button" class="btn btn-danger">Delete</button></a>
+                {%else%}
+                  {{rqst.status}} <!--Change it to something good-->
+                {%endif%}
               </td>
             </tr>
             {%endfor%}

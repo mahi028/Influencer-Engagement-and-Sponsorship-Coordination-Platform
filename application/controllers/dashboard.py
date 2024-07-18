@@ -256,7 +256,7 @@ def colab(camp_id):
         return redirect(f'/view/{camp_id}')
     
     try:
-        new_rqst = Requests(campaign_id = camp_id, influencer_id = curr_user, status = 'Pending', requested_by = curr_user)
+        new_rqst = Requests(campaign_id = camp_id, influencer_id = curr_user, status = 'Pending', requested_by = roles[0])
         db.session.add(new_rqst)
         db.session.commit()
         return redirect(url_for('home.requests'))
@@ -269,17 +269,21 @@ def colab(camp_id):
 @home.route('/negotiate/<int:rqst_id>', methods = ['GET', 'POST'])
 @login_required
 def negotiate(rqst_id):
-    roles = user_roles(current_user.user_id)
-    form = NegotiateForm()
-    if form.validate_on_submit():
-        try:
-            Requests.query.get(rqst_id).n_amount = form.negotiate.data
-            db.session.commit()
-            return redirect(url_for('home.requests'))
-        except Exception as e:
-            flash(e)
-    return render_template('colab.html', form = form, page = 'Negotiate', roles = roles)
-
+    rqst = Requests.query.get(rqst_id)
+    if rqst.status == 'Pending':
+        roles = user_roles(current_user.user_id)
+        form = NegotiateForm()
+        if form.validate_on_submit():
+            try:
+                rqst.n_amount = form.negotiate.data
+                rqst.requested_by = roles[0]
+                db.session.commit()
+                return redirect(url_for('home.requests'))
+            except Exception as e:
+                flash(e)
+        return render_template('colab.html', form = form, page = 'Negotiate', roles = roles)
+    flash('Request has been Accepted or Completed.')
+    return redirect(url_for('home.requests'))
 
 @home.route('/delete/rqst/<int:rqst_id>', methods = ['GET'])
 @login_required
@@ -308,3 +312,23 @@ def inf_posts(inf_id):
     posts = Posts.query.filter_by(post_by = inf_id).order_by(decend(Posts.post_id)).all()
     roles = user_roles(current_user.user_id)
     return render_template('all_posts.html', user = inf, page = f'{inf.name}\'s Posts', roles = roles, posts = posts)
+
+@home.route('/requests/accept/<int:rqst_id>', methods = ["GET", "POST"])
+@login_required
+def accept_rqst(rqst_id):
+    roles = user_roles(current_user.user_id)
+    rqst = Requests.query.get(rqst_id)
+    if rqst.status == 'Accepted/Ongoing':
+            flash('Already Accepted')
+    else:
+        if roles[0] == rqst.requested_by:
+            flash('You can\'t accept this Request as you Created it or Negotiated')
+        else:
+            try:
+                rqst.status = 'Accepted/Ongoing'
+                db.session.commit()
+                flash('Accepted')
+            except Exception as e:
+                flash(e)
+                return redirect(url_for('home.requests'))
+    return redirect(url_for('home.requests'))        
