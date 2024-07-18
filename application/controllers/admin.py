@@ -68,6 +68,8 @@ def flag(type,id, reason):
 @admin.route('/users', methods = ["GET","POST"])
 @login_required
 def users():
+    if not is_admin(current_user.user_id):
+        raise UserError(401, "Not Authorised")
     spn = Sponser.query.all()
     inf = Influencer.query.all()
     roles = user_roles(current_user.user_id)
@@ -76,6 +78,8 @@ def users():
 @admin.route('/posts', methods = ["GET","POST"])
 @login_required
 def posts():
+    if not is_admin(current_user.user_id):
+        raise UserError(401, "Not Authorised")
     roles = user_roles(current_user.user_id)
     posts = Posts.query.all()
     return render_template('admin_dash_posts.html', page = 'Posts', roles = roles, posts = posts)
@@ -83,5 +87,7 @@ def posts():
 @admin.route('/activities', methods = ["GET","POST"])
 @login_required
 def activities():
+    if not is_admin(current_user.user_id):
+        raise UserError(401, "Not Authorised")
     roles = user_roles(current_user.user_id)
     return render_template('activities.html', page = 'Activities', roles = roles)
