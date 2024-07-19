@@ -1,10 +1,12 @@
 from flask import Blueprint, render_template, jsonify, redirect, request, url_for, flash
 from application import db
-from application.modals import Sponser, Campaign, User, Influencer, Requests
-from application.form import SponserDetailForm, CampaignDetails
+from application.modals import Sponser, Campaign, User, Influencer, Requests, Posts
+from application.form import SponserDetailForm, CampaignDetails, PaymentForm
+from application.validation import UserError
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
 from application.get_roles import user_roles
+from application.hash import checkpw
 from werkzeug.utils import secure_filename
 from uuid import uuid4
 import os
@@ -153,3 +155,57 @@ def edit_camp(camp_id):
                     return jsonify({'Request' : e})
     else:
         return jsonify({'Request' : 'Not Authorised'})
+    
+@sponser.route('/posts', methods = ['GET', 'POST'])
+@login_required
+def posts():
+    spn = Sponser.query.get(current_user.user_id)
+    if not spn:
+        raise UserError(401, 'Not Authorised')
+    
+    roles = user_roles(current_user.user_id)
+
+    rqsts = []
+    camps = Campaign.query.filter_by(campaign_by = spn.sponser_id)
+    for camp in camps:
+        rqsts += [rqst for rqst in Requests.query.filter_by(campaign_id = camp.campaign_id).all()]
+
+    posts = []
+    for rqst in rqsts:
+        posts += [post for post in Posts.query.filter_by(post_for = rqst.request_id).all()]
+    return render_template('posts_dash.html', page = f'Posts for {spn.company_name}', roles = roles, posts = posts)
+    # return render_template('all_posts.html', user = spn, page = f'Posts for {spn.company_name}', roles = roles, posts = posts_for_spn)
+
+@sponser.route('/pay/<int:rqst_id>', methods = ['GET', 'POST'])
+@login_required
+def payment(rqst_id):
+    spn = User.query.get(current_user.user_id)
+    roles = user_roles(current_user.user_id)
+    rqst = Requests.query.get(rqst_id)
+    if 'Sponser' in roles or spn.user_id != rqst.campaign.campaign_by:
+        pay_to = User.query.get(rqst.influencer_id)
+        form = PaymentForm()
+        form.amount.label.text = f'Pay ${rqst.n_amount}* for {rqst.campaign.campaign_name}'
+        if form.validate_on_submit():
+            if form.amount.data == rqst.n_amount:
+                if checkpw(form.password.data, spn.password):
+                    if spn.wallet_balance >= form.amount.data:
+                        try:
+                            spn.wallet_balance -= form.amount.data
+                            pay_to.wallet_balance += form.amount.data
+                            db.session.commit()
+                            rqst.status = 'Fullfilled/Paid'
+                            db.session.commit()
+                            flash('Payment Successful!')
+                            return redirect(url_for('home.requests'))
+                        except Exception as e:
+                            flash(e)
+                    else:
+                        flash('Not Enough Balance')
+                else:
+                    flash('Wrong Password, Try again.')
+            else:
+                flash(f'Amount must be equal to negotiated amount: ${rqst.n_amount}')
+        return render_template('pay.html', form = form, page = 'Payment', roles = roles)
+    else:
+        raise UserError(401, 'Unauthorised')

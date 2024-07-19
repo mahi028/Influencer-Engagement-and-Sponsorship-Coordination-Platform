@@ -39,6 +39,7 @@ function new_chart(label, data, type, el, chart_name){
         }
         });
     }
+
 function create_chart(url, type, id, chart_name){
     const cont = document.getElementById('chart_cont');
     canv = `
@@ -64,7 +65,6 @@ function create_chart(url, type, id, chart_name){
             new_chart(label, n_data, type, el, chart_name);
         });
     }, 0)
-    
 }
 
 create_chart('http://127.0.0.1:5000/api/activity/request_data/request_stats', 'doughnut', 'request_stats', 'Colab Stats');

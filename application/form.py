@@ -67,3 +67,8 @@ class UpdateProfileForm(FlaskForm):
 class NegotiateForm(FlaskForm):
     negotiate = IntegerField('Negotiate?')    
     submit = SubmitField('Colab')
+
+class PaymentForm(FlaskForm):
+    amount = IntegerField('Amount (in $dollars)*', validators=[DataRequired()])    
+    password = PasswordField('Password*', validators=[DataRequired()])
+    submit = SubmitField('Pay')

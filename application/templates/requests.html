@@ -16,7 +16,9 @@
               <th>Budget</th>
               <th>Negotiate_am</th>
               <th>Status</th>
-              <th colspan="3">Action</th>
+              {%if 'Admin' not in roles%}
+                <th colspan="3">Action</th>
+              {%endif%}
             </tr>
           </thead>
           <tbody>
@@ -29,15 +31,19 @@
               <td>{{rqst.campaign.budget}}</td>
               <td>{{rqst.n_amount}}</td>
               <td>{{rqst.status}}</td>
-              <td>
-                {%if rqst.status == 'Pending'%}
-                  <a href="/requests/accept/{{rqst.request_id}}"><button type="button" class="btn btn-success">Accept</button></a>
-                  <a href="/negotiate/{{rqst.request_id}}"><button type="button" class="btn btn-danger">Negotiate</button></a>
-                  <a href="/delete/rqst/{{rqst.request_id}}"><button type="button" class="btn btn-danger">Delete</button></a>
-                {%else%}
-                  {{rqst.status}} <!--Change it to something good-->
-                {%endif%}
-              </td>
+              {%if 'Admin' not in roles%}
+                <td>
+                  {%if rqst.status == 'Pending'%}
+                    <a href="/requests/accept/{{rqst.request_id}}"><button type="button" class="btn btn-success">Accept</button></a>
+                    <a href="/negotiate/{{rqst.request_id}}"><button type="button" class="btn btn-danger">Negotiate</button></a>
+                    <a href="/delete/rqst/{{rqst.request_id}}"><button type="button" class="btn btn-danger">Delete</button></a>
+                  {%elif rqst.status == 'Fullfilled/Paid'%}
+                    Fullfilled. Paid: ${{rqst.n_amount}}
+                  {%else%}
+                    {{rqst.status}} <!--Change it to something good-->
+                  {%endif%}
+                </td>
+              {%endif%}
             </tr>
             {%endfor%}
           </tbody>

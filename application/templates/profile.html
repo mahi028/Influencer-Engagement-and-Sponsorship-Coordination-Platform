@@ -101,8 +101,12 @@
                         </button>
                     {%endif%} 
                 {%endif%}
-                    
                 </p>
+                {%if profile.user_id == current_user.user_id%}
+                    <p id="wallet_balance">
+                        <strong>Wallet Balance</strong>: <span>${{profile.wallet_balance}}</span> <a href="/wallet/add_balance" class="btn btn-info">Fill Your Wallet</a>
+                    </p>
+                {%endif%}
                 {%if 'Sponser' in role%}
                     <small class="text-muted">View all camps by <a href="/sponser/campaigns/{{spn.sponser_id}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover"><strong>{{spn.company_name}}</strong></a></small><br>
                 {%elif 'Influencer' in role%}

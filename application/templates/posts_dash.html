@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{%block title%}{{page}}{%endblock%}
+{% block content %}
+<center>
+    <h3>{{page}}</h3>
+    <div class="contatiner" style="max-width: 1100px;">
+    <table class="table " style="text-align: center;">
+        <thead >
+        <tr>
+            <th scope="col">Sr. No.</th>
+            <th scope="col">Post</th>
+            <th scope="col">Post By</th>
+            <th scope="col">Email</th>
+            <th scope="col">Posted For</th>
+            <th scope="col">View</th>
+            <th scope="col">Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for post in posts%}
+        <tr>
+            <th scope="row">{{loop.index}}</th>
+            <td>{{post.post_title}}</td>
+            <td><a href="/get/{{post.post_by}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{post.influencer.name}}</a></td>
+            <td>{{post.influencer.user.email}}</td>
+            <td><a href="/view/{{post.request.campaign.campaign_id}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{post.request.campaign.campaign_name}}</a></td>
+            <td><a href="/view/post/{{post.post_id}}" class="btn btn-secondary">View</a></td>
+            <td>
+                {%if 'Admin' in roles%}
+                    {%if post.flag %}
+                        <div id="flag_cont{{post.post_id}}">
+                            <button type="button" class="btn btn-danger" id="post{{post.post_id}}" onclick="flag_post('{{post.post_id}}', 'none')">Un-Flag</button>
+                        </div>
+                    {%else%}
+                        <div id="flag_cont{{post.post_id}}">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span id="post{{post.post_id}}">Flag</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><button class="dropdown-item" onclick="flag_post('{{post.post_id}}', 'Hateful_or_targeting')">Hateful or targeting</button></li>
+                                    <li><button class="dropdown-item" onclick="flag_post('{{post.post_id}}', 'spam')">Spam</button></li>
+                                    <li><button class="dropdown-item" onclick="flag_post('{{post.post_id}}', 'inapropriate_content')">Inapropriate Content</button></li>
+                                </ul>
+                            </div>
+                        </div>
+                    {%endif%}
+                {%endif%}
+                {%if current_user.user_id == post.request.campaign.campaign_by%}
+                    {%if post.request.status != 'Fullfilled/Paid'%}
+                        <a href="/sponser/pay/{{post.request.request_id}}" class="btn btn-success">Pay for Request Completion</a>
+                    {%else%}
+                        <span>Paid</span> 
+                    {%endif%}
+                {%endif%}
+            </td>
+        </tr>
+        {%endfor%}
+        </tbody>
+    </table>
+    </div>    
+</center>
+<script src="/st/js/submit.js"></script>
+{%endblock%}

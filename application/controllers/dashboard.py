@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from application.modals import User, Requests, Influencer, Sponser, Campaign, Admin, UserRoles, Posts
-from application.form import UpdateProfileForm, SeachForm, NegotiateForm
+from application.form import UpdateProfileForm, SeachForm, NegotiateForm, PaymentForm
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
 from application import db
-from application.hash import hashpw
+from application.hash import hashpw, checkpw
 from application.validation import UserError
 from application.get_roles import user_roles
 from werkzeug.utils import secure_filename
@@ -249,7 +249,7 @@ def send_rqst(inf_id, camp_id):
                 flash('Request already exists.')
             else:
                 try:
-                    new_rqst = Requests(campaign_id = camp.campaign_id, influencer_id = inf.influencer_id, requested_by = roles[0])
+                    new_rqst = Requests(campaign_id = camp.campaign_id, influencer_id = inf.influencer_id, n_amount = camp.budget, requested_by = roles[0])
                     db.session.add(new_rqst)
                     db.session.commit()
                     flash('Request Made')
@@ -332,3 +332,24 @@ def accept_rqst(rqst_id):
                 flash(e)
                 return redirect(url_for('home.requests'))
     return redirect(url_for('home.requests'))        
+
+@home.route('/wallet/add_balance', methods = ["GET", "POST"])
+@login_required
+def add_balance():
+    form = PaymentForm()
+    user = User.query.get(current_user.user_id)
+    if form.validate_on_submit():
+        if form.amount.data >= 10:
+            if checkpw(form.password.data, user.password):
+                try:
+                    user.wallet_balance += form.amount.data
+                    db.session.commit()
+                    flash('Payment Successful!')
+                    return redirect(f'/get/{current_user.user_id}')
+                except Exception as e:
+                    flash(e)
+            else:
+                flash('Wrong Password, Try again.')
+        else:
+            flash('Amount must be alteast $10')
+    return render_template('pay.html', form = form)

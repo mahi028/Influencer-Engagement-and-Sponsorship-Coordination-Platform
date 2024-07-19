@@ -14,6 +14,7 @@ class User(db.Model, UserMixin):
     profile = db.Column(db.String, nullable = True, default = 'user.png')
     flag = db.Column(db.Boolean, nullable = False, default = False)
     flag_reason = db.Column(db.String, nullable = True)
+    wallet_balance = db.Column(db.Integer, nullable = False, default = 0)
 
     def get_id(self):
            return (self.user_id)
@@ -82,7 +83,7 @@ class Requests(db.Model):
     request_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.campaign_id"))
     influencer_id = db.Column(db.Integer, db.ForeignKey("influencer.influencer_id"))
-    n_amount = db.Column(db.Integer, nullable=True)
+    n_amount = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(15), nullable=False, default='Pending')
     requested_by = db.Column(db.String(15), nullable=False)
 
