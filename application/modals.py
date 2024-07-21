@@ -75,7 +75,7 @@ class Posts(db.Model):
     image_path = db.Column(db.String, nullable=True, default='user.png')
     flag = db.Column(db.Boolean, nullable=False, default=False)
     flag_reason = db.Column(db.String, nullable=True)
-
+    visibility = db.Column(db.Boolean)
     influencer = db.relationship('Influencer', backref=db.backref('posts', cascade="all, delete-orphan"))
     request = db.relationship('Requests', backref=db.backref('posts', cascade="all, delete-orphan"))
 

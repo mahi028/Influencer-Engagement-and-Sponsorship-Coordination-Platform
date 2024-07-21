@@ -115,6 +115,7 @@ def profile_edit(user):
 @login_required
 def update_imp():
     form = UpdateProfileForm()
+    roles = user_roles(current_user.user_id)
     curr_user = User.query.get(current_user.user_id)
     if form.validate_on_submit():
 
@@ -167,7 +168,7 @@ def update_imp():
         except Exception as e:
             flash('Something Went Wrong. Try Again\n', e)
 
-    return render_template('update_user.html', user = curr_user, form = form)
+    return render_template('update_user.html', user = curr_user, roles = roles, form = form)
 
 @home.route('/search', methods = ["GET", "POST"])
 def search():

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, jsonify, redirect, request, url_for, flash
 from application import db
 from application.modals import Sponser, Campaign, User, Influencer, Requests, Posts
-from application.form import SponserDetailForm, CampaignDetails, InfluencerDetailForm, PostDetails
+from application.form import SponserDetailForm, CampaignDetails, InfluencerDetailForm, PostDetails, UpdatePostForm
 from application.validation import UserError
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
@@ -65,7 +65,7 @@ def new_post():
                 upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
                 image_path = os.path.join(upload_folder, image_filename)
             try:
-                new_post = Posts(post_by = current_user.user_id, post_for = post_for.request_id, post_title = form.post_title.data, desc = form.desc.data, image_path = new_image_name)
+                new_post = Posts(post_by = current_user.user_id, post_for = post_for.request_id, post_title = form.post_title.data, desc = form.desc.data, image_path = new_image_name, visibility = True if int(form.visibility.data) == 1 else False)
                 db.session.add(new_post)
                 db.session.commit()
                 if image_file:
@@ -104,7 +104,7 @@ def edit_post(post_id):
                     return jsonify({'Request' : 'Success', 'new_val' : Posts.query.get(post_id).post_title})
                 except Exception as e:
                     return jsonify({'Request' : e})
-        
+
             case 'desc':
                 try:
                     post.desc = val
@@ -112,6 +112,59 @@ def edit_post(post_id):
                     return jsonify({'Request' : 'Success', 'new_val' : Posts.query.get(post_id).desc})
                 except Exception as e:
                     return jsonify({'Request' : e})
+                
+            case 'visible':
+                try:
+                    curr_val = Posts.query.get(post_id).visibility
+                    print(curr_val, post_id)
+                    post.visibility = not curr_val
+                    db.session.commit()
+                    return jsonify({'Request' : 'Success, Reload to see changes'})
+                except Exception as e:
+                    return jsonify({'Request' : e})
+
+@influencer.route('/update_post/<int:post_id>', methods = ["GET", "POST"])            
+@login_required
+def update_camp(post_id):
+    form = UpdatePostForm()
+    curr_user = User.query.get(current_user.user_id)
+    post = Posts.query.get(post_id)
+    roles = user_roles(curr_user.user_id)
+
+    if form.validate_on_submit():
+        image_file = request.files['image']
+        new_image_name = None
+        new_image_path = None
+
+        if image_file:
+            unique_name = str(uuid4())
+            image_ext = image_file.filename.split('.')[1] #image extension
+            new_image_name = unique_name+'.'+image_ext
+            image_file.filename = new_image_name
+            image_filename = secure_filename(image_file.filename)
+            
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
+            new_image_path = os.path.join(upload_folder, image_filename)
+
+            #delete old image
+            old_image_path = os.path.join(upload_folder, post.image_path)
+            os.remove(old_image_path)
+
+            post.image_path = new_image_name
+        
+        try:
+            db.session.commit()
+
+            if image_file:
+                image_file.save(new_image_path) 
+
+            flash('Profile Updated Successfully!')
+            return redirect(f'/view/post/{post_id}')
+        except Exception as e:
+            flash('Something Went Wrong. Try Again\n', e)
+
+    return render_template('update_post.html', form = form, user = curr_user, roles = roles, page = 'Update Post')
 
 @influencer.route('/delete/post/<int:post_id>', methods = ['GET', 'POST'])
 @login_required
@@ -125,4 +178,3 @@ def delete_post(post_id):
         except:
             return jsonify({'Request' : 'Failed to delete. Try Again'})
     return jsonify({'Request' : 'No such post exists'})
-    

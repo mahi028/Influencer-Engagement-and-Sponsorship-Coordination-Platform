@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, jsonify, redirect, request, url_for, flash
 from application import db
 from application.modals import Sponser, Campaign, User, Influencer, Requests, Posts
-from application.form import SponserDetailForm, CampaignDetails, PaymentForm
+from application.form import SponserDetailForm, CampaignDetails, PaymentForm, UpdateCampForm
 from application.validation import UserError
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
 from application.get_roles import user_roles
-from application.hash import checkpw
+from application.hash import hashpw, checkpw
 from werkzeug.utils import secure_filename
 from uuid import uuid4
 import os
@@ -155,6 +155,55 @@ def edit_camp(camp_id):
                     return jsonify({'Request' : e})
     else:
         return jsonify({'Request' : 'Not Authorised'})
+    
+@sponser.route('/update_camp/<int:camp_id>', methods = ["GET", "POST"])
+@login_required
+def update_camp(camp_id):
+    form = UpdateCampForm()
+    curr_user = User.query.get(current_user.user_id)
+    camp = Campaign.query.get(camp_id)
+    roles = user_roles(curr_user.user_id)
+
+    if form.validate_on_submit():                       
+        if form.start_date.data:
+            camp.start_date = form.start_date.data
+        
+        if form.end_date.data:
+            camp.end_date = form.end_date.data
+
+        image_file = request.files['image']
+        new_image_name = None
+        new_image_path = None
+
+        if image_file:
+            unique_name = str(uuid4())
+            image_ext = image_file.filename.split('.')[1] #image extension
+            new_image_name = unique_name+'.'+image_ext
+            image_file.filename = new_image_name
+            image_filename = secure_filename(image_file.filename)
+            
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
+            new_image_path = os.path.join(upload_folder, image_filename)
+
+            #delete old image
+            old_image_path = os.path.join(upload_folder, camp.image_path)
+            os.remove(old_image_path)
+
+            camp.image_path = new_image_name
+        
+        try:
+            db.session.commit()
+
+            if image_file:
+                image_file.save(new_image_path) 
+
+            flash('Profile Updated Successfully!')
+            return redirect(f'/view/{camp_id}')
+        except Exception as e:
+            flash('Something Went Wrong. Try Again\n', e)
+
+    return render_template('update_camp.html', form = form, user = curr_user, roles = roles, page = 'Update Campaign')
     
 @sponser.route('/posts', methods = ['GET', 'POST'])
 @login_required

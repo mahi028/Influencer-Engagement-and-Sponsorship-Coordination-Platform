@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{%block title%}{{page}}{%endblock%}
+
+    {% block content %}
+    <div class="container" style="max-width: 600px;">
+        <center>
+            <h1>{{page}}</h1>
+        </center>
+        <form method="post" enctype="multipart/form-data">
+            {{form.hidden_tag()}}
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    {{ form.start_date.label(class="form-label") }}
+                    {{ form.start_date(class="form-control") }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.end_date.label(class="form-label") }}
+                    {{ form.end_date(class="form-control") }}
+                </div>
+            </div>
+
+            {{ form.image.label(class="form-label d-block") }}
+            {{ form.image(class="form-control") }}
+            <br><br>
+            <center>
+                {{form.submit(class="btn btn-outline-secondary")}} <br>
+            </center>
+        </form>
+    </div>
+
+    {%endblock%}

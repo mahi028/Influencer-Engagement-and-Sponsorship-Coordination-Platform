@@ -23,6 +23,12 @@
             {{ form.image.label(class="form-label d-block") }}
             {{ form.image(class="form-control") }}
         </div>
+        <div class="btn-group" role="group">
+            {%for sub_feild in form.visibility%}
+                {{sub_feild(class="btn-check")}}
+                {{sub_feild.label(class="btn btn-outline-primary")}}
+            {%endfor%}
+        </div>
         <div class="text-center mt-3">
             {{ form.submit(class="btn btn-outline-secondary") }}
         </div>

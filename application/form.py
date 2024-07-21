@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, PasswordField, SubmitField, FileField, EmailField, RadioField, DateField, TextAreaField, SelectField
-from wtforms.validators import DataRequired, Email
+from wtforms.validators import DataRequired, Email, Optional
 
 class SeachForm(FlaskForm):
     search = StringField('Search for: ')
@@ -18,11 +18,6 @@ class LoginForm(FlaskForm):
     email = EmailField('Your Email*', validators = [DataRequired(), Email()])
     password = PasswordField('Password*', validators=[DataRequired()])
     submit = SubmitField('Login')
-
-# class AdminLoginForm(FlaskForm):
-#     email = EmailField('Your Email*', validators = [DataRequired(), Email()])
-#     password = PasswordField('Password*', validators=[DataRequired()])
-#     submit = SubmitField('Login')
 
 class SponserDetailForm(FlaskForm):
     company_name = StringField('Company/Individual Name*', validators = [DataRequired()])
@@ -55,6 +50,7 @@ class PostDetails(FlaskForm):
     desc = TextAreaField('Post Description*', validators = [DataRequired()])
     post_for = SelectField('Post For', validators=[DataRequired()])
     image = FileField('Post Image')
+    visibility = RadioField('Visibilty*', choices =[(0,'Privet'), (1, 'Public')],validators = [DataRequired()])
     submit = SubmitField('Create')
 
 class UpdateProfileForm(FlaskForm):
@@ -62,6 +58,16 @@ class UpdateProfileForm(FlaskForm):
     password = PasswordField('New Password')
     conf_password = PasswordField('Confirm Password (Only if you want to edit)')
     image = FileField('New Profile Pic')
+    submit = SubmitField('Update')
+
+class UpdateCampForm(FlaskForm):
+    start_date = DateField('Start Date', validators=[Optional()])
+    end_date = DateField('End Date', validators=[Optional()])
+    image = FileField('New Campaign Image', validators=[Optional()])
+    submit = SubmitField('Update')
+
+class UpdatePostForm(FlaskForm):
+    image = FileField('New Post Image', validators=[Optional()])
     submit = SubmitField('Update')
 
 class NegotiateForm(FlaskForm):
