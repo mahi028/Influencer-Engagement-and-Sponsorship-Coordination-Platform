@@ -15,7 +15,7 @@
         height: 150px;
         border-radius: 50%;
         /* margin-top: -75px; */
-        border: 5px solid white;
+        border: 1px solid white;
         object-fit: cover;
     }
     .profile-info {
@@ -30,10 +30,10 @@
 <div class="container">
     <div class="profile-content text-center">
         {%if profile.flag%}
-            <h3 style="color: red;">Flagged</h3>
+            <h3 style="color: red !important;">Flagged</h3>
             <p>{{profile.flag_reason}}</p>
         {%endif%}
-        <div class="profile-card bg-white p-4">
+        <div class="profile-card p-4" style="background-color: rgba(179, 179, 179, .1); backdrop-filter: blur(10px);">
             {%if 'Influencer' in role %}
             <img src="/st/uploads/{{inf.user.profile}}" alt="Profile Image" class="profile-img" id="profile-img"> 
             {%elif 'Sponser' in role%}
