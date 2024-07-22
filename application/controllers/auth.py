@@ -37,7 +37,7 @@ def login():
             else:
                 flash('Wrong Password :( Please try again ')
             
-    return render_template('login.html', page = 'login',form = form)
+    return render_template('auth/login.html', page = 'login',form = form)
     
 
 @user_auth.route('/logout')
@@ -127,7 +127,7 @@ def register():
             else:
                 flash('Passwords did not match.')
 
-    return render_template('register.html', page = 'register', form = form)
+    return render_template('auth/register.html', page = 'register', form = form)
  
 @user_auth.route('/login/admin', methods = ['GET', 'POST'])
 def adminLogin():
@@ -154,4 +154,4 @@ def adminLogin():
         else:
             flash('No such user. Try Again')
 
-    return render_template('login.html', page = 'login',form = form)
+    return render_template('auth/login.html', page = 'Admin Login',form = form)

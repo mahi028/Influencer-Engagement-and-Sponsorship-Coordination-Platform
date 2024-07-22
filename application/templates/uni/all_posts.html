@@ -8,7 +8,7 @@
       height: 150px;
       border-radius: 50%;
       /* margin-top: -75px; */
-      border: 5px solid white;
+      border: 1px solid white;
       object-fit: cover;
     }
     </style>
@@ -17,7 +17,7 @@
       <!-- <div class="container grid"> -->
         <div class="grid" id="campaigns" style="max-width: 600px;">
             {%for post in posts%}
-              <div class=" card mb-3 shadow-lg bg-body-tertiary rounded" id="{{post.post_id}}">
+              <div class=" card mb-3 shadow-lg rounded" style="background-color: rgba(179, 179, 179, .1); backdrop-filter: blur(5px);" id="{{post.post_id}}">
                   <center>
                     <img loading="lazy" src="/st/uploads/{{post.image_path}}" alt="post Image" class="post-img" id="post-img"> 
                   </center>

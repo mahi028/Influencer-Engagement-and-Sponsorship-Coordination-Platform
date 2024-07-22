@@ -62,7 +62,7 @@ def admin_dashboard():
         raise UserError(401, "Not Authorised")
     roles = user_roles(current_user.user_id)
     camps = Campaign.query.all()
-    return render_template('admin_dash.html', page = 'Admin-Dashboard', roles = roles, camps = camps)
+    return render_template('admin/admin_dash.html', page = 'Admin-Dashboard', roles = roles, camps = camps)
     
 @admin.route('/users', methods = ["GET","POST"])
 @login_required
@@ -72,7 +72,7 @@ def users():
     spn = Sponser.query.all()
     inf = Influencer.query.all()
     roles = user_roles(current_user.user_id)
-    return render_template('users.html', sponsers = spn, influencers = inf, page = 'Ongoing Requests', roles = roles)
+    return render_template('admin/users.html', sponsers = spn, influencers = inf, page = 'Ongoing Requests', roles = roles)
 
 @admin.route('/requests', methods = ['GET', 'POST'])
 @login_required
@@ -80,7 +80,7 @@ def requests():
     roles = user_roles(current_user.user_id)
     requests = Requests.query.all()
 
-    return render_template('requests.html', requests = requests, page = 'Requests', roles = roles)
+    return render_template('uni/requests.html', requests = requests, page = 'Requests', roles = roles)
 
 @admin.route('/posts', methods = ["GET","POST"])
 @login_required
@@ -89,7 +89,7 @@ def posts():
         raise UserError(401, "Not Authorised")
     roles = user_roles(current_user.user_id)
     posts = Posts.query.all()
-    return render_template('posts_dash.html', page = 'Posts', roles = roles, posts = posts)
+    return render_template('uni/posts_dash.html', page = 'Posts', roles = roles, posts = posts)
     
 @admin.route('/activities', methods = ["GET","POST"])
 @login_required
@@ -97,4 +97,4 @@ def activities():
     if not is_admin(current_user.user_id):
         raise UserError(401, "Not Authorised")
     roles = user_roles(current_user.user_id)
-    return render_template('activities.html', page = 'Activities', roles = roles)
+    return render_template('admin/activities.html', page = 'Activities', roles = roles)

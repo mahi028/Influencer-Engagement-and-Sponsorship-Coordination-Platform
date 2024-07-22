@@ -74,6 +74,10 @@ class NegotiateForm(FlaskForm):
     negotiate = IntegerField('Negotiate?')    
     submit = SubmitField('Colab')
 
+class SuggestionForm(FlaskForm):
+    suggest = StringField('Suggestions?')    
+    submit = SubmitField('Suggest')
+
 class PaymentForm(FlaskForm):
     amount = IntegerField('Amount (in $dollars)*', validators=[DataRequired()])    
     password = PasswordField('Password*', validators=[DataRequired()])

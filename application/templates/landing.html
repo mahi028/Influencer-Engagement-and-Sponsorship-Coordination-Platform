@@ -1,7 +1,15 @@
 {%extends 'base.html'%}
 {%block title%} {{page}} {%endblock%}
 {%block content%}
-<div class="container-fluid bg-light">
+<style>
+    .card{
+        background: none;
+    }
+    .card-body{
+        background: rgba(179, 179, 179, .1); backdrop-filter: blur(2px);;
+    }
+</style>
+<div class="container-fluid">
     <!-- title -->
     <div class="container text-center">
         <h1 class="display-4">Welcome to <img src="/st/img/logo-transperent-black.png" alt="SponserMe" height="60"></h1>
@@ -43,7 +51,7 @@
     </div><br>
 
     <!-- Footer -->
-    <footer class="bg-light text-center py-4 ">
+    <footer class="text-center py-4">
         <p class="mb-0">© 2024 SponsorMe. All rights reserved.</p>
     </footer>
 </div>

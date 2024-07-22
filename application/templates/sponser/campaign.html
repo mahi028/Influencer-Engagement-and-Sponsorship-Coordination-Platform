@@ -2,9 +2,6 @@
 {%block title%}{{page}}{%endblock%}
 {% block content %}
 <style>
-    body {
-        background-color: #f8f9fa;
-    }
     .campaign-card {
         border-radius: 15px;
         overflow: hidden;
@@ -14,7 +11,7 @@
         width: 150px;
         height: 150px;
         border-radius: 50%;
-        border: 5px solid white;
+        border: 1px solid white;
         object-fit: cover;
     }
     .campaign-info {
@@ -32,7 +29,7 @@
             <h3 style="color: red;">Flagged</h3>
             <p>{{camp.flag_reason}}</p>
         {%endif%}
-        <div class="campaign-card bg-white p-4">
+        <div class="campaign-card p-4" style="background-color: rgba(179, 179, 179, .1); backdrop-filter: blur(10px);">
             <img src="/st/uploads/{{camp.image_path}}" alt="Campaign Image" class="camp-img" id="camp-img"> 
             <div class="campaign-info">
                 <h2 id="campaign_name"> 

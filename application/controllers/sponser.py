@@ -30,7 +30,7 @@ def get_sponser_data():
         except Exception as e:
             flash(e)
 
-    return render_template('user_details.html', page = 'login', role = 'sponser',form = form)
+    return render_template('auth/user_details.html', page = 'login', role = 'sponser',form = form)
 
 @sponser.route('/new/campaign', methods = ['GET', 'POST'])
 @login_required
@@ -71,7 +71,7 @@ def new_campaign():
         else:
             flash('Campaign Name must be unique')
     
-    return render_template('new_camp.html',user = user, page = 'Create Campaign', form = form, roles = roles)
+    return render_template('sponser/new_camp.html',user = user, page = 'Create Campaign', form = form, roles = roles)
 
 @sponser.route('/delete/campaign/<int:campaign_id>', methods = ['GET', 'POST'])
 @login_required
@@ -92,7 +92,7 @@ def delete_camp(campaign_id):
 def my_campaigns():
     user = User.query.get(current_user.user_id)
     campaigns = Campaign.query.filter_by(campaign_by = current_user.user_id).order_by(decend(Campaign.start_date)).all()
-    return render_template('dashboard.html',user = user, page = 'My Campaigns', roles = 'Sponser', campaigns = campaigns)
+    return render_template('uni/campaigns.html',user = user, page = 'My Campaigns', roles = 'Sponser', campaigns = campaigns)
 
 @sponser.route('/edit/<int:camp_id>', methods = ['PUT'])
 @login_required
@@ -203,7 +203,7 @@ def update_camp(camp_id):
         except Exception as e:
             flash('Something Went Wrong. Try Again\n', e)
 
-    return render_template('update_camp.html', form = form, user = curr_user, roles = roles, page = 'Update Campaign')
+    return render_template('sponser/update_camp.html', form = form, user = curr_user, roles = roles, page = 'Update Campaign')
     
 @sponser.route('/posts', methods = ['GET', 'POST'])
 @login_required
@@ -222,8 +222,7 @@ def posts():
     posts = []
     for rqst in rqsts:
         posts += [post for post in Posts.query.filter_by(post_for = rqst.request_id).all()]
-    return render_template('posts_dash.html', page = f'Posts for {spn.company_name}', roles = roles, posts = posts)
-    # return render_template('all_posts.html', user = spn, page = f'Posts for {spn.company_name}', roles = roles, posts = posts_for_spn)
+    return render_template('uni/posts_dash.html', page = f'Posts for {spn.company_name}', roles = roles, posts = posts)
 
 @sponser.route('/pay/<int:rqst_id>', methods = ['GET', 'POST'])
 @login_required
@@ -255,6 +254,6 @@ def payment(rqst_id):
                     flash('Wrong Password, Try again.')
             else:
                 flash(f'Amount must be equal to negotiated amount: ${rqst.n_amount}')
-        return render_template('pay.html', form = form, page = 'Payment', roles = roles)
+        return render_template('uni/pay.html', form = form, page = 'Payment', roles = roles)
     else:
         raise UserError(401, 'Unauthorised')

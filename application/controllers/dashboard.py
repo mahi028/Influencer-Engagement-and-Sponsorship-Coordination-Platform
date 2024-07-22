@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from application.modals import User, Requests, Influencer, Sponser, Campaign, Admin, UserRoles, Posts
-from application.form import UpdateProfileForm, SeachForm, NegotiateForm, PaymentForm
+from application.form import UpdateProfileForm, SeachForm, NegotiateForm, PaymentForm, SuggestionForm
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
 from application import db
@@ -18,9 +18,9 @@ home = Blueprint('home',__name__)
 def landing_page():
     return render_template('landing.html', page = 'Welcome')
 
-@home.route('/dashboard')
+@home.route('/all/camps', methods = ['GET', 'POST'])
 @login_required
-def dashboard():
+def all_camps():
     roles = user_roles(current_user.user_id)
 
     if 'Sponser' in roles:
@@ -36,7 +36,14 @@ def dashboard():
     campaigns = Campaign.query.filter(Campaign.start_date <= datetime.utcnow(), Campaign.end_date >= datetime.utcnow(), Campaign.flag == False, Campaign.visibility == True).order_by(decend(Campaign.start_date)).all()
     user = User.query.get(current_user.user_id)
     
-    return render_template('dashboard.html', page = 'Dashboard', roles = roles, campaigns = campaigns, user = user)
+    return render_template('uni/campaigns.html', page = 'Campaigns', roles = roles, campaigns = campaigns, user = user)
+
+@home.route('/dashboard')
+@login_required
+def dashboard():
+    posts = Posts.query.filter(Posts.visibility == True).order_by(decend(Posts.post_id)).all()
+    roles = user_roles(current_user.user_id)
+    return render_template('uni/all_posts.html', page = 'Posts', roles = roles, posts = posts)
 
 @home.route('/requests', methods = ['GET', 'POST'])
 @login_required
@@ -52,7 +59,7 @@ def requests():
     else:
         requests = Requests.query.filter_by(influencer_id = current_user.user_id).all()
 
-    return render_template('requests.html', requests = requests, page = 'Requests', roles = roles)
+    return render_template('uni/requests.html', requests = requests, page = 'Requests', roles = roles)
 
 @home.route('/edit/<string:user>', methods = ['PUT'])
 @login_required
@@ -168,15 +175,17 @@ def update_imp():
         except Exception as e:
             flash('Something Went Wrong. Try Again\n', e)
 
-    return render_template('update_user.html', user = curr_user, roles = roles, form = form)
+    return render_template('auth/update_user.html', user = curr_user, roles = roles, form = form)
 
 @home.route('/search', methods = ["GET", "POST"])
+@login_required
 def search():
+    roles = user_roles(current_user.user_id)
     form = SeachForm()
     if form.validate_on_submit():
         searched = form.search.data 
         if len(searched) < 3:
-            return render_template('searched.html')
+            return render_template('uni/searched.html')
 
         user = User.query.filter_by(email = searched).first()
         if user:
@@ -186,7 +195,7 @@ def search():
         camps_by_name = Campaign.query.filter(Campaign.campaign_name.like('%'+searched+'%')).all()
         camps_by_desc = Campaign.query.filter(Campaign.desc.like('%'+searched+'%')).all()
 
-        return render_template('searched.html', camps_by_name = camps_by_name, camps_by_desc = camps_by_desc, sponser = sponser, influencer = influencer)
+        return render_template('uni/searched.html', roles = roles, camps_by_name = camps_by_name, camps_by_desc = camps_by_desc, sponser = sponser, influencer = influencer)
  
 
 @home.route('/view/<int:camp_id>', methods = ["GET", "POST"])
@@ -197,7 +206,7 @@ def view_camp(camp_id):
     roles = user_roles(current_user.user_id)
     if camp.flag and camp.sponser.user.flag and not (camp.campaign_by == current_user.user_id or 'Admin' in roles):
         return 'Camp Not Found'
-    return render_template('campaign.html', camp = camp, user = user, roles = roles)
+    return render_template('sponser/campaign.html', camp = camp, user = user, roles = roles)
 
 @home.route('/view/post/<int:post_id>', methods = ["GET", "POST"])
 @login_required
@@ -207,7 +216,13 @@ def view_post(post_id):
     roles = user_roles(current_user.user_id)
     if post.flag and post.influencer.user.flag and not (post.post_by == current_user.user_id or 'Admin' in roles):
         return 'Post Not Found'
-    return render_template('post.html', post = post, user = user, roles = roles)
+    
+    suggest_form = SuggestionForm()
+    if suggest_form.validate_on_submit():
+        post.suggestion = suggest_form.suggestion.data
+        db.session.commit()
+
+    return render_template('influencer/post.html', post = post, user = user, roles = roles, suggest_form = suggest_form)
 
 @home.route('/get/<int:user_id>', methods = ["GET", "POST"])
 @login_required
@@ -236,7 +251,7 @@ def get_user(user_id):
         roles = 'Admin'
         adm = Admin.query.get(user_id)
 
-    return render_template('profile.html', profile = user_profile, roles = curr_user_roles, role = [roles], inf = inf, spn = spn, camps = camps, page = 'Profile')
+    return render_template('uni/profile.html', profile = user_profile, roles = curr_user_roles, role = [roles], inf = inf, spn = spn, camps = camps, page = 'Profile')
 
 @home.route('/send/rqst/<int:inf_id>/<int:camp_id>')
 @login_required
@@ -282,7 +297,7 @@ def negotiate(rqst_id):
                 return redirect(url_for('home.requests'))
             except Exception as e:
                 flash(e)
-        return render_template('colab.html', form = form, page = 'Negotiate', roles = roles)
+        return render_template('uni/colab.html', form = form, page = 'Negotiate', roles = roles)
     flash('Request has been Accepted or Completed.')
     return redirect(url_for('home.requests'))
 
@@ -304,7 +319,7 @@ def spn_campaigns(spn_id):
     spn = Sponser.query.get(spn_id)
     campaigns = Campaign.query.filter_by(campaign_by = spn_id).order_by(decend(Campaign.start_date)).all()
     roles = user_roles(current_user.user_id)
-    return render_template('dashboard.html', user = spn, page = f'{spn.company_name}\'s Campaigns', roles = roles, campaigns = campaigns)
+    return render_template('uni/campaigns.html', user = spn, page = f'{spn.company_name}\'s Campaigns', roles = roles, campaigns = campaigns)
 
 @home.route('/influencer/posts/<int:inf_id>', methods = ['GET', 'POST'])
 @login_required
@@ -312,7 +327,7 @@ def inf_posts(inf_id):
     inf = Influencer.query.get(inf_id)
     posts = Posts.query.filter_by(post_by = inf_id).order_by(decend(Posts.post_id)).all()
     roles = user_roles(current_user.user_id)
-    return render_template('all_posts.html', user = inf, page = f'{inf.name}\'s Posts', roles = roles, posts = posts)
+    return render_template('uni/all_posts.html', user = inf, page = f'{inf.name}\'s Posts', roles = roles, posts = posts)
 
 @home.route('/requests/accept/<int:rqst_id>', methods = ["GET", "POST"])
 @login_required
@@ -353,4 +368,4 @@ def add_balance():
                 flash('Wrong Password, Try again.')
         else:
             flash('Amount must be alteast $10')
-    return render_template('pay.html', form = form)
+    return render_template('uni/pay.html', form = form)

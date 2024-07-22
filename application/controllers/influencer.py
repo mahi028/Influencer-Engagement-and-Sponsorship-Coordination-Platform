@@ -28,7 +28,7 @@ def get_influencer_data():
         except Exception as e:
             flash(e)
 
-    return render_template('user_details.html', page = 'login', role = 'influencer', form = form)
+    return render_template('auth/user_details.html', page = 'login', role = 'influencer', form = form)
 
         
 @influencer.route('/new/post', methods = ['GET', 'POST'])
@@ -78,7 +78,7 @@ def new_post():
         else:
             flash('Please Select a Campaign')
 
-    return render_template('new_post.html', user = influencer, page = 'Create Post', form = form, roles = roles)
+    return render_template('influencer/new_post.html', user = influencer, page = 'Create Post', form = form, roles = roles)
 
 @influencer.route('/my/post', methods = ['GET', 'POST'])
 @login_required
@@ -86,7 +86,7 @@ def my_post():
     inf = Influencer.query.get(current_user.user_id)
     roles = user_roles(current_user.user_id)
     posts = Posts.query.filter_by(post_by = inf.influencer_id).all()
-    return render_template('all_posts.html', user = inf, page = f'{inf.name}\'s Posts', roles = roles, posts = posts)
+    return render_template('uni/all_posts.html', user = inf, page = f'{inf.name}\'s Posts', roles = roles, posts = posts)
 
 @influencer.route('/edit/<int:post_id>', methods = ['PUT'])
 @login_required
@@ -125,7 +125,7 @@ def edit_post(post_id):
 
 @influencer.route('/update_post/<int:post_id>', methods = ["GET", "POST"])            
 @login_required
-def update_camp(post_id):
+def update_post(post_id):
     form = UpdatePostForm()
     curr_user = User.query.get(current_user.user_id)
     post = Posts.query.get(post_id)
@@ -164,7 +164,7 @@ def update_camp(post_id):
         except Exception as e:
             flash('Something Went Wrong. Try Again\n', e)
 
-    return render_template('update_post.html', form = form, user = curr_user, roles = roles, page = 'Update Post')
+    return render_template('influencer/update_post.html', form = form, user = curr_user, roles = roles, page = 'Update Post')
 
 @influencer.route('/delete/post/<int:post_id>', methods = ['GET', 'POST'])
 @login_required
