@@ -1,49 +1,49 @@
 {% extends 'base.html' %}
 {%block title%}{{page}}{%endblock%}
-    {% block content %}
-    {%if campaigns%}
-    <style>
-    .Campaign-img {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      /* margin-top: -75px; */
-      border: 1px solid white;
-      object-fit: cover;
-    }
-    </style>
-      <center>
-        <h3>{{page}}</h3>
-      <!-- <div class="container grid"> -->
-        <div class="grid" id="campaigns" style="max-width: 600px;">
-            {%for campaign in campaigns%}
-              <div class=" card mb-3 shadow-lg rounded" style="background-color: rgba(179, 179, 179, .1); backdrop-filter: blur(10px);" id="{{campaign.campaign_id}}">
-                  <center>
-                    <img loading="lazy" src="/st/uploads/{{campaign.image_path}}" alt="Campaign Image" class="Campaign-img" id="Campaign-img"> 
-                  </center>
-                  <div class="card-body">
-                    <h5 class="card-title">{{campaign.campaign_name}}</h5>
-                    <p class="card-text">
-                        {{campaign.desc[:50]+'...'}}
-                    </p>
-                    <p class="card-text">
-                      <small class="text-muted">by -{{campaign.sponser.company_name}}</small></p>
-                      {%if campaign.campaign_by == current_user.user_id%}
-                      <a href="/view/{{campaign.campaign_id}}" class="btn btn-secondary">Edit/View Campaign</a>
-                      {%else%}
-                      <a href="/view/{{campaign.campaign_id}}" class="btn btn-secondary">View</a>
-                      {%endif%}
-                  </div>
-                </div>
-            {%endfor%}
-        </div>
-      </div>
-    </center>
-    <script src="/st/js/submit.js"></script>
-    {%else%}
+{% block content %}
+  {%if campaigns%}
+  <style>
+  .Campaign-img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    /* margin-top: -75px; */
+    border: 1px solid white;
+    object-fit: cover;
+  }
+  </style>
     <center>
-      <h2>No Campaigns Yet</h2>
-    </center>
-    {%endif%}
+      <h3>{{page}}</h3>
+    <!-- <div class="container grid"> -->
+      <div class="grid" id="campaigns" style="max-width: 600px;">
+          {%for campaign in campaigns%}
+            <div class=" card mb-3 shadow-lg rounded" id="{{campaign.campaign_id}}">
+                <center>
+                  <img loading="lazy" src="/st/uploads/{{campaign.image_path}}" alt="Campaign Image" class="Campaign-img" id="Campaign-img"> 
+                </center>
+                <div class="card-body">
+                  <h5 class="card-title">{{campaign.campaign_name}}</h5>
+                  <p class="card-text">
+                      {{campaign.desc[:50]+'...'}}
+                  </p>
+                  <p class="card-text">
+                    <small class="text-muted">by -{{campaign.sponser.company_name}}</small></p>
+                    {%if campaign.campaign_by == current_user.user_id%}
+                    <a href="/view/{{campaign.campaign_id}}" class="btn btn-secondary">Edit/View Campaign</a>
+                    {%else%}
+                    <a href="/view/{{campaign.campaign_id}}" class="btn btn-secondary">View</a>
+                    {%endif%}
+                </div>
+              </div>
+          {%endfor%}
+      </div>
+    </div>
+  </center>
+  <script src="/st/js/submit.js"></script>
+  {%else%}
+  <center>
+    <h2>No Campaigns Yet</h2>
+  </center>
+  {%endif%}
 
-    {%endblock%}
+{%endblock%}

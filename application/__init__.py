@@ -7,6 +7,7 @@ from flask_migrate import Migrate
 
 db = SQLAlchemy()
 login_manager = LoginManager()
+migration = Migrate()
 
 def create_app():
     app = Flask(__name__,
@@ -22,9 +23,8 @@ def create_app():
     
 
     db.init_app(app)
-    migration = Migrate(app, db)
-
     login_manager.init_app(app)
+    migration.init_app(app, db)
 
     with app.app_context():
         from application.modals import User, Role, UserRoles, Campaign

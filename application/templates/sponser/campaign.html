@@ -1,37 +1,15 @@
 {% extends 'base.html' %}
 {%block title%}{{page}}{%endblock%}
 {% block content %}
-<style>
-    .campaign-card {
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .camp-img {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        border: 1px solid white;
-        object-fit: cover;
-    }
-    .campaign-info {
-        margin-top: 20px;
-    }
-    .campaign-info h2 {
-        margin-bottom: 10px;
-    }
-</style>
-
-
 <div class="container">
-    <div class="profile-content text-center">
+    <div class="p-content text-center">
         {%if camp.flag%}
             <h3 style="color: red !important;">Flagged</h3>
             <p>{{camp.flag_reason}}</p>
         {%endif%}
-        <div class="campaign-card p-4" style="background-color: rgba(179, 179, 179, .1); backdrop-filter: blur(10px);">
-            <img src="/st/uploads/{{camp.image_path}}" alt="Campaign Image" class="camp-img" id="camp-img"> 
-            <div class="campaign-info">
+        <div class="p-card p-4">
+            <img src="/st/uploads/{{camp.image_path}}" alt="Campaign Image" class="p-img" id="camp-img"> 
+            <div class="p-info">
                 <h2 id="campaign_name"> 
                     {{camp.campaign_name}}
                     {%if current_user.user_id == camp.campaign_by%}

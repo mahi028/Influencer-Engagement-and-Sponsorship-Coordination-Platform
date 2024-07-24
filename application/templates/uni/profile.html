@@ -1,49 +1,23 @@
 {% extends 'base.html' %}
 {%block title%}{{page}}{%endblock%}
 {% block content %}
-<style>
-    body {
-        background-color: #f8f9fa;
-    }
-    .profile-card {
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
-    .profile-img {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-        /* margin-top: -75px; */
-        border: 1px solid white;
-        object-fit: cover;
-    }
-    .profile-info {
-        margin-top: 20px;
-    }
-    .profile-info h2 {
-        margin-bottom: 10px;
-    }
-</style>
-
-
 <div class="container">
-    <div class="profile-content text-center">
+    <div class="p-content text-center">
         {%if profile.flag%}
             <h3 style="color: red !important;">Flagged</h3>
             <p>{{profile.flag_reason}}</p>
         {%endif%}
-        <div class="profile-card p-4" style="background-color: rgba(179, 179, 179, .1); backdrop-filter: blur(10px);">
+        <div class="p-card p-4" >
             {%if 'Influencer' in role %}
-            <img src="/st/uploads/{{inf.user.profile}}" alt="Profile Image" class="profile-img" id="profile-img"> 
+            <img src="/st/uploads/{{inf.user.profile}}" alt="Profile Image" class="p-img" id="profile-img"> 
             {%elif 'Sponser' in role%}
-            <img src="/st/uploads/{{spn.user.profile}}" alt="Profile Image" class="profile-img" id="profile-img"> 
+            <img src="/st/uploads/{{spn.user.profile}}" alt="Profile Image" class="p-img" id="profile-img"> 
             {%else%}
-            <img src="/st/uploads/{{adm.user.profile}}" alt="Profile Image" class="profile-img" id="profile-img"> 
+            <img src="/st/uploads/{{adm.user.profile}}" alt="Profile Image" class="p-img" id="profile-img"> 
             {%endif%}
 
             <!-- Name -->
-            <div class="profile-info">
+            <div class="p-info">
                 <h2  id="profile-name"> 
                 {%if 'Influencer' in role %} {{inf.name}} 
                     {%if inf.influencer_id == current_user.user_id%}
