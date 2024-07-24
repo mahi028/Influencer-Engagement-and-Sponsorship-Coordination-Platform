@@ -38,6 +38,9 @@
         .form-control:focus{
             background: none;
         }
+        .alert-secondary{
+            --bs-alert-bg: black;
+        }
     </style>
 </head>
 <body style="margin-bottom: 15px; background: url(/st/img/bg-proto.jpg) no-repeat; background-size: cover; background-attachment: fixed;">
@@ -46,7 +49,7 @@
     <div class="container" id="flash_cont" style="max-width: 600px; position: absolute; z-index: 100; left: 50%; transform: translateX(-50%); top: 10dvh;">
         {%for msg in get_flashed_messages()%}
         <div class="alert alert-primary alert-dismissible fade show" style=" border: none;" role="alert">
-            <span>{{msg}}</span>
+            <span style=" color: black !important;">{{msg}}</span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
         {%endfor%}

@@ -76,6 +76,7 @@ class Posts(db.Model):
     flag = db.Column(db.Boolean, nullable=False, default=False)
     flag_reason = db.Column(db.String, nullable=True)
     suggestion = db.Column(db.String, nullable=True)
+    approved = db.Column(db.Boolean, nullable=False, default=False)
     visibility = db.Column(db.Boolean)
     influencer = db.relationship('Influencer', backref=db.backref('posts', cascade="all, delete-orphan"))
     request = db.relationship('Requests', backref=db.backref('posts', cascade="all, delete-orphan"))

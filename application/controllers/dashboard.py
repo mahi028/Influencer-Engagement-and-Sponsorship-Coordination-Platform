@@ -219,8 +219,16 @@ def view_post(post_id):
     
     suggest_form = SuggestionForm()
     if suggest_form.validate_on_submit():
-        post.suggestion = suggest_form.suggestion.data
-        db.session.commit()
+        try:
+            if not post.suggestion:
+                post.suggestion = ' '
+                db.session.commit()
+            post.suggestion += " | "+suggest_form.suggest.data
+            db.session.commit()
+            flash('Suggestion Made')
+            post = Posts.query.get(post_id)
+        except Exception as e:
+            flash(e)
 
     return render_template('influencer/post.html', post = post, user = user, roles = roles, suggest_form = suggest_form)
 

@@ -116,10 +116,25 @@ def edit_post(post_id):
             case 'visible':
                 try:
                     curr_val = Posts.query.get(post_id).visibility
-                    print(curr_val, post_id)
-                    post.visibility = not curr_val
+                    if post.approved:
+                        post.visibility = not curr_val
+                        db.session.commit()
+                        return jsonify({'Request' : 'Success, Reload to see changes'})
+                    else:
+                        return jsonify({'Request' : 'Post has not been approved by the Sponser yet.'})
+                except Exception as e:
+                    return jsonify({'Request' : e})
+                
+    elif post.request.campaign.campaign_by == current_user.user_id:
+        data = request.get_json()
+        to_update = data['to_update']
+        val = data['value']
+        match to_update:
+            case 'approved':
+                try:
+                    post.approved = True
                     db.session.commit()
-                    return jsonify({'Request' : 'Success, Reload to see changes'})
+                    return jsonify({'Request' : 'Success, Reload to see Changes'})
                 except Exception as e:
                     return jsonify({'Request' : e})
 

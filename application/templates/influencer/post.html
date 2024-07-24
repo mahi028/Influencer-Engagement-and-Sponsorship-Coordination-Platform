@@ -66,26 +66,28 @@
                     {%if post.request.status != 'Fullfilled/Paid'%}
                         {%if current_user.user_id == post.post_by or post.request.campaign.campaign_by == current_user.user_id%}
                             {%if post.suggestion%}
-                                Suggestion: {{post.suggestion}}
+                                Suggestion: {{post.suggestion}} <button ></button>
                             {%endif%}
                         {%endif%}
                     {%endif%}
                 </p>
-                {%if post.visibility%}
-                    <span id="visible">Public</span> 
-                        {%if current_user.user_id == post.post_by%}
-                            <button type="button" class="btn"  class="btn" onclick="make_response('/user/edit/{{post.post_id}}', 'visible', 'val')">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16"><path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"></path></svg>
-                            </button>
-                        {%endif%}
-                {%else%} 
-                    <span id="visible">Privet</span>                     
-                        {%if current_user.user_id == post.post_by%}
-                            <button type="button" class="btn"  class="btn" onclick="make_response('/user/edit/{{post.post_id}}', 'visible', 'val')">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16"><path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"></path></svg>
-                            </button>
-                        {%endif%}
-                {%endif%} <br>
+                {%if post.approved%}
+                    {%if post.visibility%}
+                        <span id="visible">Public</span> 
+                            {%if current_user.user_id == post.post_by%}
+                                <button type="button" class="btn"  class="btn" onclick="make_response('/user/edit/{{post.post_id}}', 'visible', 'val')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16"><path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"></path></svg>
+                                </button>
+                            {%endif%}
+                    {%else%} 
+                        <span id="visible">Privet</span>                     
+                            {%if current_user.user_id == post.post_by%}
+                                <button type="button" class="btn"  class="btn" onclick="make_response('/user/edit/{{post.post_id}}', 'visible', 'val')">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16"><path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"></path></svg>
+                                </button>
+                            {%endif%}
+                    {%endif%} <br>
+                {%endif%}
                 
                 {%if post.request.status != 'Fullfilled/Paid'%}
                     {%if current_user.user_id == post.post_by%}
@@ -94,15 +96,20 @@
                     {%endif%}
                     <br><br>
                     {%if post.request.campaign.campaign_by == current_user.user_id%}
-                        <a href="/sponser/pay/{{post.request.request_id}}" class="btn btn-success">Pay for Request Completion</a><br><br>
-                        {%if not post.visibility%}
-                            <form class="d-flex" role="search" method="post">
-                                {{suggest_form.hidden_tag()}}
-                                <input class="form-control me-2" type="text" placeholder="Suggestions?" name="suggest" aria-label="suggest">
-                                <button class="btn" name="submit">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16"><path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"></path></svg>
-                                </button>
-                            </form>
+                        {%if not post.approved%}
+                            <button type="button" class="btn btn-success" onclick="make_response('/user/edit/{{post.post_id}}', 'approved', 'approved')">Approve Post</button> <br><br>
+                            <div class="suggest_form_cont" style="width: 500px; position: relative; left: 50%; transform: translate(-50%);">
+                                <form class="d-flex" role="search" method="post">
+                                    {{suggest_form.hidden_tag()}}
+                                    <label for="suggest">Suggestions? </label>
+                                    <input class="form-control me-2" type="text" id="suggest" name="suggest" aria-label="suggest">
+                                    <button class="btn" name="submit">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pen" viewBox="0 0 16 16"><path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001m-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708z"></path></svg>
+                                    </button>
+                                </form>
+                            </div>
+                        {%else%}
+                            <a href="/sponser/pay/{{post.request.request_id}}" class="btn btn-success">Pay for Request Completion</a><br><br>
                         {%endif%}
                     {%endif%}
                 {%endif%}
