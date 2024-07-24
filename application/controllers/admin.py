@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
-from application.modals import User, Requests, Influencer, Sponser, Campaign, Posts
+from application.modals import User, Requests, Influencer, Sponser, Campaign, Posts, Admin, UserRoles
 from application.form import UpdateProfileForm, SeachForm
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
@@ -90,6 +90,54 @@ def posts():
     roles = user_roles(current_user.user_id)
     posts = Posts.query.all()
     return render_template('uni/posts_dash.html', page = 'Posts', roles = roles, posts = posts)
+
+@admin.route('/approvals', methods = ["GET","POST"])
+@login_required
+def approvals():
+    if not is_admin(current_user.user_id):
+        raise UserError(401, "Not Authorised")
+    
+    roles = user_roles(current_user.user_id)
+    approval_rqsts = Admin.query.filter_by(approved = False).all()
+
+    users = [User.query.get(user.admin_id) for user in approval_rqsts]
+    
+    return render_template('admin/approvals.html', page = 'Posts', roles = roles, users = users)
+
+@admin.route('/approvals/<string:action>/<int:admin_id>', methods = ["GET", "POST"])
+@login_required
+def approval_rqst(action, admin_id):
+    if not is_admin(current_user.user_id):
+        raise UserError(401, "Not Authorised")
+    
+    user = User.query.get(admin_id)
+
+    if user:
+        match action:
+            case 'approve':
+                admin = Admin.query.get(user.user_id)
+                try:
+                    if admin:
+                        admin.approved = True
+                    new_role = UserRoles(user_id = user.user_id, role_id = 1)
+                    db.session.add(new_role)
+                    db.session.commit()
+                    flash('Admin Approved')
+                except Exception as e:
+                    flash(e)
+            
+            case 'delete':
+                try:
+                    db.session.delete(user)
+                    db.session.commit()
+                    flash('Request deleted')
+                except Exception as e:
+                    flash(e)
+
+    else:
+        flash('No such user')
+    return redirect(url_for('admin.approvals'))
+
     
 @admin.route('/activities', methods = ["GET","POST"])
 @login_required

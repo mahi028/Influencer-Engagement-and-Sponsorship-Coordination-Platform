@@ -4,7 +4,7 @@
     {% block content %}
     <div class="container" style="max-width: 600px;">
         <center>
-            <h1> Register </h1>
+            <h1> {{page}} </h1>
         </center>
         <form method="post" enctype="multipart/form-data">
             {{form.hidden_tag()}}
@@ -32,7 +32,11 @@
             <br><br>
             <center>
                 {{form.submit(class="btn btn-outline-secondary")}} <br>
-                <span>Already a User?<a href="{{url_for('user_auth.login')}}" class="link-secondary link-offset-2 link-offset-1-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Login</a></span>
+                {%if page == 'Admin Registeration'%}
+                    <span>Already an Admin?<a href="{{url_for('user_auth.adminLogin')}}" class="link-secondary link-offset-2 link-offset-1-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Login</a></span>
+                {%else%}
+                    <span>Already a User?<a href="{{url_for('user_auth.login')}}" class="link-secondary link-offset-2 link-offset-1-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Login</a></span>
+                {%endif%}
             </center>
         </form>
     </div>

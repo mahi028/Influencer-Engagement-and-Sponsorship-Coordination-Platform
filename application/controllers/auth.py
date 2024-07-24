@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from application import db
-from application.modals import User, UserRoles
+from application.modals import User, UserRoles, Admin
 from application import login_manager
 from application.form import RegisterForm, LoginForm
 from application.hash import hashpw, checkpw
@@ -26,6 +26,10 @@ def login():
             flash(f'No user found.')
         
         else:
+            if Admin.query.get(user.user_id):
+                flash('Admin, Please Login here.')
+                return redirect(url_for('user_auth.adminLogin'))
+
             if checkpw(form.password.data, user.password):
                 login_user(user)
                 user.active_flag = True
@@ -59,28 +63,8 @@ def register():
         user = User.query.filter_by(email = form.email.data).first()
 
         if user:
-            if checkpw(form.password.data, user.password):
-                user_role = UserRoles.query.get((user.user_id, int(form.role.data)))
-
-                if user_role:
-                    flash('Role already exists, Please Login')
-                    return redirect(url_for("user_auth.login"))
-
-                else:
-                    try:
-                        new_role = UserRoles(user_id = user.user_id, role_id = int(form.role.data))
-                        db.session.add(new_role)
-                        db.session.commit()
-
-                        flash('New role has been created :)')
-                        return redirect(url_for("user_auth.login"))                        
-
-                    except Exception as e:
-                        flash(e)
-                        
-            else:
-                roles = {1: 'Admin', 2: 'Influencer', 3: 'Sponser'}
-                flash(f'User exists, So plese type correct password to register as a {roles[int(form.role.data)]}. Or use another email.')
+            flash('User Already Exist, Please Login.')
+            return redirect(url_for('user_auth.login'))
 
         else:
             if form.password.data == form.conf_password.data:
@@ -104,7 +88,6 @@ def register():
                     db.session.commit()
                     if image_file:
                         image_file.save(image_path) 
-
 
                 except Exception as e:
                     flash(e)
@@ -138,7 +121,7 @@ def adminLogin():
         
         if admin:
             if checkpw(form.password.data, admin.password):
-                role = UserRoles.query.get((admin.user_id, 1))
+                role = UserRoles.query.filter_by(user_id = admin.user_id, role_id = 1).first()
                 
                 if role:
                     login_user(admin)
@@ -155,3 +138,59 @@ def adminLogin():
             flash('No such user. Try Again')
 
     return render_template('auth/login.html', page = 'Admin Login',form = form)
+
+@user_auth.route('/register/admin', methods = ['GET', 'POST'])
+def adminRegister():
+    form = RegisterForm()
+    form.role.choices = [(1, 'Admin')]
+    if form.validate_on_submit():
+        user = User.query.filter_by(email = form.email.data).first()
+
+        if user:
+            flash('User Already Exist, Please Login or Use Another Email Id.')
+
+        else:
+            if form.password.data == form.conf_password.data:
+                image_file = request.files['image']
+                new_image_name = None
+                image_path = None
+                if image_file:
+                # Create unique name for image
+                    unique_name = str(uuid4())
+                    image_ext = image_file.filename.split('.')[1] #image extension
+                    new_image_name = unique_name+'.'+image_ext
+                    image_file.filename = new_image_name
+                    image_filename = secure_filename(image_file.filename)
+                    
+                    base_dir = os.path.dirname(os.path.abspath(__file__))
+                    upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
+                    image_path = os.path.join(upload_folder, image_filename)
+                try:
+                    new_user = User(email = form.email.data, password = hashpw(form.password.data), profile = new_image_name)
+                    db.session.add(new_user)
+                    db.session.commit()
+                    if image_file:
+                        image_file.save(image_path) 
+
+                except Exception as e:
+                    flash(e)
+
+                else:
+                    added_user = User.query.filter_by(email = form.email.data).first()
+
+                    try:
+                        new_admin = Admin(admin_id = added_user.user_id)
+                        db.session.add(new_admin)
+                        db.session.commit()
+                        flash('Admin created. Please Wait Till Another Admin Approves you. :)')
+                        return redirect(url_for('user_auth.adminLogin'))
+                    
+                    except Exception as e:
+                        db.session.delete(added_user)
+                        db.session.commit()
+                        flash(e)
+
+            else:
+                flash('Passwords did not match.')
+
+    return render_template('auth/register.html', page = 'Admin Registeration', form = form)

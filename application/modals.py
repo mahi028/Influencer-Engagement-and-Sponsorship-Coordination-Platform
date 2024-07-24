@@ -21,15 +21,14 @@ class User(db.Model, UserMixin):
 
 class UserRoles(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
-    role_id = db.Column(db.Integer, db.ForeignKey('role.role_id'), primary_key=True)
+    role_id = db.Column(db.Integer, db.ForeignKey('role.role_id'), nullable = False)
 
     user = db.relationship('User', backref=db.backref('user_roles', cascade="all, delete-orphan"))
     role = db.relationship('Role', backref=db.backref('user_roles', cascade="all, delete-orphan"))
 
 class Admin(db.Model):
     admin_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
-    name = db.Column(db.String, nullable = False)
-
+    approved = db.Column(db.Boolean, nullable = False, default = False)
     user = db.relationship('User', backref=db.backref('admins', cascade="all, delete-orphan"))
      
 class Sponser(db.Model):

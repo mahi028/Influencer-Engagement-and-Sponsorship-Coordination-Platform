@@ -235,7 +235,7 @@ def view_post(post_id):
 @home.route('/get/<int:user_id>', methods = ["GET", "POST"])
 @login_required
 def get_user(user_id):
-    inf = spn = None
+    inf = spn = adm = None
     roles = user_roles(user_id)
     curr_user_roles = user_roles(current_user.user_id)
     camps = None
@@ -255,11 +255,11 @@ def get_user(user_id):
         if 'Sponser' in curr_user_roles:
             camps = Campaign.query.filter_by(campaign_by = current_user.user_id).all()
 
-    elif 'Amdin' in roles:
+    elif 'Admin' in roles:
         roles = 'Admin'
         adm = Admin.query.get(user_id)
 
-    return render_template('uni/profile.html', profile = user_profile, roles = curr_user_roles, role = [roles], inf = inf, spn = spn, camps = camps, page = 'Profile')
+    return render_template('uni/profile.html', profile = user_profile, roles = curr_user_roles, role = [roles], inf = inf, spn = spn, adm = adm, camps = camps, page = 'Profile')
 
 @home.route('/send/rqst/<int:inf_id>/<int:camp_id>')
 @login_required

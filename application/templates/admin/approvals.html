@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{%block title%}Admin Dashboard{%endblock%}
+{% block content %}
+<center>
+    <h3>Admin Approvals</h3>
+    {%if not users%}
+        <h3>No Approval Requests Yet</h3>
+    {%else%}
+        <div class="contatiner" style="max-width: 1100px;">
+        <table class="table " style="text-align: center;">
+            <thead >
+            <tr>
+                <th scope="col">Sr. No.</th>
+                <th scope="col">Eamil Id</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for user in users%}
+            <tr>
+                <th scope="row">{{loop.index}}</th>
+                <td><a href="/get/{{user.user_id}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{user.email}}</a></td>
+                <td>
+                    <a class="btn btn-success" href="/admin/approvals/approve/{{user.user_id}}">Approve</a>
+                    <a class="btn btn-danger" href="/admin/approvals/delete/{{user.user_id}}">Delete</a>
+                </td>
+            </tr>
+            {%endfor%}
+            </tbody>
+        </table>
+        </div>   
+    {%endif%}
+</center>
+<script src="/st/js/submit.js"></script>
+{%endblock%}

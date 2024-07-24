@@ -17,7 +17,11 @@
             <br><br>
             <center>
                 {{form.submit(class="btn btn-outline-secondary")}} <br>
-                <span>New User? <a href="{{url_for('user_auth.register')}}" class="link-secondary link-offset-2 link-offset-1-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Register</a></span>
+                {%if page == 'Admin Login'%}
+                    <span>New Admin? <a href="{{url_for('user_auth.adminRegister')}}" class="link-secondary link-offset-2 link-offset-1-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Register</a></span>
+                {%else%}
+                    <span>New User? <a href="{{url_for('user_auth.register')}}" class="link-secondary link-offset-2 link-offset-1-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">Register</a></span>
+                {%endif%}
             </center>
         </form>
     </div>
