@@ -30,7 +30,7 @@ def get_sponser_data():
         except Exception as e:
             flash(e)
 
-    return render_template('auth/user_details.html', page = 'login', role = 'sponser',form = form)
+    return render_template('auth/user_details.html', page = 'login', role = 'Sponser',form = form)
 
 @sponser.route('/new/campaign', methods = ['GET', 'POST'])
 @login_required

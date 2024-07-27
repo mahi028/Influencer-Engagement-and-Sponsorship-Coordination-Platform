@@ -29,7 +29,7 @@ def get_influencer_data():
         except Exception as e:
             flash(e)
 
-    return render_template('auth/user_details.html', page = 'login', role = 'influencer', form = form)
+    return render_template('auth/user_details.html', page = 'login', role = 'Influencer', form = form)
 
         
 @influencer.route('/new/post', methods = ['GET', 'POST'])

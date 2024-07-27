@@ -2,7 +2,7 @@
 {%block title%}{{role}}-Details{%endblock%}
 
     {% block content %}
-    {%if role == 'sponser'%}
+    {%if role == 'Sponser'%}
     <div class="container" style="max-width: 600px;">
         <center>
             <h1> Company/Individual Details </h1>
@@ -12,8 +12,8 @@
             {{form.company_name.label(class="form-label")}}
             {{form.company_name(class="form-control")}} <br>
 
-            {{form.industry.label(class="form-label")}}
-            {{form.industry(class="form-control")}} <br>
+            {{form.industry.label}}
+            {{form.industry(class="btn btn-secondary dropdown-toggle")}} <br>
             
             {{form.budget.label(class="form-label")}}
             {{form.budget(class="form-control")}} <br>
@@ -27,7 +27,7 @@
         </form>
     </div>
     
-    {%elif role == 'influencer'%}
+    {%elif role == 'Influencer'%}
     <div class="container" style="max-width: 600px;">
         <center>
             <h1> Personal Details </h1>
@@ -37,8 +37,8 @@
             {{form.name.label(class="form-label")}}
             {{form.name(class="form-control")}} <br>
 
-            {{form.category.label(class="form-label")}}
-            {{form.category(class="form-control")}} <br>
+            {{form.category.label}}
+            {{form.category(class="btn btn-secondary dropdown-toggle")}} <br>
             
             {{form.about.label(class="form-label")}}
             {{form.about(class="form-control")}} <br>
