@@ -43,7 +43,6 @@ class Influencer(db.Model):
     influencer_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
     name = db.Column(db.String, nullable = False)
     category = db.Column(db.String, nullable = False)
-    niche = db.Column(db.String, nullable = False)
     about = db.Column(db.String, nullable = True)
     # reach = db.Column(db.Integer, nullable = True)
     user = db.relationship('User', backref=db.backref('influencers', cascade="all, delete-orphan"))
@@ -62,6 +61,7 @@ class Campaign(db.Model):
     image_path = db.Column(db.String, nullable=True, default = 'user.png')
     flag = db.Column(db.Boolean, nullable = False, default = False)
     flag_reason = db.Column(db.String, nullable = True)
+    category = db.Column(db.String)
     
     sponser = db.relationship('Sponser', backref = db.backref('campaigns', cascade = "all, delete-orphan"))
 

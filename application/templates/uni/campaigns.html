@@ -26,6 +26,7 @@
                   <p class="card-text">
                       {{campaign.desc[:50]+'...'}}
                   </p>
+                  <p>{{campaign.category}}</p>
                   <p class="card-text">
                     <small class="text-muted">by -{{campaign.sponser.company_name}}</small></p>
                     {%if campaign.campaign_by == current_user.user_id%}

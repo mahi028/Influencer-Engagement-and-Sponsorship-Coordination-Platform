@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, jsonify, redirect, request, url_for, flash
 from application import db
 from application.modals import Sponser, Campaign, User, Influencer, Requests, Posts
-from application.form import SponserDetailForm, CampaignDetails, PaymentForm, UpdateCampForm
+from application.form import SponserDetailForm, CampaignDetails, PaymentForm, UpdateCampForm, categories
 from application.validation import UserError
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
@@ -18,7 +18,7 @@ sponser = Blueprint('sponser', __name__)
 @login_required
 def get_sponser_data():            
     form = SponserDetailForm()
-
+    form.industry.choices = categories
     if form.validate_on_submit():
         try:
             new_sponser = Sponser(sponser_id = current_user.user_id, company_name = form.company_name.data, industry = form.industry.data, budget = int(form.budget.data), about = form.about.data)
@@ -37,6 +37,7 @@ def get_sponser_data():
 def new_campaign():
     user = User.query.get(current_user.user_id)
     form = CampaignDetails()
+    form.category.choices = categories
     roles = user_roles(current_user.user_id)
 
     if form.validate_on_submit():
@@ -58,7 +59,7 @@ def new_campaign():
                 upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
                 image_path = os.path.join(upload_folder, image_filename)
             try:
-                new_camp = Campaign(campaign_by = current_user.user_id, campaign_name = form.campaign_name.data, desc = form.desc.data, requirements = form.requirements.data, start_date = form.start_date.data, end_date = form.end_date.data, budget = form.budget.data, goals = form.goals.data, image_path = new_image_name, visibility = True if int(form.visibility.data) == 1 else False)
+                new_camp = Campaign(campaign_by = current_user.user_id, campaign_name = form.campaign_name.data, desc = form.desc.data, category = form.category.data, requirements = form.requirements.data, start_date = form.start_date.data, end_date = form.end_date.data, budget = form.budget.data, goals = form.goals.data, image_path = new_image_name, visibility = True if int(form.visibility.data) == 1 else False)
                 db.session.add(new_camp)
                 db.session.commit()
                 if image_file:

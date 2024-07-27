@@ -190,12 +190,14 @@ def search():
         user = User.query.filter_by(email = searched).first()
         if user:
             return redirect(f'/get/{user.user_id}') 
+        
         sponser = Sponser.query.filter(Sponser.company_name.like('%'+searched+'%')).all()
         influencer = Influencer.query.filter(Influencer.name.like('%'+searched+'%')).all()
+        camps_by_category = Campaign.query.filter(Campaign.category.like('%'+searched+'%')).all()
         camps_by_name = Campaign.query.filter(Campaign.campaign_name.like('%'+searched+'%')).all()
         camps_by_desc = Campaign.query.filter(Campaign.desc.like('%'+searched+'%')).all()
 
-        return render_template('uni/searched.html', roles = roles, camps_by_name = camps_by_name, camps_by_desc = camps_by_desc, sponser = sponser, influencer = influencer)
+        return render_template('uni/searched.html', roles = roles, searched = searched, camps_by_category = camps_by_category, camps_by_name = camps_by_name, camps_by_desc = camps_by_desc, sponser = sponser, influencer = influencer)
  
 
 @home.route('/view/<int:camp_id>', methods = ["GET", "POST"])

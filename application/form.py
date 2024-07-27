@@ -21,21 +21,21 @@ class LoginForm(FlaskForm):
 
 class SponserDetailForm(FlaskForm):
     company_name = StringField('Company/Individual Name*', validators = [DataRequired()])
-    industry = StringField('Industry*', validators = [DataRequired()])
+    industry = SelectField('Industry*', choices=[], validators = [DataRequired()])
     budget = IntegerField('Company Budget*', validators = [DataRequired()])
     about = StringField('About You or Your Company')
     submit = SubmitField('Submit')
 
 class InfluencerDetailForm(FlaskForm):
     name = StringField('Name*', validators = [DataRequired()])
-    category = StringField('Category*', validators = [DataRequired()])
-    niche = StringField('Niche*', validators = [DataRequired()])
+    category = SelectField('Category*', choices=[],validators = [DataRequired()])
     about = StringField('About Yourself')
     submit = SubmitField('Submit')
 
 class CampaignDetails(FlaskForm):
     campaign_name = StringField('Campaign Name*', validators = [DataRequired()])
     desc = TextAreaField('Description*', validators = [DataRequired()])
+    category = SelectField('Category*', choices=[],validators = [DataRequired()])
     requirements = TextAreaField('requirements*', validators = [DataRequired()])
     start_date = DateField('Start-Date')
     end_date = DateField('End-Date*', validators = [DataRequired()])
@@ -82,3 +82,54 @@ class PaymentForm(FlaskForm):
     amount = IntegerField('Amount (in $dollars)*', validators=[DataRequired()])    
     password = PasswordField('Password*', validators=[DataRequired()])
     submit = SubmitField('Pay')
+
+categories = {
+        "Niche/Industry": [
+            "Fashion",
+            "Beauty",
+            "Travel",
+            "Fitness",
+            "Food",
+            "Technology",
+            "Gaming",
+            "Lifestyle",
+            "Parenting",
+            "Finance",
+            "Education",
+            "Automotive",
+            "Music",
+            "Photography",
+            "Art and Crafts",
+            "Books and Literature",
+            "Environment and Sustainability",
+            "Pets",
+            "Business",
+            "Sports"
+        ],
+        "Content Type": [
+            "Vloggers",
+            "Reviewers",
+            "Tutorial Creators",
+            "Entertainers",
+            "Activists",
+            "Live Streamers"
+        ],
+        "Platform": [
+            "Instagram",
+            "YouTube",
+            "TikTok",
+            "Twitter",
+            "Facebook",
+            "Blogging",
+            "Twitch",
+            "LinkedIn",
+            "Pinterest"
+        ],
+        "Audience Demographics": [
+            "Teens",
+            "Young Adults",
+            "Parents",
+            "Professionals",
+            "Seniors"
+        ]
+    }

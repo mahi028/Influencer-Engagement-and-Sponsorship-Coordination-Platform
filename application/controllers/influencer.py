@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, jsonify, redirect, request, url_for, flash
 from application import db
 from application.modals import Sponser, Campaign, User, Influencer, Requests, Posts
-from application.form import SponserDetailForm, CampaignDetails, InfluencerDetailForm, PostDetails, UpdatePostForm
+from application.form import SponserDetailForm, CampaignDetails, InfluencerDetailForm, PostDetails, UpdatePostForm, categories
 from application.validation import UserError
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
@@ -16,10 +16,11 @@ influencer = Blueprint('influencer', __name__)
 @login_required
 def get_influencer_data():
     form = InfluencerDetailForm()
-
+    form.category.choices = categories
+    
     if form.validate_on_submit():
         try:
-            new_inf = Influencer(influencer_id = current_user.user_id, name = form.name.data, category = form.category.data, niche = form.niche.data, about = form.about.data)
+            new_inf = Influencer(influencer_id = current_user.user_id, name = form.name.data, category = form.category.data, about = form.about.data)
             db.session.add(new_inf)
             db.session.commit()
             flash('Influencer account has been created :)')

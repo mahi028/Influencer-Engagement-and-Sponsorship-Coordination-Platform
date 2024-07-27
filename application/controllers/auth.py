@@ -1,9 +1,10 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from application import db
-from application.modals import User, UserRoles, Admin
+from application.modals import User, UserRoles, Admin, Influencer, Sponser
 from application import login_manager
 from application.form import RegisterForm, LoginForm
 from application.hash import hashpw, checkpw
+from application.get_roles import user_roles
 from flask_login import login_required, login_user, logout_user, current_user
 from werkzeug.utils import secure_filename
 import os
@@ -35,9 +36,13 @@ def login():
                 user.active_flag = True
                 db.session.commit()
                 flash('Welcome :)')
-
-                return redirect(url_for('home.dashboard'))
-
+                roles = user_roles(current_user.user_id)
+                if 'Influencer' in roles and not Influencer.query.get(current_user.user_id):
+                    return redirect(url_for('influencer.get_influencer_data'))
+                elif 'Sponser' in roles and not Sponser.query.get(current_user.user_id):
+                    return redirect(url_for('sponser.get_sponser_data'))
+                else:
+                    return redirect(url_for('home.dashboard'))
             else:
                 flash('Wrong Password :( Please try again ')
             
