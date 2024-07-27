@@ -5,16 +5,8 @@ from application.validation import UserError
 from application.modals import User
 from datetime import datetime
 
-user_parser = reqparse.RequestParser()
-user_parser.add_argument('email')
-
-activity_fields = {
-    "status" : fields.String,
-}
-
 class Activities(Resource):
     def get(self, type_of_data):
-
         match type_of_data:
             case 'request_stats':
                 requests = Requests.query.all()

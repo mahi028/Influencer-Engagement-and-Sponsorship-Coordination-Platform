@@ -90,15 +90,3 @@ class Requests(db.Model):
 
     influencer = db.relationship('Influencer', backref=db.backref('requests', cascade="all, delete-orphan"))
     campaign = db.relationship('Campaign', backref=db.backref('requests', cascade="all, delete-orphan"))
-
-# class Camp_request(db.Model):
-#     request_id = db.Column(db.Integer, db.ForeignKey("requests.request_id"), primary_key = True)
-#     payment_amount = db.Column(db.Integer)
-#     stutus = db.Column(db.String(15))
-#     n_amount = db.Column(db.Integer, nullable=True)
-#     request = db.relationship('Requests', backref = db.backref('camp_requests', cascade = "all, delete-orphan"))
-
-class Camp_msg(db.Model):
-    msg_id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-    request_id = db.Column(db.Integer, db.ForeignKey("requests.request_id"))
-    msg = db.Column(db.String)
