@@ -101,6 +101,11 @@
                     </div>
                     {%endif%}
                 {%endif%}
+                {%if current_user.user_id == profile.user_id%}
+                    <br><br><div class="delete">
+                        <a href="/delete/account" class="btn btn-danger">--Delete Account--</a>
+                    </div>
+                {%endif%}
                 {%if 'Admin' in roles%}
                         {%if profile.flag %}
                             <div id="flag_cont{{profile.user_id}}">

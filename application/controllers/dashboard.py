@@ -77,6 +77,7 @@ def profile_edit(user):
                     db.session.commit()
                     return jsonify({'Request' : 'Success', 'new_val' : Influencer.query.get(current_user.user_id).name})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
             case 'category':
                 try:
@@ -84,6 +85,7 @@ def profile_edit(user):
                     db.session.commit()
                     return jsonify({'Request' : 'Success', 'new_val' : Influencer.query.get(current_user.user_id).category})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
             case 'about':
                 try:
@@ -91,6 +93,7 @@ def profile_edit(user):
                     db.session.commit()
                     return jsonify({'Request' : 'Success', 'new_val' : Influencer.query.get(current_user.user_id).about})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
 
     elif user == 'spn':
@@ -102,6 +105,7 @@ def profile_edit(user):
                     db.session.commit()
                     return jsonify({'Request' : 'Success', 'new_val' : Sponser.query.get(current_user.user_id).company_name})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
             case 'category':
                 try:
@@ -109,6 +113,7 @@ def profile_edit(user):
                     db.session.commit()
                     return jsonify({'Request' : 'Success', 'new_val' : Sponser.query.get(current_user.user_id).industry})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
             case 'about':
                 try:
@@ -116,6 +121,7 @@ def profile_edit(user):
                     db.session.commit()
                     return jsonify({'Request' : 'Success', 'new_val' : Sponser.query.get(current_user.user_id).about})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
                 
 @home.route('/update_imp', methods = ["GET", "POST"])
@@ -173,6 +179,7 @@ def update_imp():
             flash('Profile Updated Successfully!')
             return redirect(f'/get/{current_user.user_id}')
         except Exception as e:
+            db.session.rollback()
             flash('Something Went Wrong. Try Again\n', e)
 
     return render_template('auth/update_user.html', user = curr_user, roles = roles, form = form)
@@ -232,6 +239,7 @@ def view_post(post_id):
             flash('Suggestion Made')
             post = Posts.query.get(post_id)
         except Exception as e:
+            db.session.rollback()
             flash(e)
 
     return render_template('influencer/post.html', post = post, liked_by = liked_by, likes = len(liked_by), liked = liked, user = user, roles = roles, suggest_form = suggest_form)
@@ -283,6 +291,7 @@ def send_rqst(inf_id, camp_id):
                     flash('Request Made')
                     return redirect(url_for('home.requests'))
                 except Exception as e:
+                    db.session.rollback()
                     flash(e)
         else:
             flash('No such Influencer or Campaign')
@@ -308,6 +317,7 @@ def negotiate(rqst_id):
                 db.session.commit()
                 return redirect(url_for('home.requests'))
             except Exception as e:
+                db.session.rollback()
                 flash(e)
         return render_template('uni/colab.html', form = form, page = 'Negotiate', roles = roles)
     flash('Request has been Accepted or Completed.')
@@ -322,6 +332,7 @@ def delete_rqst(rqst_id):
         db.session.commit()
         flash('Request Deleted')
     except Exception as e:
+        db.session.rollback()
         flash(e)
     return redirect(url_for('home.requests'))
 
@@ -357,6 +368,7 @@ def accept_rqst(rqst_id):
                 db.session.commit()
                 flash('Accepted')
             except Exception as e:
+                db.session.rollback()
                 flash(e)
                 return redirect(url_for('home.requests'))
     return redirect(url_for('home.requests'))        
@@ -365,7 +377,7 @@ def accept_rqst(rqst_id):
 @login_required
 def add_balance():
     form = PaymentForm()
-    user = User.query.get(current_user.user_id)
+    user = User.query.get_or_404(current_user.user_id)
     if form.validate_on_submit():
         if form.amount.data >= 10:
             if checkpw(form.password.data, user.password):
@@ -375,6 +387,7 @@ def add_balance():
                     flash('Payment Successful!')
                     return redirect(f'/get/{current_user.user_id}')
                 except Exception as e:
+                    db.session.rollback()
                     flash(e)
             else:
                 flash('Wrong Password, Try again.')
@@ -385,34 +398,47 @@ def add_balance():
 @home.route('/like/<string:action>/<int:post_id>', methods = ["PUT"])
 @login_required
 def like_post(action, post_id):
-    curr_user = User.query.get(current_user.user_id)
-    post = Posts.query.get(post_id)
+    curr_user = User.query.get_or_404(current_user.user_id)
+    post = Posts.query.get_or_404(post_id)
 
-    if curr_user and post:
-        like = LikedPost.query.get((curr_user.user_id, post.post_id))
-        match action:
-            case 'like':
-                if like:
-                    return jsonify({'Request' : 'Post Already Liked'})
-                else:
-                    try:
-                        db.session.add(LikedPost(user_id = curr_user.user_id, post_id = post.post_id))
-                        inf = Influencer.query.get(post.post_by)
-                        inf.reach += 1
-                        db.session.commit()
-                        return jsonify({'Request' : 'Post Liked'})
-                    except Exception as e:
-                        return jsonify({'Request' : e})
-            case 'dislike':
-                if not like:
-                    return jsonify({'Request' : 'Post Already Dis-Liked'})
+    like = LikedPost.query.get((curr_user.user_id, post.post_id))
+    match action:
+        case 'like':
+            if like:
+                return jsonify({'Request' : 'Post Already Liked'})
+            else:
                 try:
-                    db.session.delete(LikedPost.query.get((curr_user.user_id, post.post_id)))
+                    db.session.add(LikedPost(user_id = curr_user.user_id, post_id = post.post_id))
                     inf = Influencer.query.get(post.post_by)
-                    inf.reach -= 1
+                    inf.reach += 1
                     db.session.commit()
-                    return jsonify({'Request' : 'Post Dis-Liked'})
+                    return jsonify({'Request' : 'Post Liked'})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
-    else:
-        raise UserError(404, 'PostNotFound')
+        case 'dislike':
+            if not like:
+                return jsonify({'Request' : 'Post Already Dis-Liked'})
+            try:
+                db.session.delete(LikedPost.query.get((curr_user.user_id, post.post_id)))
+                inf = Influencer.query.get(post.post_by)
+                inf.reach -= 1
+                db.session.commit()
+                return jsonify({'Request' : 'Post Dis-Liked'})
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({'Request' : e})
+    
+@home.route('/delete/account')
+@login_required
+def delete_account():
+    user = User.query.get_or_404(current_user.user_id)
+    try:
+        db.session.delete(user)
+        db.session.commit()
+        flash('Account Deleted')
+        return redirect(url_for('home.landing_page'))
+    except Exception as e:
+        db.session.rollback()
+        flash(e)
+        return redirect(url_for('home.profile'))

@@ -27,6 +27,7 @@ def get_influencer_data():
             return redirect(url_for('home.dashboard'))
 
         except Exception as e:
+            db.session.rollback()
             flash(e)
 
     return render_template('auth/user_details.html', page = 'login', role = 'Influencer', form = form)
@@ -78,9 +79,8 @@ def new_post():
             return redirect(url_for('home.dashboard'))
         
         except Exception as e:
-            flash(e)       
-        # else:
-        #     flash('Please Select a Campaign')
+            db.session.rollback()
+            flash(e)
 
     return render_template('influencer/new_post.html', user = influencer, page = 'Create Post', form = form, roles = roles)
 
@@ -107,6 +107,7 @@ def edit_post(post_id):
                     db.session.commit()
                     return jsonify({'Request' : 'Success', 'new_val' : Posts.query.get(post_id).post_title})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
 
             case 'desc':
@@ -115,6 +116,7 @@ def edit_post(post_id):
                     db.session.commit()
                     return jsonify({'Request' : 'Success', 'new_val' : Posts.query.get(post_id).desc})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
                 
             case 'visible':
@@ -127,6 +129,7 @@ def edit_post(post_id):
                     else:
                         return jsonify({'Request' : 'Post has not been approved by the Sponser yet.'})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
                 
     elif post.request.campaign.campaign_by == current_user.user_id:
@@ -140,6 +143,7 @@ def edit_post(post_id):
                     db.session.commit()
                     return jsonify({'Request' : 'Success, Reload to see Changes'})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
 
 @influencer.route('/update_post/<int:post_id>', methods = ["GET", "POST"])            
@@ -181,6 +185,7 @@ def update_post(post_id):
             flash('Profile Updated Successfully!')
             return redirect(f'/view/post/{post_id}')
         except Exception as e:
+            db.session.rollback()
             flash('Something Went Wrong. Try Again\n', e)
 
     return render_template('influencer/update_post.html', form = form, user = curr_user, roles = roles, page = 'Update Post')
@@ -195,5 +200,6 @@ def delete_post(post_id):
             db.session.commit()
             return jsonify({'Request' : 'Success'})
         except:
+            db.session.rollback()
             return jsonify({'Request' : 'Failed to delete. Try Again'})
     return jsonify({'Request' : 'No such post exists'})

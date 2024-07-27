@@ -28,6 +28,7 @@ def get_sponser_data():
             return redirect(url_for('home.dashboard'))
 
         except Exception as e:
+            db.session.rollback()
             flash(e)
 
     return render_template('auth/user_details.html', page = 'login', role = 'Sponser',form = form)
@@ -68,6 +69,7 @@ def new_campaign():
                 return redirect(url_for('home.dashboard'))
             
             except Exception as e:
+                db.session.rollback()
                 flash(e)
         else:
             flash('Campaign Name must be unique')
@@ -84,6 +86,7 @@ def delete_camp(campaign_id):
             db.session.commit()
             return jsonify({'Request' : 'Success'})
         except:
+            db.session.rollback()
             return jsonify({'Request' : 'Failed to delete. Try Again'})
     return jsonify({'Request' : 'No such campaign exists'})
     
@@ -112,6 +115,7 @@ def edit_camp(camp_id):
                     db.session.commit()
                     return jsonify({'Request' : 'Success', 'new_val' : Campaign.query.get(camp_id).campaign_name})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
         
             case 'desc':
@@ -120,6 +124,7 @@ def edit_camp(camp_id):
                     db.session.commit()
                     return jsonify({'Request' : 'Success', 'new_val' : Campaign.query.get(camp_id).desc})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
             case 'requirements':
                 try:
@@ -127,6 +132,7 @@ def edit_camp(camp_id):
                     db.session.commit()
                     return jsonify({'Request' : 'Success', 'new_val' : Campaign.query.get(camp_id).requirements})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
                 
             case 'goals':
@@ -135,6 +141,7 @@ def edit_camp(camp_id):
                     db.session.commit()
                     return jsonify({'Request' : 'Success', 'new_val' : Campaign.query.get(camp_id).goals})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
             
             case 'budget':
@@ -143,6 +150,7 @@ def edit_camp(camp_id):
                     db.session.commit()
                     return jsonify({'Request' : 'Success', 'new_val' : Campaign.query.get(camp_id).budget})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
 
             case 'visible':
@@ -153,6 +161,7 @@ def edit_camp(camp_id):
                     db.session.commit()
                     return jsonify({'Request' : 'Success, Reload to see changes', 'new_val' : Campaign.query.get(camp_id).visibility})
                 except Exception as e:
+                    db.session.rollback()
                     return jsonify({'Request' : e})
     else:
         return jsonify({'Request' : 'Not Authorised'})
@@ -202,6 +211,7 @@ def update_camp(camp_id):
             flash('Profile Updated Successfully!')
             return redirect(f'/view/{camp_id}')
         except Exception as e:
+            db.session.rollback()
             flash('Something Went Wrong. Try Again\n', e)
 
     return render_template('sponser/update_camp.html', form = form, user = curr_user, roles = roles, page = 'Update Campaign')
@@ -248,6 +258,7 @@ def payment(rqst_id):
                             flash('Payment Successful!')
                             return redirect(url_for('home.requests'))
                         except Exception as e:
+                            db.session.rollback()
                             flash(e)
                     else:
                         flash('Not Enough Balance')

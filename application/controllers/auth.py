@@ -95,6 +95,7 @@ def register():
                         image_file.save(image_path) 
 
                 except Exception as e:
+                    db.session.rollback()
                     flash(e)
 
                 else:
@@ -108,8 +109,7 @@ def register():
                         return redirect(url_for('user_auth.login'))
                     
                     except Exception as e:
-                        db.session.delete(added_user)
-                        db.session.commit()
+                        db.session.rollback()
                         flash(e)
 
             else:
@@ -178,6 +178,7 @@ def adminRegister():
                         image_file.save(image_path) 
 
                 except Exception as e:
+                    db.session.rollback()
                     flash(e)
 
                 else:
@@ -191,8 +192,7 @@ def adminRegister():
                         return redirect(url_for('user_auth.adminLogin'))
                     
                     except Exception as e:
-                        db.session.delete(added_user)
-                        db.session.commit()
+                        db.session.rollback()
                         flash(e)
 
             else:

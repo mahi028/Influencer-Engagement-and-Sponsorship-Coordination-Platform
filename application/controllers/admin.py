@@ -124,6 +124,7 @@ def approval_rqst(action, admin_id):
                     db.session.commit()
                     flash('Admin Approved')
                 except Exception as e:
+                    db.session.rollback()
                     flash(e)
             
             case 'delete':
@@ -132,6 +133,7 @@ def approval_rqst(action, admin_id):
                     db.session.commit()
                     flash('Request deleted')
                 except Exception as e:
+                    db.session.rollback()
                     flash(e)
 
     else:
