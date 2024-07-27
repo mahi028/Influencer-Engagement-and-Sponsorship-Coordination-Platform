@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
-from application.modals import User, Requests, Influencer, Sponser, Campaign, Admin, UserRoles, Posts
+from application.modals import User, Requests, Influencer, Sponser, Campaign, Admin, UserRoles, Posts, LikedPost
 from application.form import UpdateProfileForm, SeachForm, NegotiateForm, PaymentForm, SuggestionForm
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
@@ -215,6 +215,8 @@ def view_camp(camp_id):
 def view_post(post_id):
     user = User.query.get(current_user.user_id)
     post = Posts.query.get(post_id)
+    liked_by = LikedPost.query.filter_by(post_id = post.post_id).all()
+    liked = True if LikedPost.query.get((current_user.user_id, post.post_id)) else False
     roles = user_roles(current_user.user_id)
     if post.flag and post.influencer.user.flag and not (post.post_by == current_user.user_id or 'Admin' in roles):
         return 'Post Not Found'
@@ -232,7 +234,7 @@ def view_post(post_id):
         except Exception as e:
             flash(e)
 
-    return render_template('influencer/post.html', post = post, user = user, roles = roles, suggest_form = suggest_form)
+    return render_template('influencer/post.html', post = post, liked_by = liked_by, likes = len(liked_by), liked = liked, user = user, roles = roles, suggest_form = suggest_form)
 
 @home.route('/get/<int:user_id>', methods = ["GET", "POST"])
 @login_required
@@ -379,3 +381,38 @@ def add_balance():
         else:
             flash('Amount must be alteast $10')
     return render_template('uni/pay.html', form = form)
+
+@home.route('/like/<string:action>/<int:post_id>', methods = ["PUT"])
+@login_required
+def like_post(action, post_id):
+    curr_user = User.query.get(current_user.user_id)
+    post = Posts.query.get(post_id)
+
+    if curr_user and post:
+        like = LikedPost.query.get((curr_user.user_id, post.post_id))
+        match action:
+            case 'like':
+                if like:
+                    return jsonify({'Request' : 'Post Already Liked'})
+                else:
+                    try:
+                        db.session.add(LikedPost(user_id = curr_user.user_id, post_id = post.post_id))
+                        inf = Influencer.query.get(post.post_by)
+                        inf.reach += 1
+                        db.session.commit()
+                        return jsonify({'Request' : 'Post Liked'})
+                    except Exception as e:
+                        return jsonify({'Request' : e})
+            case 'dislike':
+                if not like:
+                    return jsonify({'Request' : 'Post Already Dis-Liked'})
+                try:
+                    db.session.delete(LikedPost.query.get((curr_user.user_id, post.post_id)))
+                    inf = Influencer.query.get(post.post_by)
+                    inf.reach -= 1
+                    db.session.commit()
+                    return jsonify({'Request' : 'Post Dis-Liked'})
+                except Exception as e:
+                    return jsonify({'Request' : e})
+    else:
+        raise UserError(404, 'PostNotFound')

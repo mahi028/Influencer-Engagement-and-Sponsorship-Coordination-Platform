@@ -44,7 +44,7 @@ class Influencer(db.Model):
     name = db.Column(db.String, nullable = False)
     category = db.Column(db.String, nullable = False)
     about = db.Column(db.String, nullable = True)
-    # reach = db.Column(db.Integer, nullable = True)
+    reach = db.Column(db.Integer, nullable = False, default = 0)
     user = db.relationship('User', backref=db.backref('influencers', cascade="all, delete-orphan"))
 
 class Campaign(db.Model):
@@ -68,7 +68,7 @@ class Campaign(db.Model):
 class Posts(db.Model):
     post_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     post_by = db.Column(db.Integer, db.ForeignKey("influencer.influencer_id"), nullable=False)
-    post_for = db.Column(db.Integer, db.ForeignKey("requests.request_id"), nullable=False)
+    post_for = db.Column(db.Integer, db.ForeignKey("requests.request_id"))
     post_title = db.Column(db.String, nullable=False)
     desc = db.Column(db.String, nullable=False)
     image_path = db.Column(db.String, nullable=True, default='user.png')
@@ -90,3 +90,10 @@ class Requests(db.Model):
 
     influencer = db.relationship('Influencer', backref=db.backref('requests', cascade="all, delete-orphan"))
     campaign = db.relationship('Campaign', backref=db.backref('requests', cascade="all, delete-orphan"))
+
+class LikedPost(db.Model):
+    user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"), primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey("posts.post_id"), primary_key=True)
+
+    user = db.relationship('User', backref=db.backref('likedposts', cascade="all, delete-orphan"))
+    post = db.relationship('Posts', backref=db.backref('likedposts', cascade="all, delete-orphan"))

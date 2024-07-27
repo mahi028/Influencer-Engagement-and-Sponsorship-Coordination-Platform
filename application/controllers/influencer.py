@@ -49,35 +49,38 @@ def new_post():
 
     if form.validate_on_submit():
         post_camp = Campaign.query.filter_by(campaign_name = form.post_for.data).first()
-        post_for = Requests.query.filter_by(campaign_id = post_camp.campaign_id, influencer_id = current_user.user_id).first()
-        if post_for:
-            image_file = request.files['image']
-            new_image_name = None
-            image_path = None
-            if image_file:
-            # Create unique name for image
-                unique_name = str(uuid4())
-                image_ext = image_file.filename.split('.')[1] #image extension
-                new_image_name = unique_name+'.'+image_ext
-                image_file.filename = new_image_name
-                image_filename = secure_filename(image_file.filename)
-                
-                base_dir = os.path.dirname(os.path.abspath(__file__))
-                upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
-                image_path = os.path.join(upload_folder, image_filename)
-            try:
-                new_post = Posts(post_by = current_user.user_id, post_for = post_for.request_id, post_title = form.post_title.data, desc = form.desc.data, image_path = new_image_name, visibility = True if int(form.visibility.data) == 1 else False)
-                db.session.add(new_post)
-                db.session.commit()
-                if image_file:
-                    image_file.save(image_path)
-                flash('New Post Created')
-                return redirect(url_for('home.dashboard'))
+        post_for = None
+
+        if post_camp:
+            post_for = Requests.query.filter_by(campaign_id = post_camp.campaign_id, influencer_id = current_user.user_id).first().request_id
+
+        image_file = request.files['image']
+        new_image_name = None
+        image_path = None
+        if image_file:
+        # Create unique name for image
+            unique_name = str(uuid4())
+            image_ext = image_file.filename.split('.')[1] #image extension
+            new_image_name = unique_name+'.'+image_ext
+            image_file.filename = new_image_name
+            image_filename = secure_filename(image_file.filename)
             
-            except Exception as e:
-                flash(e)       
-        else:
-            flash('Please Select a Campaign')
+            base_dir = os.path.dirname(os.path.abspath(__file__))
+            upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
+            image_path = os.path.join(upload_folder, image_filename)
+        try:
+            new_post = Posts(post_by = current_user.user_id, post_for = post_for, post_title = form.post_title.data, desc = form.desc.data, image_path = new_image_name, approved = True if not post_for else False, visibility = True if int(form.visibility.data) == 1 else False)
+            db.session.add(new_post)
+            db.session.commit()
+            if image_file:
+                image_file.save(image_path)
+            flash('New Post Created')
+            return redirect(url_for('home.dashboard'))
+        
+        except Exception as e:
+            flash(e)       
+        # else:
+        #     flash('Please Select a Campaign')
 
     return render_template('influencer/new_post.html', user = influencer, page = 'Create Post', form = form, roles = roles)
 

@@ -64,6 +64,11 @@
                     {%endif%} 
                 {%endif%}
                 </p>
+                {%if 'Influencer' in roles%}
+                <p>
+                    Reach : {{inf.reach}}
+                </p>
+                {%endif%}
                 {%if profile.user_id == current_user.user_id%}
                     <p id="wallet_balance">
                         <strong>Wallet Balance</strong>: <span>${{profile.wallet_balance}}</span> <a href="/wallet/add_balance" class="btn btn-info">Fill Your Wallet</a>
