@@ -8,6 +8,7 @@ from sqlalchemy import desc as decend
 from application.get_roles import user_roles
 from application.hash import hashpw, checkpw
 from werkzeug.utils import secure_filename
+from datetime import datetime
 from uuid import uuid4
 import os
 
@@ -60,6 +61,10 @@ def new_campaign():
                 upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
                 image_path = os.path.join(upload_folder, image_filename)
             try:
+                if form.end_date.data:
+                    end_date = str(form.end_date.data).split('-')
+                    form.end_date.data = datetime(year = int(end_date[0]), month = int(end_date[1]), day = int(end_date[2]), hour = 23, minute = 59, second = 59)
+
                 new_camp = Campaign(campaign_by = current_user.user_id, campaign_name = form.campaign_name.data, desc = form.desc.data, category = form.category.data, requirements = form.requirements.data, start_date = form.start_date.data, end_date = form.end_date.data, budget = form.budget.data, goals = form.goals.data, image_path = new_image_name, visibility = True if int(form.visibility.data) == 1 else False)
                 db.session.add(new_camp)
                 db.session.commit()
@@ -179,6 +184,8 @@ def update_camp(camp_id):
             camp.start_date = form.start_date.data
         
         if form.end_date.data:
+            end_date = str(form.end_date.data).split('-')
+            form.end_date.data = datetime(year = int(end_date[0]), month = int(end_date[1]), day = int(end_date[2]), hour = 23, minute = 59, second = 59)
             camp.end_date = form.end_date.data
 
         image_file = request.files['image']
