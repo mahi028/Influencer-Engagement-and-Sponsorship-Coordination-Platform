@@ -84,6 +84,9 @@ class PaymentForm(FlaskForm):
     submit = SubmitField('Pay')
 
 categories = {
+        "None": [
+            "None"
+        ],
         "Niche/Industry": [
             "Fashion",
             "Beauty",

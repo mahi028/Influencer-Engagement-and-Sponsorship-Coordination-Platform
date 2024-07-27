@@ -2,6 +2,7 @@
 {%block title%}{{page}}{%endblock%}
 {% block content %}
 <center>
+    {%if posts%}
     <h3>{{page}}</h3>
     <div class="contatiner" style="max-width: 1100px;">
     <table class="table " style="text-align: center;">
@@ -58,7 +59,10 @@
         {%endfor%}
         </tbody>
     </table>
-    </div>    
+    </div>   
+    {%else%}
+        <H1>No Posts Yet</H1>
+    {%endif%}
 </center>
 <script src="/st/js/submit.js"></script>
 {%endblock%}
