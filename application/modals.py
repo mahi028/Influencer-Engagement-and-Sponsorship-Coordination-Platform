@@ -20,8 +20,8 @@ class User(db.Model, UserMixin):
            return (self.user_id)
 
 class UserRoles(db.Model):
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
-    role_id = db.Column(db.Integer, db.ForeignKey('role.role_id'), nullable = False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'), primary_key=True,)
+    role_id = db.Column(db.Integer, db.ForeignKey('role.role_id', ondelete='CASCADE'), nullable = False)
 
     user = db.relationship('User', backref=db.backref('user_roles', cascade="all, delete-orphan"))
     role = db.relationship('Role', backref=db.backref('user_roles', cascade="all, delete-orphan"))
@@ -32,7 +32,7 @@ class Admin(db.Model):
     user = db.relationship('User', backref=db.backref('admins', cascade="all, delete-orphan"))
      
 class Sponser(db.Model):
-    sponser_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
+    sponser_id = db.Column(db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'), primary_key=True)
     company_name = db.Column(db.String, nullable = False)
     industry = db.Column(db.String, nullable = False)
     budget = db.Column(db.Integer, nullable = False)
@@ -40,7 +40,7 @@ class Sponser(db.Model):
     user = db.relationship('User', backref=db.backref('sponsers', cascade="all, delete-orphan"))
 
 class Influencer(db.Model):
-    influencer_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), primary_key=True)
+    influencer_id = db.Column(db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'), primary_key=True)
     name = db.Column(db.String, nullable = False)
     category = db.Column(db.String, nullable = False)
     about = db.Column(db.String, nullable = True)
@@ -49,7 +49,7 @@ class Influencer(db.Model):
 
 class Campaign(db.Model):
     campaign_id = db.Column(db.Integer, primary_key=True, autoincrement = True)
-    campaign_by = db.Column(db.Integer, db.ForeignKey("sponser.sponser_id"), nullable = False)
+    campaign_by = db.Column(db.Integer, db.ForeignKey("sponser.sponser_id", ondelete='CASCADE'), nullable = False)
     campaign_name = db.Column(db.String, unique=True)
     desc = db.Column(db.String, nullable=False)
     requirements = db.Column(db.String, nullable=False)
@@ -67,8 +67,8 @@ class Campaign(db.Model):
 
 class Posts(db.Model):
     post_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    post_by = db.Column(db.Integer, db.ForeignKey("influencer.influencer_id"), nullable=False)
-    post_for = db.Column(db.Integer, db.ForeignKey("requests.request_id"))
+    post_by = db.Column(db.Integer, db.ForeignKey("influencer.influencer_id", ondelete='CASCADE'), nullable=False)
+    post_for = db.Column(db.Integer, db.ForeignKey("requests.request_id", ondelete='CASCADE'))
     post_title = db.Column(db.String, nullable=False)
     desc = db.Column(db.String, nullable=False)
     image_path = db.Column(db.String, nullable=True, default='user.png')
@@ -82,8 +82,8 @@ class Posts(db.Model):
 
 class Requests(db.Model):
     request_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.campaign_id"))
-    influencer_id = db.Column(db.Integer, db.ForeignKey("influencer.influencer_id"))
+    campaign_id = db.Column(db.Integer, db.ForeignKey("campaign.campaign_id", ondelete='CASCADE'))
+    influencer_id = db.Column(db.Integer, db.ForeignKey("influencer.influencer_id", ondelete='CASCADE'))
     n_amount = db.Column(db.Integer, nullable=False)
     status = db.Column(db.String(15), nullable=False, default='Pending')
     requested_by = db.Column(db.String(15), nullable=False)
@@ -92,8 +92,8 @@ class Requests(db.Model):
     campaign = db.relationship('Campaign', backref=db.backref('requests', cascade="all, delete-orphan"))
 
 class LikedPost(db.Model):
-    user_id = db.Column(db.Integer, db.ForeignKey("user.user_id"), primary_key=True)
-    post_id = db.Column(db.Integer, db.ForeignKey("posts.post_id"), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.user_id", ondelete='CASCADE'), primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey("posts.post_id", ondelete='CASCADE'), primary_key=True)
 
     user = db.relationship('User', backref=db.backref('likedposts', cascade="all, delete-orphan"))
     post = db.relationship('Posts', backref=db.backref('likedposts', cascade="all, delete-orphan"))
