@@ -18,7 +18,7 @@ sponser = Blueprint('sponser', __name__)
 @sponser.route('/get_sponser_data', methods = ['GET', 'POST'])
 @login_required
 def get_sponser_data():            
-    if not Sponser.query.get(current_user.user_id):
+    if 'Sponser' not in user_roles(current_user.user_id):
         raise UserError(401, 'Not Authorised')
     
     form = SponserDetailForm()

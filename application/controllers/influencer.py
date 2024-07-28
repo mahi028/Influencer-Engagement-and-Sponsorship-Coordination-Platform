@@ -16,7 +16,7 @@ influencer = Blueprint('influencer', __name__)
 @influencer.route('/get_influencer_data', methods = ['GET', 'POST'])
 @login_required
 def get_influencer_data():
-    if not Influencer.query.get(current_user.user_id):
+    if 'Influencer' not in user_roles(current_user.user_id):
         raise UserError(401, 'Not Authorised')
     
     form = InfluencerDetailForm()
