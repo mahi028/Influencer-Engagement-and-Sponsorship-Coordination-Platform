@@ -1,12 +1,13 @@
 from flask import Blueprint, render_template, jsonify, redirect, request, url_for, flash
 from application import db
-from application.modals import Sponser, Campaign, User, Influencer, Requests, Posts
-from application.form import SponserDetailForm, CampaignDetails, InfluencerDetailForm, PostDetails, UpdatePostForm, categories
+from application.modals import Campaign, User, Influencer, Requests, Posts
+from application.form import InfluencerDetailForm, PostDetails, UpdatePostForm, categories
 from application.validation import UserError
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
 from application.get_roles import user_roles
 from werkzeug.utils import secure_filename
+from datetime import datetime
 from uuid import uuid4
 import os
 
@@ -15,6 +16,9 @@ influencer = Blueprint('influencer', __name__)
 @influencer.route('/get_influencer_data', methods = ['GET', 'POST'])
 @login_required
 def get_influencer_data():
+    if not Influencer.query.get(current_user.user_id):
+        raise UserError(401, 'Not Authorised')
+    
     form = InfluencerDetailForm()
     form.category.choices = categories
     
@@ -42,10 +46,11 @@ def new_post():
     form = PostDetails()
 
     rqsts = Requests.query.filter_by(influencer_id = current_user.user_id, status = 'Accepted/Ongoing').all()
-    if not rqsts:
-        flash('No Accepted Requests to Post about.')
-        return redirect(url_for('home.requests'))
-    form.post_for.choices = [None]+[rqst.campaign.campaign_name for rqst in rqsts]
+    if rqsts:
+        form.post_for.choices = [None]+[rqst.campaign.campaign_name for rqst in rqsts if rqst.campaign.start_date < datetime.utcnow() and rqst.campaign.end_date > datetime.utcnow()]
+    else:
+        form.post_for.choices = [None]
+
     roles = user_roles(current_user.user_id)
 
     if form.validate_on_submit():
@@ -70,7 +75,7 @@ def new_post():
             upload_folder = os.path.join(base_dir, '..', 'static', 'uploads')
             image_path = os.path.join(upload_folder, image_filename)
         try:
-            new_post = Posts(post_by = current_user.user_id, post_for = post_for, post_title = form.post_title.data, desc = form.desc.data, image_path = new_image_name, approved = True if not post_for else False, visibility = True if int(form.visibility.data) == 1 else False)
+            new_post = Posts(post_by = current_user.user_id, post_for = post_for, post_title = form.post_title.data, desc = form.desc.data, image_path = new_image_name, approved = True if not post_for else False, visibility = False if post_for else True)
             db.session.add(new_post)
             db.session.commit()
             if image_file:
@@ -87,14 +92,20 @@ def new_post():
 @influencer.route('/my/post', methods = ['GET', 'POST'])
 @login_required
 def my_post():
+    if not Influencer.query.get(current_user.user_id):
+        raise UserError(401, 'Not Authorised')
+    
     inf = Influencer.query.get(current_user.user_id)
     roles = user_roles(current_user.user_id)
-    posts = Posts.query.filter_by(post_by = inf.influencer_id).all()
+    posts = Posts.query.filter_by(post_by = inf.influencer_id).order_by(decend(Posts.post_id)).all()
     return render_template('uni/all_posts.html', user = inf, page = f'{inf.name}\'s Posts', roles = roles, posts = posts)
 
 @influencer.route('/edit/<int:post_id>', methods = ['PUT'])
 @login_required
 def edit_post(post_id):
+    if not Influencer.query.get(current_user.user_id):
+        raise UserError(401, 'Not Authorised')
+    
     post = Posts.query.get(post_id)
     if post.post_by == current_user.user_id:
         data = request.get_json()
@@ -149,6 +160,9 @@ def edit_post(post_id):
 @influencer.route('/update_post/<int:post_id>', methods = ["GET", "POST"])            
 @login_required
 def update_post(post_id):
+    if not Influencer.query.get(current_user.user_id):
+        raise UserError(401, 'Not Authorised')
+    
     form = UpdatePostForm()
     curr_user = User.query.get(current_user.user_id)
     post = Posts.query.get(post_id)
@@ -171,8 +185,9 @@ def update_post(post_id):
             new_image_path = os.path.join(upload_folder, image_filename)
 
             #delete old image
-            old_image_path = os.path.join(upload_folder, post.image_path)
-            os.remove(old_image_path)
+            if not post.image_path == 'user.png':
+                old_image_path = os.path.join(upload_folder, post.image_path)
+                os.remove(old_image_path)
 
             post.image_path = new_image_name
         
@@ -193,6 +208,9 @@ def update_post(post_id):
 @influencer.route('/delete/post/<int:post_id>', methods = ['GET', 'POST'])
 @login_required
 def delete_post(post_id):
+    if not Influencer.query.get(current_user.user_id):
+        raise UserError(401, 'Not Authorised')
+    
     post = Posts.query.get(post_id)
     if post:
         try:

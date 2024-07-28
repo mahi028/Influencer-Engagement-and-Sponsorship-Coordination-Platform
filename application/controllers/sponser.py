@@ -1,12 +1,12 @@
 from flask import Blueprint, render_template, jsonify, redirect, request, url_for, flash
 from application import db
-from application.modals import Sponser, Campaign, User, Influencer, Requests, Posts
+from application.modals import Sponser, Campaign, User, Requests, Posts
 from application.form import SponserDetailForm, CampaignDetails, PaymentForm, UpdateCampForm, categories
 from application.validation import UserError
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
 from application.get_roles import user_roles
-from application.hash import hashpw, checkpw
+from application.hash import checkpw
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from uuid import uuid4
@@ -18,6 +18,9 @@ sponser = Blueprint('sponser', __name__)
 @sponser.route('/get_sponser_data', methods = ['GET', 'POST'])
 @login_required
 def get_sponser_data():            
+    if not Sponser.query.get(current_user.user_id):
+        raise UserError(401, 'Not Authorised')
+    
     form = SponserDetailForm()
     form.industry.choices = categories
     if form.validate_on_submit():
@@ -37,6 +40,9 @@ def get_sponser_data():
 @sponser.route('/new/campaign', methods = ['GET', 'POST'])
 @login_required
 def new_campaign():
+    if not Sponser.query.get(current_user.user_id):
+        raise UserError(401, 'Not Authorised')
+    
     user = User.query.get(current_user.user_id)
     form = CampaignDetails()
     form.category.choices = categories
@@ -84,6 +90,9 @@ def new_campaign():
 @sponser.route('/delete/campaign/<int:campaign_id>', methods = ['GET', 'POST'])
 @login_required
 def delete_camp(campaign_id):
+    if not Sponser.query.get(current_user.user_id):
+        raise UserError(401, 'Not Authorised')
+    
     camp = Campaign.query.get(campaign_id)
     if camp:
         try:
@@ -99,6 +108,9 @@ def delete_camp(campaign_id):
 @sponser.route('/my/campaigns', methods = ['GET', 'POST'])
 @login_required
 def my_campaigns():
+    if not Sponser.query.get(current_user.user_id):
+        raise UserError(401, 'Not Authorised')
+    
     user = User.query.get(current_user.user_id)
     campaigns = Campaign.query.filter_by(campaign_by = current_user.user_id).order_by(decend(Campaign.start_date)).all()
     return render_template('uni/campaigns.html',user = user, page = 'My Campaigns', roles = 'Sponser', campaigns = campaigns)
@@ -106,6 +118,9 @@ def my_campaigns():
 @sponser.route('/edit/<int:camp_id>', methods = ['PUT'])
 @login_required
 def edit_camp(camp_id):
+    if not Sponser.query.get(current_user.user_id):
+        raise UserError(401, 'Not Authorised')
+    
     camp = Campaign.query.get(camp_id)
     if camp.campaign_by == current_user.user_id:
         data = request.get_json()
@@ -174,6 +189,9 @@ def edit_camp(camp_id):
 @sponser.route('/update_camp/<int:camp_id>', methods = ["GET", "POST"])
 @login_required
 def update_camp(camp_id):
+    if not Sponser.query.get(current_user.user_id):
+        raise UserError(401, 'Not Authorised')
+    
     form = UpdateCampForm()
     curr_user = User.query.get(current_user.user_id)
     camp = Campaign.query.get(camp_id)
@@ -204,8 +222,9 @@ def update_camp(camp_id):
             new_image_path = os.path.join(upload_folder, image_filename)
 
             #delete old image
-            old_image_path = os.path.join(upload_folder, camp.image_path)
-            os.remove(old_image_path)
+            if not camp.image_path == 'user.png':
+                old_image_path = os.path.join(upload_folder, camp.image_path)
+                os.remove(old_image_path)
 
             camp.image_path = new_image_name
         
@@ -226,6 +245,9 @@ def update_camp(camp_id):
 @sponser.route('/posts', methods = ['GET', 'POST'])
 @login_required
 def posts():
+    if not Sponser.query.get(current_user.user_id):
+        raise UserError(401, 'Not Authorised')
+    
     spn = Sponser.query.get(current_user.user_id)
     if not spn:
         raise UserError(401, 'Not Authorised')
@@ -245,6 +267,9 @@ def posts():
 @sponser.route('/pay/<int:rqst_id>', methods = ['GET', 'POST'])
 @login_required
 def payment(rqst_id):
+    if not Sponser.query.get(current_user.user_id):
+        raise UserError(401, 'Not Authorised')
+    
     spn = User.query.get(current_user.user_id)
     roles = user_roles(current_user.user_id)
     rqst = Requests.query.get(rqst_id)

@@ -50,7 +50,6 @@ class PostDetails(FlaskForm):
     desc = TextAreaField('Post Description*', validators = [DataRequired()])
     post_for = SelectField('Post For', validators=[DataRequired()])
     image = FileField('Post Image')
-    visibility = RadioField('Visibilty*', choices =[(0,'Privet'), (1, 'Public')],validators = [DataRequired()])
     submit = SubmitField('Create')
 
 class UpdateProfileForm(FlaskForm):

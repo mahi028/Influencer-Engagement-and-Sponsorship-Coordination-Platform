@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
-from application.modals import User, Requests, Influencer, Sponser, Campaign, Admin, UserRoles, Posts, LikedPost
+from application.modals import User, Requests, Influencer, Sponser, Campaign, Admin, Posts, LikedPost
 from application.form import UpdateProfileForm, SeachForm, NegotiateForm, PaymentForm, SuggestionForm
 from flask_login import login_required, current_user
 from sqlalchemy import desc as decend
@@ -33,7 +33,7 @@ def all_camps():
         if not inf_details:
             return redirect(url_for('influencer.get_influencer_data'))
         
-    campaigns = Campaign.query.filter(Campaign.start_date <= datetime.utcnow(), Campaign.end_date >= datetime.utcnow(), Campaign.flag == False, Campaign.visibility == True).order_by(decend(Campaign.start_date)).all()
+    campaigns = Campaign.query.filter(Campaign.start_date <= datetime.utcnow(), Campaign.end_date >= datetime.utcnow(), Campaign.flag == False, Campaign.visibility == True).order_by(decend(Campaign.campaign_id)).all()
     user = User.query.get(current_user.user_id)
     
     return render_template('uni/campaigns.html', page = 'Campaigns', roles = roles, campaigns = campaigns, user = user)
@@ -48,7 +48,6 @@ def dashboard():
 @home.route('/requests', methods = ['GET', 'POST'])
 @login_required
 def requests():
-
     roles = user_roles(current_user.user_id)
     requests = []
 
@@ -69,6 +68,9 @@ def profile_edit(user):
     val = data['value']
 
     if user == 'inf':
+        if not Influencer.query.get(current_user.user_id):
+            raise UserError(401, 'Not Authorised')
+    
         curr_user = Influencer.query.get(current_user.user_id)
         match to_update:
             case 'name':
@@ -97,6 +99,9 @@ def profile_edit(user):
                     return jsonify({'Request' : e})
 
     elif user == 'spn':
+        if not Sponser.query.get(current_user.user_id):
+            raise UserError(401, 'Not Authorised')
+    
         curr_user = Sponser.query.get(current_user.user_id)
         match to_update:
             case 'name':
@@ -165,8 +170,9 @@ def update_imp():
             new_image_path = os.path.join(upload_folder, image_filename)
 
             #delete old image
-            old_image_path = os.path.join(upload_folder, curr_user.profile)
-            os.remove(old_image_path)
+            if not curr_user.profile == 'user.png':
+                old_image_path = os.path.join(upload_folder, curr_user.profile)
+                os.remove(old_image_path)
 
             curr_user.profile = new_image_name
         
@@ -213,8 +219,15 @@ def view_camp(camp_id):
     user = User.query.get(current_user.user_id)
     camp = Campaign.query.get(camp_id)
     roles = user_roles(current_user.user_id)
+
     if camp.flag and camp.sponser.user.flag and not (camp.campaign_by == current_user.user_id or 'Admin' in roles):
-        return 'Camp Not Found'
+        flash('No Such Campign')
+        return redirect(url_for('home.all_camps'))
+
+    if camp.end_date < datetime.utcnow() and not (camp.campaign_by == current_user.user_id or 'Admin' in roles):
+        flash('Campaign is either expired or has not started yet.')
+        return redirect(url_for('home.all_camps'))
+
     return render_template('sponser/campaign.html', camp = camp, user = user, roles = roles)
 
 @home.route('/view/post/<int:post_id>', methods = ["GET", "POST"])
@@ -358,7 +371,10 @@ def accept_rqst(rqst_id):
     roles = user_roles(current_user.user_id)
     rqst = Requests.query.get(rqst_id)
     if rqst.status == 'Accepted/Ongoing':
-            flash('Already Accepted')
+        flash('Already Accepted')
+    elif rqst.campaign.end_date < datetime.utcnow():
+        flash('Campaign for rqst has expired')
+        return redirect(f'/delete/rqst/{rqst_id}')
     else:
         if roles[0] == rqst.requested_by:
             flash('You can\'t accept this Request as you Created it or Negotiated')
