@@ -412,7 +412,7 @@ def like_post(action, post_id):
                     inf = Influencer.query.get(post.post_by)
                     inf.reach += 1
                     db.session.commit()
-                    return jsonify({'Request' : 'Post Liked'})
+                    return jsonify({'Request' : 'liked'})
                 except Exception as e:
                     db.session.rollback()
                     return jsonify({'Request' : e})
@@ -424,7 +424,7 @@ def like_post(action, post_id):
                 inf = Influencer.query.get(post.post_by)
                 inf.reach -= 1
                 db.session.commit()
-                return jsonify({'Request' : 'Post Dis-Liked'})
+                return jsonify({'Request' : 'disliked'})
             except Exception as e:
                 db.session.rollback()
                 return jsonify({'Request' : e})
