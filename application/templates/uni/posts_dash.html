@@ -12,7 +12,9 @@
             <th scope="col">Post</th>
             <th scope="col">Post By</th>
             <th scope="col">Email</th>
+            {%if post.post_for%}
             <th scope="col">Posted For</th>
+            {%endif%}
             <th scope="col">View</th>
             <th scope="col">Action</th>
         </tr>
@@ -24,7 +26,9 @@
             <td>{{post.post_title}}</td>
             <td><a href="/get/{{post.post_by}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{post.influencer.name}}</a></td>
             <td>{{post.influencer.user.email}}</td>
+            {%if post.post_for%}
             <td><a href="/view/{{post.request.campaign.campaign_id}}" class="link-secondary link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{post.request.campaign.campaign_name}}</a></td>
+            {%endif%}
             <td><a href="/view/post/{{post.post_id}}" class="btn btn-secondary">View</a></td>
             <td>
                 {%if 'Admin' in roles%}
