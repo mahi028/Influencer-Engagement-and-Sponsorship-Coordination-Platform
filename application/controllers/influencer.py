@@ -103,8 +103,6 @@ def my_post():
 @influencer.route('/edit/<int:post_id>', methods = ['PUT'])
 @login_required
 def edit_post(post_id):
-    if not Influencer.query.get(current_user.user_id):
-        raise UserError(401, 'Not Authorised')
     
     post = Posts.query.get(post_id)
     if post.post_by == current_user.user_id:
