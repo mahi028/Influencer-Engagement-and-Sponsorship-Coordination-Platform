@@ -51,7 +51,7 @@
                         </div>
                     {%endif%}
                 {%endif%}
-                {%if post.post_by%}
+                {%if post.post_for%}
                 {%if current_user.user_id == post.request.campaign.campaign_by%}
                     {%if post.request.status != 'Fullfilled/Paid'%}
                         <a href="/sponser/pay/{{post.request.request_id}}" class="btn btn-success">Pay for Request Completion</a>
