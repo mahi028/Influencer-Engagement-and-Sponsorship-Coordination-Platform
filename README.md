@@ -1,8 +1,8 @@
-#DESCRIPTION OF PROJECT 
+DESCRIPTION OF PROJECT 
  
 In this day and age of social media, more and more Influencers and brands are collaborating online. This platform, SponserMe, helps both Brands as well as Influencers to collaborate easily, help Influencers monetize their content, let brands advertise their products and services by Influencers with high reach. It’s a platform where both, Brands and Influencers, can “Elevate their Brand and Empower their Influence”.
  
-##TECHNOLOGIES USED 
+TECHNOLOGIES USED 
  
 •	Flask: Backend framework for building the web application. 
 •	SQLAlchemy: ORM (Object-Relational Mapping) tool for database interactions. 
@@ -15,7 +15,7 @@ In this day and age of social media, more and more Influencers and brands are co
 •	UUID: Python library for generating unique ids.
 
  
-##ARCHITECTURE 
+ARCHITECTURE 
  
 Here, The app.py file contains the main code to run the application. /application is a module which contains all the files for app. The description of files inside application are as follows 
 •	api.py – This file contains Activity Api for admin monitoring
@@ -36,7 +36,7 @@ o	dashboard.py – This file handles universal routes for all types of users.
 
  
  
-##FEATURES 
+FEATURES 
  
 User Management: 
  
@@ -47,7 +47,7 @@ User Management:
 
 
 
-##Campaign and Post Management: 
+Campaign and Post Management: 
  
 •	Ability to create, update, delete privet and public campaigns.
 •	Ability to create, update, delete privet and public posts.
@@ -55,12 +55,12 @@ User Management:
 •	Ability to search for campaigns.
 •	Feedback or suggestion for posts.
  
-##Collab Request Management: 
+Collab Request Management: 
  
 •	Collaboration requests for campaigns.
 •	Ability to negotiate budget.
 
-##DB SCHEMA DESIGN 
+DB SCHEMA DESIGN 
  
 The database schema consists of tables for users, roles, admin, sponsor, influencer, requests, campaign, posts. Each table contains relevant fields such as user details.
 
